@@ -1,9 +1,9 @@
-
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CadastroComponent } from '../cadastro/cadastro';
 import { AuthService } from '../../service/auth';
+import { LoginModel } from '../../models/login';
 
 @Component({
   selector: 'app-login',
@@ -13,8 +13,10 @@ import { AuthService } from '../../service/auth';
   styleUrl: './login.css',
 })
 export class LoginComponent {
-  nome_usuario = '';
-  senha = '';
+  login: LoginModel = {
+    nome_usuario: '',
+    senha: '',
+  };
 
   constructor(
     private dialog: MatDialog,
@@ -22,14 +24,14 @@ export class LoginComponent {
   ) {}
 
   entrar() {
-    if (!this.nome_usuario.trim() || !this.senha) {
+    if (!this.login.nome_usuario.trim() || !this.login.senha) {
       alert('Preencha o nome de usuário e a senha.');
       return;
     }
 
     this.authService.login({
-      nome_usuario: this.nome_usuario.trim(),
-      senha: this.senha,
+      nome_usuario: this.login.nome_usuario.trim(),
+      senha: this.login.senha,
     }).subscribe({
       next: (resposta) => {
         localStorage.setItem('token', resposta.token);
