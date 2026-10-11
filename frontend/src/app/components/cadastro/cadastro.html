@@ -6,7 +6,9 @@
     <p>Preencha seus dados para acessar o jornal da escola.</p>
   </div>
 
-  <form #formCadastro="ngForm" (ngSubmit)="cadastrar()">
+  <form #formCadastro="ngForm"
+        (ngSubmit)="cadastrar()"
+        novalidate>
 
     <div class="campo">
       <label for="nome_completo">Nome completo</label>
@@ -35,36 +37,31 @@
     </div>
 
     <div class="campo">
-      <label for="email">E-mail</label>
-      <input
-        type="email"
-        id="email"
-        name="email"
-        [(ngModel)]="cadastro.email"
-        placeholder="Digite seu e-mail"
-        autocomplete="email"
+      <label for="nivel_acesso">Nível de acesso</label>
+      <select
+        id="nivel_acesso"
+        name="nivel_acesso"
+        [(ngModel)]="cadastro.nivel_acesso"
         required
-      />
+      >
+        <option value="" disabled>Selecione o nível de acesso</option>
+        <option value="aluno">Aluno</option>
+        <option value="administrador">Administrador</option>
+        <option value="bibliotecario">Bibliotecário</option>
+      </select>
     </div>
 
     <div class="campo">
-      <label for="sala_id">Sala / Turma</label>
-      <select
-        id="sala_id"
-        name="sala_id"
-        [(ngModel)]="cadastro.sala_id"
+      <label for="codigo_acesso">Código de acesso</label>
+      <input
+        type="password"
+        id="codigo_acesso"
+        name="codigo_acesso"
+        [(ngModel)]="cadastro.codigo_acesso"
+        placeholder="Digite o código de acesso"
+        autocomplete="off"
         required
-      >
-        <option [ngValue]="null" disabled>
-          Selecione sua turma
-        </option>
-
-        @for (sala of salas; track sala.id) {
-          <option [ngValue]="sala.id">
-            {{ sala.nome }}
-          </option>
-        }
-      </select>
+      />
     </div>
 
     <div class="campo">
@@ -94,20 +91,30 @@
       />
     </div>
 
-    @if (mensagem) {
-      <p class="mensagem" role="status">
-        {{ mensagem }}
-      </p>
-    }
+    <p
+      class="mensagem"
+      [hidden]="!mensagem"
+      [class.mensagem-erro]="tipoMensagem === 'erro'"
+      [class.mensagem-sucesso]="tipoMensagem === 'sucesso'"
+      role="alert"
+      aria-live="polite"
+    >
+      {{ mensagem }}
+    </p>
 
-    <button type="submit" class="btn-cadastrar">
-      CRIAR CONTA
+    <button
+      type="submit"
+      class="btn-cadastrar"
+      [disabled]="carregando"
+    >
+      {{ carregando ? 'CRIANDO CONTA...' : 'CRIAR CONTA' }}
     </button>
 
   </form>
 
   <div class="cadastro-footer">
     <p>Já tem uma conta?</p>
+
     <button
       type="button"
       class="link-login"

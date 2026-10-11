@@ -21,6 +21,14 @@ export interface LoginResponse {
   token: string;
 }
 
+export interface CadastroRequest {
+  nome_completo: string;
+  nome_usuario: string;
+  senha: string;
+  nivel_acesso: 'aluno' | 'administrador' | 'bibliotecario';
+  codigo_acesso: string;
+}
+
 @Injectable({
   providedIn: 'root',
 })
@@ -32,6 +40,13 @@ export class AuthService {
   login(dados: LoginRequest): Observable<LoginResponse> {
     return this.http.post<LoginResponse>(
       `${this.apiUrl}/login`,
+      dados
+    );
+  }
+
+  cadastrar(dados: CadastroRequest): Observable<{ usuario: Usuario; token: string }> {
+    return this.http.post<{ usuario: Usuario; token: string }>(
+      `${this.apiUrl}/cadastro`,
       dados
     );
   }
