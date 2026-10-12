@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { MatDialog } from '@angular/material/dialog';
 import { LoginComponent } from '../login/login';
+import { AuthService } from '../../service/auth';
+
 
 @Component({
   selector: 'app-navbar',

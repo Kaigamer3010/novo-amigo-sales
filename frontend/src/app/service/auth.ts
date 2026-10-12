@@ -35,6 +35,35 @@ export interface CadastroRequest {
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
 
+  // essa variavel guarda as informações do usuario que foi cadastrado
+
+  private usuarioLogado: Usuario | null = null;
+
+// esse método define que os dados do usuario serão guardados na variavel usuarioLogado
+
+definirUsuario(usuario: Usuario): void {
+  this.usuarioLogado = usuario;
+}
+
+// esse método faz a gente ter acesso àquela váriavel
+
+obterUsuario(): Usuario | null {
+  return this.usuarioLogado;
+}
+
+// essa retorna os cargos atribuidos ao usuarioLogado
+
+obterCargo(): string | null {
+  return this.usuarioLogado?.nivel_acesso ?? null;
+}
+
+// a gente usa essa aqui no html para ver se o usuário atual tem algum dos cargos que tem acesso à alguma coisa
+
+temCargo(cargos: string[]): boolean {
+  return this.usuarioLogado !== null &&
+    cargos.includes(this.usuarioLogado.nivel_acesso);
+}
+
   constructor(private http: HttpClient) {}
 
   login(dados: LoginRequest): Observable<LoginResponse> {
