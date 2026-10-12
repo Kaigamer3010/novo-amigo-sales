@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 
 export interface Usuario {
   id: number;
@@ -35,45 +35,48 @@ export interface CadastroRequest {
 export class AuthService {
   private apiUrl = 'http://127.0.0.1:8000/api';
 
-  // essa variavel guarda as informações do usuario que foi cadastrado
+  private usuarioInicial(): Usuario | null {
+    try {
+      const salvo = localStorage.getItem('usuario');
+      return salvo ? JSON.parse(salvo) as Usuario : null;
+    } catch {
+      return null;
+    }
+  }
 
-  private usuarioLogado: Usuario | null = null;
+  private usuarioSubject = new BehaviorSubject<Usuario | null>(
+    this.usuarioInicial()
+  );
 
-// esse método define que os dados do usuario serão guardados na variavel usuarioLogado
-
-definirUsuario(usuario: Usuario): void {
-  this.usuarioLogado = usuario;
-}
-
-// esse método faz a gente ter acesso àquela váriavel
-
-obterUsuario(): Usuario | null {
-  return this.usuarioLogado;
-}
-
-// essa retorna os cargos atribuidos ao usuarioLogado
-
-obterCargo(): string | null {
-  return this.usuarioLogado?.nivel_acesso ?? null;
-}
-
-// a gente usa essa aqui no html para ver se o usuário atual tem algum dos cargos que tem acesso à alguma coisa
-
-temCargo(cargos: string[]): boolean {
-  return this.usuarioLogado !== null &&
-    cargos.includes(this.usuarioLogado.nivel_acesso);
-}
+  usuario$ = this.usuarioSubject.asObservable();
 
   constructor(private http: HttpClient) {}
 
-  login(dados: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(
-      `${this.apiUrl}/login`,
-      dados
-    );
+  definirUsuario(usuario: Usuario): void {
+    localStorage.setItem('usuario', JSON.stringify(usuario));
+    this.usuarioSubject.next(usuario);
   }
 
-  cadastrar(dados: CadastroRequest): Observable<{ usuario: Usuario; token: string }> {
+  obterUsuario(): Usuario | null {
+    return this.usuarioSubject.value;
+  }
+
+  obterCargo(): string | null {
+    return this.usuarioSubject.value?.nivel_acesso ?? null;
+  }
+
+  temCargo(cargos: string[]): boolean {
+    const usuario = this.usuarioSubject.value;
+    return usuario !== null && cargos.includes(usuario.nivel_acesso);
+  }
+
+  login(dados: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, dados);
+  }
+
+  cadastrar(
+    dados: CadastroRequest
+  ): Observable<{ usuario: Usuario; token: string }> {
     return this.http.post<{ usuario: Usuario; token: string }>(
       `${this.apiUrl}/cadastro`,
       dados

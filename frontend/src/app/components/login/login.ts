@@ -35,10 +35,8 @@ export class LoginComponent {
     }).subscribe({
       next: (resposta) => {
         localStorage.setItem('token', resposta.token);
-        localStorage.setItem(
-          'usuario',
-          JSON.stringify(resposta.usuario)
-        );
+        localStorage.setItem('usuario', JSON.stringify(resposta.usuario));
+        this.authService.definirUsuario(resposta.usuario);
 
         alert(`Bem-vindo, ${resposta.usuario.nome_completo}!`);
         this.dialog.closeAll();
