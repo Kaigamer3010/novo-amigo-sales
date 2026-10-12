@@ -1,82 +1,106 @@
 <main>
     <div class="backSuperior"></div>
+
     <div class="conteudo">
 
         <div class="barraBusca">
-            <input type="text" id="barraPesquisa" placeholder="Pesquise por livro, autor, ou ISBN..."
-             [(ngModel)]="busca" (input)="buscarLivro()" >
+            <input type="text" id="barraPesquisa" placeholder="Pesquise por livro, autor ou ISBN..." [(ngModel)]="busca"
+                (input)="buscarLivro()">
         </div>
 
-        <div class="filtros">
+        <div class="filtros"></div>
 
-        </div>
-
-        <div class="livros">
-            
-            @for (livro of livrosVisiveis; track livro.titulo){
-
-                <button class="livro" data-bs-toggle="offcanvas" href="#livroInformacoes" 
-                role="button" aria-controls="offcanvasExample" (click)="selecionarLivro(livro)">
-                    
-                    <img src="{{livro.imagem}}" >
-
-                    <h2>{{ livro.titulo }}</h2>
-
-                    <h3>{{ livro.autor }}</h3>
-
-                    @if (livro.disponivel) {
-                <span class="disponivel">
-                    Disponível
-                </span>
-            } @else {
-                <span class="indisponivel">
-                    Indisponível
-                </span>
-            }
-
-                </button>
-
-            }
-        </div>
-            
-            @if (livroSelecionado){    
-
-            <div class="offcanvas offcanvas-end" tabindex="-1" id="livroInformacoes" aria-labelledby="offcanvasExampleLabel">
-                <div class="offcanvas-body">
-                    
-                    <div class="offcontainer">
-                        <div class="offcapalivro"><img src="{{livroSelecionado.imagem}}" alt=""></div>
-                    </div>
-                    
-    
-                    <h2>{{livroSelecionado.titulo}}</h2>
-                    <h3>{{livroSelecionado.autor}}</h3>
-                    <h3>{{livroSelecionado.anoLancamento}}</h3>
-    
-                    <p>{{livroSelecionado.sinopse}}</p>
-    
-                    <h3>ISBN: {{livroSelecionado.isbn}}</h3>
-                    
-                     @if (livroSelecionado.disponivel) {
-                <span class="disponivel">
-                    Disponível
-                </span>
-            } @else {
-                <span class="indisponivel">
-                    Indisponível
-                </span>
-            }
-                    
-                </div>
-            </div>
-
+        @if (carregando) {
+        <p>Carregando livros...</p>
         }
 
-        <mat-paginator
-            [length]="livros.length"
-            [pageSize]="5"
-            (page)="mudarPagina($event)">
+        @if (erroCarregamento) {
+        <p>{{ erroCarregamento }}</p>
+        }
+
+        @if (!carregando && !erroCarregamento) {
+
+        <div class="livros">
+
+            @for (livro of livrosVisiveis; track livro.id ?? livro.titulo) {
+
+            <button class="livro" type="button" data-bs-toggle="offcanvas" data-bs-target="#livroInformacoes"
+                aria-controls="livroInformacoes" (click)="selecionarLivro(livro)">
+
+                @if (livro.imagem) {
+                <img [src]="livro.imagem" [alt]="'Capa do livro ' + livro.titulo">
+                }
+
+                <h2>{{ livro.titulo }}</h2>
+
+                <h3>
+                    {{ Array.isArray(livro.autores) ? livro.autores.join(', ') : (livro.autores || 'Autor não
+                    informado') }}
+                </h3>
+
+                @if (livro.disponibilidade) {
+                <span class="disponivel">Disponível</span>
+                } @else {
+                <span class="indisponivel">Indisponível</span>
+                }
+
+            </button>
+
+            } @empty {
+            <p>Nenhum livro encontrado.</p>
+            }
+
+        </div>
+
+        @if (livroSelecionado) {
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="livroInformacoes"
+            aria-labelledby="livroInformacoesLabel">
+
+            <div class="offcanvas-body">
+
+                <div class="offcontainer">
+                    <div class="offcapalivro">
+                        @if (livroSelecionado.imagem) {
+                        <img [src]="livroSelecionado.imagem" [alt]="'Capa do livro ' + livroSelecionado.titulo">
+                        }
+                    </div>
+                </div>
+
+                <h2 id="livroInformacoesLabel">
+                    {{ livroSelecionado.titulo }}
+                </h2>
+
+                <h3>
+                    {{
+                    Array.isArray(livroSelecionado.autores)
+                    ? livroSelecionado.autores.join(', ')
+                    : (livroSelecionado.autores || 'Autor não informado')
+                    }}
+                </h3>
+
+                <h3>{{ livroSelecionado.ano_publicacao }}</h3>
+
+                <p>
+                    {{ livroSelecionado.sinopse || 'Sinopse não informada.' }}
+                </p>
+
+                <h3>ISBN: {{ livroSelecionado.isbn }}</h3>
+
+                @if (livroSelecionado.disponibilidade) {
+                <span class="disponivel">Disponível</span>
+                } @else {
+                <span class="indisponivel">Indisponível</span>
+                }
+
+            </div>
+        </div>
+        }
+
+        <mat-paginator [length]="livrosFiltrados.length" [pageSize]="5" [pageIndex]="0"
+            [disabled]="livrosFiltrados.length === 0" (page)="mudarPagina($event)">
         </mat-paginator>
+
+        }
 
     </div>
 </main>

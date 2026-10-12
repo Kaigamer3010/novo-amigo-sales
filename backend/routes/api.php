@@ -13,12 +13,13 @@ use App\Http\Controllers\SalaController;
 use App\Http\Controllers\CursoController;
 use App\Http\Controllers\HorarioAulaController;
 use App\Http\Controllers\AtividadeController;
+use App\Http\Controllers\EmprestimoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
     })->middleware('auth:sanctum');
     
-// Fazer login
+
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/cadastro', [AuthController::class, 'cadastrar']);
 
@@ -26,10 +27,8 @@ Route::post('/cadastro', [AuthController::class, 'cadastrar']);
 # Usuario
 Route::middleware('auth:sanctum')->group(function () {
 
-    // logout
     Route::post('/logout', [AuthController::class, 'logout']);
 
-    // CRUD de usuário 
     Route::get('/usuarios', [UsuarioController::class, 'index']);
     Route::post('/usuarios', [UsuarioController::class, 'store']);
     Route::get('/usuarios/{id}', [UsuarioController::class, 'show']);
@@ -38,15 +37,16 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 #Livro
-Route::middleware('auth:sanctum')->group(function () {
 
+Route::get('/livros', [LivroController::class, 'index']); //publico para que todos tenham acesso    
+Route::get('/livros/{id}', [LivroController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
     // Rota específica de busca por ISBN — precisa vir ANTES da rota /livros/{id},
     // senão o Laravel pode confundir "buscar-isbn" com um {id}
     Route::get('/livros/buscar-isbn/{isbn}', [LivroController::class, 'buscarPorIsbn']);
 
-    Route::get('/livros', [LivroController::class, 'index']);
     Route::post('/livros', [LivroController::class, 'store']);
-    Route::get('/livros/{id}', [LivroController::class, 'show']);
     Route::put('/livros/{id}', [LivroController::class, 'update']);
     Route::delete('/livros/{id}', [LivroController::class, 'destroy']);
 });
@@ -130,4 +130,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/atividades/{id}', [AtividadeController::class, 'show']);
     Route::put('/atividades/{id}', [AtividadeController::class, 'update']);
     Route::delete('/atividades/{id}', [AtividadeController::class, 'destroy']);
+
+    Route::get('/emprestimos', [EmprestimoController::class, 'index']);
+    Route::post('/emprestimos', [EmprestimoController::class, 'store']);
+    Route::patch('/emprestimos/{emprestimo}/devolver', [EmprestimoController::class, 'devolver']);
+    Route::get('/emprestimos-atrasados', [EmprestimoController::class, 'atrasados']);
 });

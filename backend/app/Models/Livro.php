@@ -15,14 +15,23 @@ class Livro extends Model
         'imagem',
         'isbn',
         'disponibilidade',
+        'quantidade_exemplares',
+        'localizacoes',
     ];
-    // genero_id sai do fillable também, já que não existe mais essa coluna aqui
+
     protected $casts = [
         'autores' => 'array',
+        'disponibilidade' => 'boolean',
+        'quantidade_exemplares' => 'integer',
     ];
 
     public function generos()
     {
         return $this->belongsToMany(Genero::class, 'genero_livro');
+    }
+
+    public function emprestimos()
+    {
+        return $this->hasMany(Emprestimo::class);
     }
 }

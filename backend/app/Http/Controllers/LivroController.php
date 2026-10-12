@@ -9,20 +9,32 @@ use Illuminate\Support\Facades\Gate;
 
 class LivroController extends Controller
 {
+   
     public function index()
-{
-    $livros = Livro::with('generos')->get();
+    {
+        $livros = Livro::with('generos')->withCount([
+            'emprestimos as quantidade_emprestada' => function ($query) {
+                $query->whereNull('data_devolucao');
+            }
+        ])->get();
 
-    // map() percorre cada livro da coleção e aplica uma transformação nele
-    $livrosFormatados = $livros->map(function ($livro) {
-        $livroArray = $livro->toArray();
-        // pluck('genero') pega só o valor da coluna "genero" de cada item
-        $livroArray['generos'] = $livro->generos->pluck('genero');
-        return $livroArray;
-    });
+        $livrosFormatados = $livros->map(function ($livro) {
+            $livroArray = $livro->toArray();
 
-    return response()->json($livrosFormatados);
-}
+            $livroArray['generos'] = $livro->generos->pluck('genero');
+            $livroArray['quantidade_exemplares'] = $livro->quantidade_exemplares ?? 1;
+            $livroArray['quantidade_emprestada'] = $livro->quantidade_emprestada;
+            $livroArray['quantidade_disponivel'] = max(
+                0,
+                $livroArray['quantidade_exemplares'] - $livroArray['quantidade_emprestada']
+            );
+
+            return $livroArray;
+        });
+
+        return response()->json($livrosFormatados);
+    }   
+
 
     public function show($id)
 {
@@ -78,6 +90,8 @@ class LivroController extends Controller
     'ano_publicacao' => 'sometimes|required|digits:4',
     'generos' => 'sometimes|array',
     'generos.*' => 'exists:generos,id',
+    'quantidade_exemplares' => 'required|integer|min:1',
+    'localizacoes' => 'nullable|string|max:255',
 ]);
 
     // except('generos') atualiza todos os campos comuns, MENOS generos
