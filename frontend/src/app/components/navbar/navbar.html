@@ -18,7 +18,9 @@
     <a class="rotas" routerLink="/pg-jornal"><ul>JORNAL</ul></a>
     <a class="rotas" routerLink="/pg-biblioteca"><ul>BIBLIOTECA</ul></a>
     <a class="rotas" routerLink="/pg-sala"><ul>SALA</ul></a>
-    
+    @if (auth.temCargo(['administrador'])){
+      <a class="rotas" routerLink="/gerenciar-avisos"></a>
+    }
    
   </div>
 </div>

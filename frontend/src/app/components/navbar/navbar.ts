@@ -13,7 +13,7 @@ import { AuthService } from '../../service/auth';
 })
 export class Navbar {
 
-  constructor(private dialog: MatDialog) {}
+  constructor(private dialog: MatDialog, public auth: AuthService) {}
 
   abrirLogin() {
     this.dialog.open(LoginComponent, {
