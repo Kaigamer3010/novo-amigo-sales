@@ -1,0 +1,129 @@
+main{
+    width: 100%;
+    height: 85vh;
+    display: flex;
+    flex-direction: column;
+    background-color: #faf8f4;
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+.jornalEscola{
+    width: 100%;
+    margin-top: 30px;
+    padding-left: 46px;
+}
+
+h1{
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+}
+
+.conteudo1{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: 50px;
+    padding-left: 50px;
+    padding-right: 50px;
+    padding-top: 10px;
+}
+
+.barraBusca{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+}
+
+#barraPesquisa{
+    width: 100%;
+    border: none;
+    padding: 7px;
+    box-shadow: 4px 5px 15px rgba(0, 0, 0, 0.256);
+}
+
+.conteudo{
+    width:min-content;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 35px;
+    padding-left: 40px;
+    padding-right: 40px;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    margin-top: 30px;
+    border-radius: 5px;
+    background-color: rgb(253, 253, 253);
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.111);
+}
+
+.edicao{
+    width: 210px;
+    height: 310px;
+    border-radius: 5px;
+    padding: 10px;
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.111);
+    background-color: rgb(255, 255, 255);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(114, 114, 114, 0.105) ;
+}
+
+.edicao img{
+    width: 100%;
+    height: 100%;
+    border: 1px solid black;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+.livro h2{
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    overflow: hidden;
+}
+
+h2{
+    font-size: 1rem;
+    font-weight: bold;
+    font-family: var(--font-league-spartan);
+    margin-top: 10px;
+}
+
+h3{
+    font-size: 0.80rem;
+}
+
+.filtros{
+    width: 100%;
+    display: flex;
+    margin-top: 40px;
+    gap: 20px;
+}
+
+.filtrobutton{
+    width: 130px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-color);
+    font-size: 1rem;
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+    color: var(--primary-color);
+    background-color: #faf8f4;
+}
+
+.filtros button.ativo {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+mat-paginator{
+    margin-top: 10px;
+    background-color:#faf8f4;
+}

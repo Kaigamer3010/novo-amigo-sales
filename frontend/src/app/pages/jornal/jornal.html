@@ -1,7 +1,55 @@
 <main>
-    <div class="jornalEscola"></div>
-    <div class="filtros"></div>
-    <div class="conteudo">
-        
+  <div class="jornalEscola">
+
+    <h1>JORNAL DA ESCOLA</h1>
+    <h3>Edições e artigos com informações escritas pelos proprios alunos.</h3>
+
+  </div>
+
+  <div class="conteudo1">
+
+    <div class="barraBusca">
+      <input
+        type="text"
+        id="barraPesquisa"
+        placeholder="Pesquise por edição ou assunto..."
+        [(ngModel)]="busca"
+        (input)="buscarEdicao()"
+      >
     </div>
+
+<div class="filtros">
+  <button class="filtrobutton" type="button" [class.ativo]="filtroAtual === 'todos'" (click)="deixarTodos()">Tudo</button>
+
+  <button class="filtrobutton" type="button" [class.ativo]="filtroAtual === 'edicoes'" (click)="deixarEdicoes()"> Edições</button>
+
+  <button class="filtrobutton" type="button"[class.ativo]="filtroAtual === 'artigos'"(click)="deixarArtigos()">Artigos</button>
+</div>
+
+    <div class="conteudo">
+
+      @for (item of conteudosVisiveis; track item.id) {
+  <button class="edicao" type="button">
+
+    <img src="" alt="">
+
+    <h2>{{ item.titulo }}</h2>
+    <h3>{{ item.data_publicacao }}</h3>
+  </button>
+}
+       @empty {
+        <p>Nenhuma edição encontrada.</p>
+      }
+
+    </div>
+
+   <mat-paginator
+        [length]="conteudosFiltrados.length"
+        [pageSize]="tamanhoPagina"
+        [pageIndex]="paginaAtual"
+        (page)="mudarPagina($event)">
+    </mat-paginator>
+
+  </div>
 </main>
+```
