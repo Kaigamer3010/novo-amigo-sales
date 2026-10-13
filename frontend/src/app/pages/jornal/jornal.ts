@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { Edicao } from '../../models/edicaoJornal';
+import { Artigo } from '../../models/artigoJornal';
 
 @Component({
   selector: 'app-jornal',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
   styleUrl: './jornal.css',
 })
 export class Jornal {
+
+
+  
 }

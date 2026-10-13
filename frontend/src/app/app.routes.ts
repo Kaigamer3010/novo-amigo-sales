@@ -18,16 +18,4 @@ export const routes: Routes = [
 
   { path: 'editar-pg-inicial', component: EditarPgInicial, canActivate: [cargoGuard], data: {cargos: ['administrador']}},
 
-  {
-    path: 'gerenciar-cardapio',
-    component: GerenciarCardapio,
-    canActivate: [cargoGuard],
-    data: { cargos: ['administrador'] }
-  },
-  {
-    path: 'gerenciar-avisos',
-    component: GerenciarAvisos,
-    canActivate: [cargoGuard],
-    data: { cargos: ['administrador'] }
-  }
 ];

@@ -23,12 +23,14 @@
       <a class="rotas" routerLink="/pg-biblioteca">
         <ul>BIBLIOTECA</ul>
       </a>
+      @if (auth.temCargo(['aluno'])) {
       <a class="rotas" routerLink="/pg-sala">
         <ul>SALA</ul>
       </a>
+    }
       @if (auth.temCargo(['administrador'])) {
-      <a class="rotas" routerLink="/gerenciar-avisos">
-        GERENCIAR AVISOS
+      <a class="rotas" routerLink="/editar-pg-inicial">
+        <ul>EDITAR PÁGINA INICIAL</ul>
       </a>
       }
 
