@@ -1,0 +1,110 @@
+ <main class="conteudo">
+
+    <section class="cabecalho-pagina">
+      <h1>EDIÇÕES - PÁGINA INICIAL</h1>
+      <p>Adicione, edite ou remova avisos e cardápios.</p>
+    </section>
+
+    <!-- CARDÁPIO -->
+    <section class="painel">
+
+      <div class="painel-cabecalho">
+        <h2>Cardápio</h2>
+
+        <button class="botao-adicionar"
+                (click)="abrirGerenciarCardapio()">
+          <span class="mais">+</span>
+          Cardápio
+        </button>
+      </div>
+
+      <div class="tabela-container">
+        <table>
+          <thead>
+            <tr>
+              <th>Dia da Semana</th>
+              <th>Manhã</th>
+              <th>Tarde</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (item of cardapios; track item.id) {
+              <tr>
+                <td>{{ item.dia_semana }}</td>
+                <td>{{ item.refeicao }}</td>
+
+                <td class="acoes">
+                  <button class="botao-acao editar"
+                          title="Editar cardápio"
+                          (click)="editarCardapio(item)">
+                    ✎
+                  </button>
+
+                  <button class="botao-acao excluir"
+                          title="Excluir cardápio"
+                          (click)="excluirCardapio(item.id)">
+                    ♜
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- AVISOS -->
+    <section class="painel">
+
+      <div class="painel-cabecalho">
+        <h2>Avisos</h2>
+
+        <button class="botao-adicionar"
+                (click)="abrirGerenciarAvisos()">
+          <span class="mais">+</span>
+          Aviso
+        </button>
+      </div>
+
+      <div class="tabela-container">
+        <table class="tabela-avisos">
+          <thead>
+            <tr>
+              <th>Título</th>
+              <th>Descrição</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (aviso of avisos; track aviso.id) {
+              <tr>
+                <td>{{ aviso.titulo }}</td>
+                <td class="descricao">{{ aviso.descricao }}</td>
+
+
+                <td class="acoes">
+                  <button class="botao-acao editar"
+                          title="Editar aviso"
+                          (click)="editarAviso(aviso)">
+                    ✎
+                  </button>
+
+                  <button class="botao-acao excluir"
+                          title="Excluir aviso"
+                          (click)="excluirAviso(aviso.id)">
+                    ♜
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+  </main>

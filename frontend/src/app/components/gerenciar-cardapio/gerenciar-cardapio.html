@@ -1,7 +1,11 @@
 
 <main>
-  <h1>Cadastrar cardápio</h1>
+  <div class="h1CadastrarCardapio">
+  <h1>ADICIONAR CARDÁPIO</h1>
+  </div>
 
+
+  <div class="conteudo">
   <label for="dia">Dia da semana:</label>
 
   <select id="dia" [(ngModel)]="novoDia">
@@ -36,15 +40,5 @@
   @if (erro) {
     <p>{{ erro }}</p>
   }
-
-  <h2>Cardápios cadastrados:</h2>
-
-  @for (cardapio of cardapios; track cardapio.id) {
-    <div>
-      <h3>{{ nomeDia(cardapio.dia_semana) }}</h3>
-      <p>{{ cardapio.refeicao }}</p>
-    </div>
-  } @empty {
-    <p>Nenhuma refeição cadastrada.</p>
-  }
+  </div>
 </main>

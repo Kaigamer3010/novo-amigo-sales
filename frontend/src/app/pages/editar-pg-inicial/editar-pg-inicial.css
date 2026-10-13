@@ -1,0 +1,155 @@
+
+:host {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  color: #111;
+}
+
+.conteudo {
+  width: 100%;
+  height: 90vh;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
+}
+
+.cabecalho-pagina {
+  margin-bottom: 22px;
+}
+
+.cabecalho-pagina h1 {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+}
+
+.cabecalho-pagina p {
+  margin: 4px 0 0;
+  font-size: 10px;
+  color: #555;
+}
+
+.painel {
+  margin-bottom: 26px;
+  padding: 18px 20px 22px;
+  background: #fff;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  box-shadow: 0 5px 12px #0002;
+}
+
+.painel-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.painel-cabecalho h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 750;
+}
+
+.botao-adicionar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-width: 112px;
+  padding: 7px 12px;
+  border: none;
+  border-radius: 5px;
+  background-color: #761111;
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 3px 7px #0002;
+}
+
+.botao-adicionar:hover {
+  background-color: #570b0b;
+}
+
+.mais {
+  font-size: 23px;
+  line-height: 15px;
+  font-weight: 800;
+}
+
+.tabela-container {
+  width: 100%;
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  table-layout: fixed;
+  font-size: 11px;
+}
+
+thead {
+  background-color: #e9e9e9;
+}
+
+.tabela-avisos {
+  width: 100%;
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.tabela-avisos th,
+.tabela-avisos td {
+  width: 33.33%;
+  padding: 8px 5px;
+  text-align: center;
+  box-sizing: border-box;
+}
+
+th{ 
+    width: 25%;
+    padding: 8px 5px;
+    text-align: center;
+    box-sizing: border-box;
+}
+
+td {
+  padding: 6px 5px;
+  text-align: center;
+  overflow: hidden;
+}
+
+.descricao,
+.cor-aviso {
+  color: #9299a5;
+}
+
+.acoes {
+  white-space: nowrap;
+}
+
+.botao-acao {
+  margin: 0 3px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  font-size: 17px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.editar {
+  color: #222;
+}
+
+.excluir {
+  color: #df2424;
+}
+
+.botao-acao:hover {
+  opacity: 0.65;
+}
+

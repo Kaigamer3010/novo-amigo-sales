@@ -1,0 +1,59 @@
+main{
+    width: 100%;
+    height: 100%;
+    background-color: var(--background-color);
+}
+
+.conteudo{
+    height:auto;
+    margin: 10px;
+    background-color: white;
+    border-radius: 5px;
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.111);
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+}
+
+select{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 3px;
+}
+
+input{
+    margin-top: 5px;
+    margin-bottom: 5px;
+    padding: 3px;
+}
+
+button{
+    width: 100px;
+    margin: 0 auto;
+    margin-top: 5px;
+    background-color: var(--primary-color);
+    font-family: var(--font-montserrat);
+    color: white;
+    border: none;
+    border-radius: 2px;
+    padding: 4px;
+    transition: 0.3s;
+}
+
+button:hover{
+    background-color: var(--secondary-color);
+}
+
+.h1CadastrarAvisos{
+    padding-top:8px;
+    padding-bottom: 1px;
+    padding-left: 14px;
+    background-color: var(--primary-color);
+}
+
+.h1CadastrarAvisos h1{
+    color: white;
+    font-size: 1.5rem;
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+}
