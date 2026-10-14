@@ -1,15 +1,36 @@
 main{
     width: 100%;
-    height: 90vh;
+    height: 92vh;
     display: flex;
     flex-direction: column;
+    background-color: #faf8f4;
+    padding-left: 70px;
+    padding-right: 70px;
+}
+
+.filtros{
+    width: 100%;
+    display: flex;
+    margin-top: 40px;
+    gap: 20px;
+}
+
+.filtrobutton{
+    width: 130px;
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-color);
+    font-size: 1rem;
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+    color: var(--primary-color);
     background-color: #faf8f4;
 }
 
 .backSuperior{
     width: 100%;
-    height: 15vh;
-    background-color: gray;
+    margin-top: 30px;
+    padding-left: 46px;
 }
 
 .conteudo{
@@ -18,15 +39,17 @@ main{
     align-items: center;
     flex-direction: column;
     padding: 50px;
+    padding-top: 20px;
 }
 
 .barraBusca{
     display: flex;
     justify-content: center;
+    width: 100%;
 }
 
 #barraPesquisa{
-    width: 400px;
+    width: 100%;
     border: none;
     padding: 7px;
     box-shadow: 4px 5px 15px rgba(0, 0, 0, 0.256);
@@ -42,7 +65,7 @@ main{
     padding-right: 40px;
     padding-top: 20px;
     padding-bottom: 20px;
-    margin-top: 20px;
+    margin-top: 30px;
     border-radius: 5px;
     background-color: rgb(253, 253, 253);
     box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.111);
@@ -68,6 +91,12 @@ main{
     -webkit-line-clamp: 1;
     overflow: hidden;
 }
+
+h1{
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+}
+
 
 h2{
     font-size: 1rem;

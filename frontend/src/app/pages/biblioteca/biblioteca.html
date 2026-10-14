@@ -1,5 +1,8 @@
 <main>
-    <div class="backSuperior"></div>
+    <div class="backSuperior">
+        <h1>BIBLIOTECA DA ESCOLA</h1>
+        <h3>Todos os livros da nossa biblioteca</h3>
+    </div>
 
     <div class="conteudo">
 
@@ -8,7 +11,11 @@
                 (input)="buscarLivro()">
         </div>
 
-        <div class="filtros"></div>
+        <div class="filtros">
+            <button class="filtrobutton" type="button">Tudo</button>
+            <button class="filtrobutton" type="button" > Disponível</button>
+            <button class="filtrobutton" type="button" >Indisponível</button>
+        </div>
 
         @if (carregando) {
         <p>Carregando livros...</p>

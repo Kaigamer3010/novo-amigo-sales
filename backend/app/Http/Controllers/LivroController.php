@@ -125,7 +125,7 @@ class LivroController extends Controller
 
     // Método novo: recebe um ISBN e busca os dados na Google Books API,
     // pra já vir pronto no formulário do Angular antes do usuário salvar.
-    public function buscarPorIsbn($isbn)
+    public function buscarPorIsbn($isbn)                                                
     {
         // Http::get() faz uma requisição GET pra URL informada, igual o Postman faz manualmente
         $chave = env('GOOGLE_BOOKS_API_KEY');
