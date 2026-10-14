@@ -7,6 +7,7 @@ import { GerenciarCardapio } from './components/gerenciar-cardapio/gerenciar-car
 import { GerenciarAvisos } from './components/gerenciar-avisos/gerenciar-avisos';
 import { cargoGuard } from './guards/cargo-guard';
 import { EditarPgInicial } from './pages/editar-pg-inicial/editar-pg-inicial';
+import { Dashboard } from './pages/dashboard/dashboard';
 
 export const routes: Routes = [
   { path: '', redirectTo: 'pg-inicial', pathMatch: 'full' },
@@ -15,6 +16,8 @@ export const routes: Routes = [
   { path: 'pg-jornal', component: Jornal },
   { path: 'pg-biblioteca', component: Biblioteca },
   { path: 'pg-sala', component: Sala },
+
+  {path: 'pg-dashboard', component: Dashboard},
 
   { path: 'editar-pg-inicial', component: EditarPgInicial, canActivate: [cargoGuard], data: {cargos: ['administrador']}},
 

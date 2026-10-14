@@ -1,0 +1,117 @@
+main{
+    width: 100%;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.backDash{
+    width: 100%;
+    height: 15vh;
+    background-color: gray;
+}
+
+.tela{
+    width: 100%;
+    padding-left: 110px;
+    padding-right: 110px;
+}
+
+.cards{
+    width: 100%;
+    display: flex;
+    padding-top: 30px;
+    gap: 50px;
+}
+
+.livrosCards{
+    width: 25%;
+    height: 110px;
+    border: 1px solid rgba(162, 162, 162, 0.214);
+    border-radius: 5px;
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.244);
+    display: flex;
+}
+
+.iconeCard{
+    width: 45px;
+    height: 45px;
+    background-color: rgb(220, 219, 219);
+    border: 1px solid gray;
+    border-radius: 5px;
+}
+
+.lcard1{
+    width: 30%;
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+.lcard2{
+    width: 70%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.container{
+    width: 100%;
+    height: 100%;
+    border: 1px solid gray;
+    border-radius: 5px;
+    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.244);
+    margin-top: 30px;
+    padding: 20px;
+    overflow: hidden;
+}
+
+.header{
+    width: 100%;
+    display: flex;
+    padding-top: 5px;
+}
+
+#adLivro{
+    width: 180px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid var(--primary-color);
+    font-size: 0.8rem;
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+    color: white;
+    background-color: var(--primary-color);
+}
+
+.header1{
+    width: 50%;
+    display: flex;
+    justify-content: start;
+}
+
+.header2{
+    width: 50%;
+    display: flex;
+    justify-content: end;
+}
+
+table{
+    width: 100%;
+    margin-top: 30px;
+    border: 1px solid #cbcbcb;
+}
+
+thead{
+  background-color: #cbcbcb;
+}
+
+.book-table th, td{
+    width: 20%;
+    text-align: center;
+}
+
+td{
+    border: 1px solid #cbcbcb;
+}
