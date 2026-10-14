@@ -5,9 +5,24 @@
     aria-controls="offcanvasExample">
     <img id="hamburguer" src="images/hamburger.png" alt="">
   </a>
+
   <div class="perfil-position">
-    <div class="perfil-login"><button (click)="abrirLogin()"><img src="images/user.png" alt=""></button></div>
+    @if (auth.usuario$ | async; as usuario) {
+    <div class="perfil-login">
+      <span>{{ usuario.nome_completo }}</span>
+      <button type="button" (click)="sair()">
+        Sair
+      </button>
+    </div>
+    } @else {
+    <div class="perfil-login">
+      <button type="button" (click)="abrirLogin()">
+        <img src="images/user.png" alt="Entrar">
+      </button>
+    </div>
+    }
   </div>
+
 
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
     <div class="offcanvas-header">
@@ -27,7 +42,7 @@
       <a class="rotas" routerLink="/pg-sala">
         <ul>SALA</ul>
       </a>
-    }
+      }
       @if (auth.temCargo(['administrador'])) {
       <a class="rotas" routerLink="/editar-pg-inicial">
         <ul>EDITAR PÁGINA INICIAL</ul>

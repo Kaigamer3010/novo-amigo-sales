@@ -1,7 +1,7 @@
 
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, BehaviorSubject } from 'rxjs';
+import { Observable, BehaviorSubject, tap } from 'rxjs';
 
 export interface Usuario {
   id: number;
@@ -71,29 +71,56 @@ export class AuthService {
   }
 
   login(dados: LoginRequest): Observable<LoginResponse> {
-    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, dados);
+    return this.http
+      .post<LoginResponse>(`${this.apiUrl}/login`, dados)
+      .pipe(
+        tap((resposta) => {
+          localStorage.setItem('token', resposta.token);
+          this.definirUsuario(resposta.usuario);
+        })
+      );
   }
 
   cadastrar(
     dados: CadastroRequest
   ): Observable<{ usuario: Usuario; token: string }> {
-    return this.http.post<{ usuario: Usuario; token: string }>(
-      `${this.apiUrl}/cadastro`,
-      dados
-    );
+    return this.http
+      .post<{ usuario: Usuario; token: string }>(
+        `${this.apiUrl}/cadastro`,
+        dados
+      )
+      .pipe(
+        tap((resposta) => {
+          localStorage.setItem('token', resposta.token);
+          this.definirUsuario(resposta.usuario);
+        })
+      );
+  }
+
+  limparSessao(): void {
+    localStorage.removeItem('token');
+    localStorage.removeItem('usuario');
+    this.usuarioSubject.next(null);
   }
 
   logout(): Observable<{ mensagem: string }> {
     const token = localStorage.getItem('token');
 
-    return this.http.post<{ mensagem: string }>(
-      `${this.apiUrl}/logout`,
-      {},
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    );
+    return this.http
+      .post<{ mensagem: string }>(
+        `${this.apiUrl}/logout`,
+        {},
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
+      .pipe(
+        tap({
+          next: () => this.limparSessao(),
+          error: () => this.limparSessao(),
+        })
+      );
   }
 }
