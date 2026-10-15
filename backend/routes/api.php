@@ -14,6 +14,7 @@ use App\Http\Controllers\CursoController;
 use App\Http\Controllers\HorarioAulaController;
 use App\Http\Controllers\AtividadeController;
 use App\Http\Controllers\EmprestimoController;
+use App\Http\Controllers\EdicaoController;
 
 Route::get('/user', function (Request $request) {
     return $request->user();
@@ -60,15 +61,26 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::delete('/generos/{id}', [GeneroController::class, 'destroy']);
 });
 
-#Noticia
-Route::middleware('auth:sanctum')->group(function () {
 
-    Route::get('/noticias', [NoticiaController::class, 'index']);
+#Noticia
+Route::get('/noticias', [NoticiaController::class, 'index']);
+Route::get('/noticias/{id}', [NoticiaController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
     Route::post('/noticias', [NoticiaController::class, 'store']);
-    Route::get('/noticias/{id}', [NoticiaController::class, 'show']);
     Route::put('/noticias/{id}', [NoticiaController::class, 'update']);
     Route::delete('/noticias/{id}', [NoticiaController::class, 'destroy']);
+});
 
+#Edições
+
+Route::get('/edicoes', [EdicaoController::class, 'index']);
+Route::get('/edicoes/{id}', [EdicaoController::class, 'show']);
+
+Route::middleware('auth:sanctum')->group(function () {
+    Route::post('/edicoes', [EdicaoController::class, 'store']);
+    Route::put('/edicoes/{id}', [EdicaoController::class, 'update']);
+    Route::delete('/edicoes/{id}', [EdicaoController::class, 'destroy']);
 });
 
 #Aviso
