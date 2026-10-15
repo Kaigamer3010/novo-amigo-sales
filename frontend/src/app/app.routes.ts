@@ -9,6 +9,7 @@ import { EditarPgInicial } from './pages/editar-pg-inicial/editar-pg-inicial';
 import { Dashboard } from './pages/dashboard/dashboard';
 
 import { cargoGuard } from './guards/cargo-guard';
+import { AdicionarLivro } from './components/adicionar-livro/adicionar-livro';
 
 export const routes: Routes = [
   {
@@ -34,7 +35,11 @@ export const routes: Routes = [
   },
   {
     path: 'pg-dashboard',
-    component: Dashboard
+    component: Dashboard,
+    canActivate: [cargoGuard],
+    data: {
+      cargos: ['bibliotecario', 'administrador']
+    }
   },
   {
     path: 'editar-pg-inicial',

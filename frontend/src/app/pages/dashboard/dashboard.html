@@ -10,34 +10,34 @@
 
         <div class="livrosCards">
             <div class="lcard1">
-                <div class="iconeCard"></div>
+                <div class="iconeCard"><img src="images\open-book.png" class="imgCardIcon" alt=""></div>
             </div>
-            <div class="lcard2"> <h5 style="color: gray;">Total de livros</h5> <span class="numeroNosCards">101</span></div>
+            <div class="lcard2"> <h5 style="color: gray;">Total de livros</h5> <span class="numeroNosCards">{{totalLivros}}</span></div>
         </div>
         
         <!-- livros disponiveis -->
         
         <div class="livrosCards">
             <div class="lcard1">
-                <div class="iconeCard"></div>
+                <div class="iconeCard"><img src="images\mark.png" class="imgCardIcon" alt=""></div>
             </div>
-            <div class="lcard2"> <h5 style="color: var(--correct-color);">Disponíveis</h5> <span class="numeroNosCards">101</span></div>
+            <div class="lcard2"> <h5 style="color: var(--correct-color);">Disponíveis</h5> <span class="numeroNosCards">{{livrosDisponiveis}}</span></div>
         </div>
         
         <!-- livros indisponiveis -->
         
         <div class="livrosCards">
             <div class="lcard1">
-                <div class="iconeCard"></div>
+                <div class="iconeCard"><img src="images\shape.png" class="imgCardIcon" alt=""></div>
             </div>
-            <div class="lcard2"> <h5 style="color: var(--wrong-color);">Indisponíveis</h5> <span class="numeroNosCards">101</span></div>
+            <div class="lcard2"> <h5 style="color: var(--wrong-color);">Indisponíveis</h5> <span class="numeroNosCards">{{livrosIndisponiveis}}</span></div>
         </div>
         
         <!-- categorias -->
         
         <div class="livrosCards">
             <div class="lcard1">
-                <div class="iconeCard"></div>
+                <div class="iconeCard" style="background-color: var(--primary-color);"><img src="images\plus.png" class="imgCardIcon" alt=""></div>
             </div>
             <div class="lcard2"> <h5>Categorias</h5> <span class="numeroNosCards">101</span></div>
         </div>
@@ -50,7 +50,7 @@
         <div class="header">
 
             <div class="header1"><span style="font-size: 1.5rem; font-weight: bold;">Livros recentes</span></div>
-            <div class="header2"> <button id="adLivro">+ Adicionar livro</button> </div>
+            <div class="header2"> <button id="adLivro" (click)="abrirAdicionarLivro()">+ Adicionar livro</button> </div>
 
         </div>
 
