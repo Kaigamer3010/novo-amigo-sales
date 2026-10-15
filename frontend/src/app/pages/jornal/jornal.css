@@ -177,3 +177,22 @@ mat-paginator{
 .offcapalivro img{
     width: 100%;
 }
+
+
+
+.abrirPdf{
+    width: 180px;
+    border-radius: 5px;
+    background-color: var(--primary-color);
+    padding: 2px;
+    font-size: 0.8rem;
+    color: white;
+    font-family: var(--font-montserrat);
+    font-weight: bold;
+    text-decoration: none;
+    transition: 0.3s;
+}
+
+.abrirPdf:hover{
+    background-color: var(--secondary-color);
+}

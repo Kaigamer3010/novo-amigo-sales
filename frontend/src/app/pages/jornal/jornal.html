@@ -107,8 +107,18 @@
                     {{ edicaoSelecionada.descricao || 'Sinopse não informada.' }}
                 </p>
 
-                <h3>ler mais</h3>
+                  @if (edicaoSelecionada.pdf) {
+        <a
+          class="abrirPdf"
+          [href]="urlPdf(edicaoSelecionada)"
+          target="_blank"
+          rel="noopener noreferrer">
 
+          {{ edicaoSelecionada.tipo === 'edicao'
+            ? 'Abrir edição completa'
+            : 'Ler artigo completo' }}
+        </a>
+      }
 
             </div>
         </div>
@@ -120,6 +130,7 @@
       [pageSize]="tamanhoPagina"
       [pageIndex]="paginaAtual"
       [pageSizeOptions]="[5, 10, 20]"
+      hidePageSize="true"
       (page)="mudarPagina($event)">
     </mat-paginator>
 
