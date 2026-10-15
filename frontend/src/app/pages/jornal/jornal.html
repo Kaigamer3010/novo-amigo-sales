@@ -48,7 +48,8 @@
     <!-- Conteúdos -->
     <div class="conteudo">
       @for (item of conteudosVisiveis; track item.tipo + '-' + item.id) {
-        <article class="edicao">
+        <button class="edicao" type="button" data-bs-toggle="offcanvas" data-bs-target="#livroInformacoes"
+                aria-controls="livroInformacoes" (click)="selecionarElementoClicado(item)">
 
           <div class="capaEdicao">
             @if (item.tipo === 'edicao') {
@@ -69,30 +70,49 @@
               <h3>{{ formatarData(item.data_publicacao) }}</h3>
             }
 
-            @if (item.descricao) {
-              <p>{{ item.descricao }}</p>
-            }
+            
 
-            @if (item.pdf) {
-              <a
-                class="abrirPdf"
-                [href]="urlPdf(item)"
-                target="_blank"
-                rel="noopener noreferrer">
-                {{ item.tipo === 'edicao'
-                  ? 'Abrir edição completa'
-                  : 'Ler artigo completo' }}
-              </a>
-            }
+           
           </div>
 
-        </article>
+        </button>
       } @empty {
         <p class="semConteudo">
           Nenhum conteúdo encontrado.
         </p>
       }
     </div>
+
+    @if (edicaoSelecionada) {
+        <div class="offcanvas offcanvas-end" tabindex="-1" id="livroInformacoes"
+            aria-labelledby="livroInformacoesLabel">
+
+            <div class="offcanvas-body">
+
+                <div class="offcontainer">
+                    <div class="offcapalivro">
+                      
+                        <img [src]="edicaoSelecionada.capa" [alt]="'Capa do livro ' + edicaoSelecionada.titulo">
+                        
+                    </div>
+                </div>
+
+                <h2 id="livroInformacoesLabel">
+                    {{ edicaoSelecionada.titulo }}
+                </h2>
+
+                <h3>{{ edicaoSelecionada.data_publicacao }}</h3>
+
+                <p>
+                    {{ edicaoSelecionada.descricao || 'Sinopse não informada.' }}
+                </p>
+
+                <h3>ler mais</h3>
+
+
+            </div>
+        </div>
+        }
 
     <!-- Paginação -->
     <mat-paginator

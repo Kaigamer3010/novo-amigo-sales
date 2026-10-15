@@ -54,6 +54,10 @@
       this.carregarArtigos();
     }
 
+    selecionarElementoClicado(item: any):void{
+          this.edicaoSelecionada = item;
+    }
+
     carregarEdicoes(): void {
       this.http.get<Edicao[]>(this.apiEdicoesUrl).subscribe({
         next: (edicoes) => {
