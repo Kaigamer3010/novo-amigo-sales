@@ -2,6 +2,8 @@ import { Component } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { MatDialog } from '@angular/material/dialog';
+import { PerfilUsuario } from '../perfil-usuario/perfil-usuario';
+
 
 import { LoginComponent } from '../login/login';
 import { AuthService } from '../../service/auth';
@@ -42,4 +44,13 @@ export class Navbar {
       }
     });
   }
+
+
+abrirPerfil(): void {
+  this.dialog.open(PerfilUsuario, {
+    width: '380px',
+    maxWidth: '95vw',
+    autoFocus: false
+  });
+}
 }

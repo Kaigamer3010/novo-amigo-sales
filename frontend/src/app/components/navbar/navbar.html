@@ -6,22 +6,28 @@
     <img id="hamburguer" src="images/hamburger.png" alt="">
   </a>
 
-  <div class="perfil-position">
-    @if (auth.usuario$ | async; as usuario) {
+ 
+<div class="perfil-position">
+  @if (auth.usuario$ | async; as usuario) {
     <div class="perfil-login">
-      <span>{{ usuario.nome_completo }}</span>
-      <button type="button" (click)="sair()">
-        Sair
+      <button
+        type="button"
+        class="btn-perfil"
+        (click)="abrirPerfil()"
+        title="Meu perfil"
+      >
+        <img src="images/user.png" alt="Meu perfil">
       </button>
     </div>
-    } @else {
+  } @else {
     <div class="perfil-login">
       <button type="button" (click)="abrirLogin()">
         <img src="images/user.png" alt="Entrar">
       </button>
     </div>
-    }
-  </div>
+  }
+</div>
+
 
 
   <div class="offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample" aria-labelledby="offcanvasExampleLabel">
@@ -46,6 +52,11 @@
       @if (auth.temCargo(['administrador'])) {
       <a class="rotas" routerLink="/editar-pg-inicial">
         <ul>EDITAR PÁGINA INICIAL</ul>
+      </a>
+      }
+      @if (auth.temCargo(['bibliotecario', 'administrador'])) {
+        <a class="rotas" routerLink="/pg-dashboard">
+        <ul>DASHBOARD</ul>
       </a>
       }
 

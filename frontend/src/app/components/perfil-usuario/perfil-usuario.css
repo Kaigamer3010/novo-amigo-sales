@@ -1,0 +1,32 @@
+.perfil-container {
+  padding: 24px;
+  min-width: 280px;
+  font-family: 'Montserrat', sans-serif;
+}
+
+h2 {
+  color: #721111;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.perfil-info p {
+  margin-bottom: 16px;
+  overflow-wrap: anywhere;
+}
+
+.btn-sair {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 6px;
+  background-color: #721111;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  margin-top: 12px;
+}
+
+.btn-sair:hover {
+  background-color: #430a0a;
+}

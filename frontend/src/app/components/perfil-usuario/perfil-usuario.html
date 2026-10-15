@@ -1,0 +1,23 @@
+
+<div class="perfil-container">
+  <h2>Meu perfil</h2>
+
+  <p>
+    <strong>Nome de usuário:</strong>
+    {{ usuario?.nome_usuario }}
+  </p>
+
+  <p>
+    <strong>Nome completo:</strong>
+    {{ usuario?.nome_completo }}
+  </p>
+
+  <p>
+    <strong>Cargo:</strong>
+    {{ usuario?.nivel_acesso }}
+  </p>
+
+  <button class="btn-sair" (click)="sair()">
+    Sair
+  </button>
+</div>
