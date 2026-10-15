@@ -1,171 +1,209 @@
-import { Component, OnInit } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Edicao } from '../../models/edicaoJornal';
-import { Artigo } from '../../models/artigoJornal';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
-import { FormsModule } from '@angular/forms';
-import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+  import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+  import { HttpClient } from '@angular/common/http';
+  import { DomSanitizer, SafeResourceUrl } from '@angular/platform-browser';
+  import { FormsModule } from '@angular/forms';
+  import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
-@Component({
-  selector: 'app-jornal',
-  standalone: true,
-  imports: [MatPaginatorModule, FormsModule],
-  templateUrl: './jornal.html',
-  styleUrl: './jornal.css',
-})
-export class Jornal implements OnInit {
+  import { Edicao } from '../../models/edicaoJornal';
+  import { Artigo } from '../../models/artigoJornal';
 
-  private apiUrl = 'http://127.0.0.1:8000/api/noticias';
-  private apiEdicoesUrl = 'http://127.0.0.1:8000/api/edicoes';
+  type ConteudoJornal = {
+    id: number;
+    titulo: string;
+    descricao: string;
+    data_publicacao: string;
+    capa: string;
+    pdf: string;
+    tipo: 'edicao' | 'artigo';
+  };
 
+  @Component({
+    selector: 'app-jornal',
+    standalone: true,
+    imports: [MatPaginatorModule, FormsModule],
+    templateUrl: './jornal.html',
+    styleUrl: './jornal.css',
+  })
+  export class Jornal implements OnInit {
+    private readonly apiUrl = 'http://127.0.0.1:8000/api/noticias';
+    private readonly apiEdicoesUrl = 'http://127.0.0.1:8000/api/edicoes';
+    private readonly storageUrl = 'http://127.0.0.1:8000/storage/';
 
-  edicoes: Edicao[] = [];
+    edicoes: ConteudoJornal[] = [];
+    artigos: ConteudoJornal[] = [];
 
-  filtroAtual: 'todos' | 'edicoes' | 'artigos' = 'todos';
+    filtroAtual: 'todos' | 'edicoes' | 'artigos' = 'todos';
 
-  conteudosFiltrados: (Edicao | Artigo)[] = [];
-  conteudosVisiveis: (Edicao | Artigo)[] = [];
+    conteudosFiltrados: ConteudoJornal[] = [];
+    conteudosVisiveis: ConteudoJornal[] = [];
 
-  artigos: Artigo[] = [];
+    busca = '';
+    edicaoSelecionada: ConteudoJornal | null = null;
 
-  busca = '';
-  edicaoSelecionada: Edicao | null = null;
+    paginaAtual = 0;
+    tamanhoPagina = 5;
 
-  paginaAtual = 0;
-  tamanhoPagina = 5;
+    constructor(
+      private readonly http: HttpClient,
+      private readonly sanitizer: DomSanitizer,
+      private readonly cdr: ChangeDetectorRef
+    ) { }
 
-  constructor(
-    private http: HttpClient,
-    private sanitizer: DomSanitizer
-  ) { }
+    ngOnInit(): void {
+      this.carregarEdicoes();
+      this.carregarArtigos();
+    }
 
-  ngOnInit(): void {
-    this.carregarEdicoes();
-    this.carregarArtigos();
-  }
+    carregarEdicoes(): void {
+      this.http.get<Edicao[]>(this.apiEdicoesUrl).subscribe({
+        next: (edicoes) => {
+          this.edicoes = edicoes.map((edicao) => ({
+            id: edicao.id,
+            titulo: edicao.titulo,
+            descricao: edicao.descricao ?? '',
+            data_publicacao: edicao.data_publicacao ?? '',
+            capa: edicao.capa ?? '',
+            pdf: edicao.pdf ?? '',
+            tipo: 'edicao',
+          }));
 
-  carregarArtigos(): void {
-    this.http.get<Artigo[]>(this.apiUrl).subscribe({
-      next: (noticias) => {
-        this.artigos = noticias.map((noticia) => ({
-          ...noticia,
-          capa: noticia.capa ?? '',
-          pdf: noticia.pdf ?? ''
-        }));
+          console.log('Edições recebidas do Laravel:', this.edicoes);
+          this.aplicarFiltros();
+        },
+        error: (erro) => {
+          console.error('Erro ao carregar edições:', erro);
+          this.edicoes = [];
+          this.aplicarFiltros();
+        },
+      });
+    }
 
-        console.log('Artigos recebidos do Laravel:', this.artigos);
+    carregarArtigos(): void {
+      this.http.get<Artigo[]>(this.apiUrl).subscribe({
+        next: (noticias) => {
+          this.artigos = noticias.map((artigo) => ({
+            id: artigo.id,
+            titulo: artigo.titulo,
+            descricao: artigo.descricao ?? '',
+            data_publicacao: artigo.data_publicacao ?? '',
+            capa: artigo.capa ?? '',
+            pdf: artigo.pdf ?? '',
+            tipo: 'artigo',
+          }));
 
-        this.aplicarFiltros();
-      },
-      error: (erro) => {
-        console.error('Erro ao carregar artigos:', erro);
-        this.aplicarFiltros();
+          console.log('Artigos recebidos do Laravel:', this.artigos);
+          this.aplicarFiltros();
+        },
+        error: (erro) => {
+          console.error('Erro ao carregar artigos:', erro);
+          this.artigos = [];
+          this.aplicarFiltros();
+        },
+      });
+    }
+
+    aplicarFiltros(): void {
+      const termo = this.busca.toLocaleLowerCase().trim();
+
+      let conteudos: ConteudoJornal[];
+
+      if (this.filtroAtual === 'edicoes') {
+        conteudos = [...this.edicoes];
+      } else if (this.filtroAtual === 'artigos') {
+        conteudos = [...this.artigos];
+      } else {
+        conteudos = [...this.edicoes, ...this.artigos];
       }
-    });
-  }
 
-  carregarEdicoes(): void {
-    this.http.get<Edicao[]>(this.apiEdicoesUrl).subscribe({
-      next: (edicoes) => {
-        this.edicoes = edicoes.map((edicao) => ({
-          ...edicao,
-          capa: edicao.capa ?? '',
-          pdf: edicao.pdf ?? ''
-        }));
+      this.conteudosFiltrados = conteudos.filter((item) =>
+        item.titulo.toLocaleLowerCase().includes(termo) ||
+        item.descricao.toLocaleLowerCase().includes(termo)
+      );
 
-        console.log('Edições recebidas do Laravel:', this.edicoes);
+      this.paginaAtual = 0;
+      this.atualizarPagina();
+    }
 
-        this.aplicarFiltros();
-      },
-      error: (erro) => {
-        console.error('Erro ao carregar edições:', erro);
-        this.aplicarFiltros();
+    atualizarPagina(): void {
+      const inicio = this.paginaAtual * this.tamanhoPagina;
+      const fim = inicio + this.tamanhoPagina;
+
+      this.conteudosVisiveis =
+        this.conteudosFiltrados.slice(inicio, fim);
+
+      this.cdr.detectChanges();
+    }
+
+    mudarPagina(event: PageEvent): void {
+      this.paginaAtual = event.pageIndex;
+      this.tamanhoPagina = event.pageSize;
+      this.atualizarPagina();
+    }
+
+    buscarEdicao(): void {
+      this.aplicarFiltros();
+    }
+
+    selecionarEdicao(item: ConteudoJornal): void {
+      this.edicaoSelecionada = item;
+    }
+
+    deixarTodos(): void {
+      this.filtroAtual = 'todos';
+      this.aplicarFiltros();
+    }
+
+    deixarEdicoes(): void {
+      this.filtroAtual = 'edicoes';
+      this.aplicarFiltros();
+    }
+
+    deixarArtigos(): void {
+      this.filtroAtual = 'artigos';
+      this.aplicarFiltros();
+    }
+
+    urlPdf(item: ConteudoJornal): string {
+      if (!item.pdf) {
+        return '';
       }
-    });
-  }
 
-  urlPdf(item: Edicao | Artigo): string {
-    if (!item.pdf) {
-      return '';
+      if (/^https?:\/\//i.test(item.pdf)) {
+        return item.pdf;
+      }
+
+      const caminho = item.pdf.replace(/^\/+/, '');
+
+      if (caminho.startsWith('storage/')) {
+        return `http://127.0.0.1:8000/${caminho}`;
+      }
+
+      return `${this.storageUrl}${caminho}`;
     }
 
-    if (item.pdf.startsWith('http://') ||
-      item.pdf.startsWith('https://')) {
-      return item.pdf;
+    urlPdfSeguro(item: ConteudoJornal): SafeResourceUrl | null {
+      const url = this.urlPdf(item);
+
+      if (!url) {
+        return null;
+      }
+
+      return this.sanitizer.bypassSecurityTrustResourceUrl(
+        `${url}#page=1&toolbar=0&navpanes=0`
+      );
     }
 
-    const caminho = item.pdf.replace(/^\/+/, '');
+    formatarData(data: string): string {
+      if (!data) {
+        return '';
+      }
 
-    return `http://127.0.0.1:8000/storage/${caminho}`;
-  }
+      const partes = data.split('-');
 
-  urlPdfSeguro(item: Edicao | Artigo): SafeResourceUrl | null {
-    const url = this.urlPdf(item);
+      if (partes.length === 3 && partes[0].length === 4) {
+        return `${partes[2].slice(0, 2)}/${partes[1]}/${partes[0]}`;
+      }
 
-    if (!url) {
-      return null;
+      return data;
     }
-
-    return this.sanitizer.bypassSecurityTrustResourceUrl(
-      `${url}#page=1&toolbar=0&navpanes=0`
-    );
   }
-
-  atualizarPagina(): void {
-    const inicio = this.paginaAtual * this.tamanhoPagina;
-    const fim = inicio + this.tamanhoPagina;
-
-    this.conteudosVisiveis = this.conteudosFiltrados.slice(inicio, fim);
-  }
-
-  mudarPagina(event: PageEvent): void {
-    this.paginaAtual = event.pageIndex;
-    this.tamanhoPagina = event.pageSize;
-    this.atualizarPagina();
-  }
-
-  buscarEdicao(): void {
-    this.aplicarFiltros();
-  }
-
-  selecionarEdicao(edicao: Edicao): void {
-    this.edicaoSelecionada = edicao;
-  }
-
-  aplicarFiltros(): void {
-    const termo = this.busca.toLocaleLowerCase().trim();
-
-    let conteudos: (Edicao | Artigo)[];
-
-    if (this.filtroAtual === 'todos') {
-      conteudos = [...this.edicoes, ...this.artigos];
-    } else if (this.filtroAtual === 'edicoes') {
-      conteudos = [...this.edicoes];
-    } else {
-      conteudos = [...this.artigos];
-    }
-
-    this.conteudosFiltrados = conteudos.filter((item) =>
-      item.titulo.toLocaleLowerCase().includes(termo) ||
-      item.descricao.toLocaleLowerCase().includes(termo)
-    );
-
-    this.paginaAtual = 0;
-    this.atualizarPagina();
-  }
-
-  deixarTodos(): void {
-    this.filtroAtual = 'todos';
-    this.aplicarFiltros();
-  }
-
-  deixarEdicoes(): void {
-    this.filtroAtual = 'edicoes';
-    this.aplicarFiltros();
-  }
-
-  deixarArtigos(): void {
-    this.filtroAtual = 'artigos';
-    this.aplicarFiltros();
-  }
-}
