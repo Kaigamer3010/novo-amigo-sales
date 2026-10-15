@@ -20,6 +20,8 @@ export class LoginComponent {
     senha: '',
   };
 
+  mostrarSenha = false;
+
   constructor(
     private dialog: MatDialog,
     private authService: AuthService

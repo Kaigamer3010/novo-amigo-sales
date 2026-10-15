@@ -104,6 +104,22 @@
   transform: scale(0.98);
 }
 
+.btn-mostrar-senha{
+  width: 30px;
+  height: 30px;
+  border: none;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
+}
+
+.btn-mostrar-senha img{
+  width: 25px;
+  height: 25px;
+}
+
 /* Rodapé e cadastro */
 .login-footer {
   margin-top: 24px;

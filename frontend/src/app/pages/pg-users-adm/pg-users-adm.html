@@ -1,0 +1,52 @@
+<main>
+  <div class="jornalEscola">
+    <h1>Administração de usuários</h1>
+    <h3>Edite o cargo dos usuários aqui</h3>
+  </div>
+
+  <div class="table-container">
+    <table class="book-table">
+      <thead>
+        <tr>
+          <th>Usuário</th>
+          <th>Nome completo</th>
+          <th>E-mail</th>
+          <th>Cargo</th>
+          <th>Sala</th>
+          <th>Data de login</th>
+        </tr>
+      </thead>
+
+      <tbody>
+  @for (usuario of usuarios; track usuario.id) {
+    <tr>
+      <td>{{ usuario.nome_usuario }}</td>
+      <td>{{ usuario.nome_completo }}</td>
+      <td>{{ usuario.email }}</td>
+
+      <td>
+        <select
+          [ngModel]="usuario.nivel_acesso"
+          (ngModelChange)="alterarCargo(usuario, $event)"
+        >
+          <option value="aluno">Aluno</option>
+          <option value="administrador">Administrador</option>
+          <option value="bibliotecario">Bibliotecário</option>
+        </select>
+      </td>
+
+      <td>{{ usuario.sala_id }}</td>
+
+      <td>
+        {{ usuario.created_at ? (usuario.created_at | date:'dd/MM/yyyy HH:mm') : '—' }}
+      </td>
+    </tr>
+  } @empty {
+    <tr>
+      <td colspan="6">Nenhum usuário encontrado.</td>
+    </tr>
+  }
+</tbody>
+    </table>
+  </div>
+</main>

@@ -22,16 +22,35 @@
     </div>
 
     <div class="campo">
-      <label for="senha">Senha</label>
-      <input
-        type="password"
-        id="senha"
-        name="senha"
-        [(ngModel)]="login.senha"
-        placeholder="Digite sua senha"
-        required
-      />
-    </div>
+  <label for="senha">Senha</label>
+
+  <div class="senha-container">
+    <input
+      [type]="mostrarSenha ? 'text' : 'password'"
+      id="senha"
+      name="senha"
+      [(ngModel)]="login.senha"
+      placeholder="Digite sua senha"
+      required
+    />
+
+    <button
+      type="button"
+      class="btn-mostrar-senha"
+      (click)="mostrarSenha = !mostrarSenha"
+      [attr.aria-label]="mostrarSenha ? 'Ocultar senha' : 'Mostrar senha'"
+      [attr.aria-pressed]="mostrarSenha"
+    >
+      <span aria-hidden="true">
+  @if (mostrarSenha) {
+    <img src="images/eye-close-up.png" alt="" />
+  } @else {
+    <img src="images/closed-eyes.png" alt="" />
+  }
+</span>
+    </button>
+  </div>
+</div>
 
     <button type="submit" class="btn-entrar">
       ENTRAR

@@ -10,6 +10,7 @@ import { Dashboard } from './pages/dashboard/dashboard';
 
 import { cargoGuard } from './guards/cargo-guard';
 import { AdicionarLivro } from './components/adicionar-livro/adicionar-livro';
+import { PgUsersAdm } from './pages/pg-users-adm/pg-users-adm';
 
 export const routes: Routes = [
   {
@@ -48,6 +49,10 @@ export const routes: Routes = [
     data: {
       cargos: ['administrador']
     }
+  },
+  {
+    path: 'pg-users-adm',
+    component: PgUsersAdm
   },
   {
     path: '**',
