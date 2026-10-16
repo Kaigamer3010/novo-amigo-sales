@@ -1,3 +1,4 @@
+
 <main>
   <div class="jornalEscola">
     <h1>JORNAL DA ESCOLA</h1>
@@ -18,7 +19,7 @@
         (input)="buscarEdicao()">
     </div>
 
-    <!-- Filtros -->
+    <!-- Filtros de conteúdo -->
     <div class="filtros">
       <button
         class="filtrobutton"
@@ -45,11 +46,16 @@
       </button>
     </div>
 
-    <!-- Conteúdos -->
+    <!-- Lista de edições e artigos -->
     <div class="conteudo">
       @for (item of conteudosVisiveis; track item.tipo + '-' + item.id) {
-        <button class="edicao" type="button" data-bs-toggle="offcanvas" data-bs-target="#livroInformacoes"
-                aria-controls="livroInformacoes" (click)="selecionarElementoClicado(item)">
+        <button
+          class="edicao"
+          type="button"
+          data-bs-toggle="offcanvas"
+          data-bs-target="#livroInformacoes"
+          aria-controls="livroInformacoes"
+          (click)="selecionarElementoClicado(item)">
 
           <div class="capaEdicao">
             @if (item.tipo === 'edicao') {
@@ -69,10 +75,6 @@
             @if (item.data_publicacao) {
               <h3>{{ formatarData(item.data_publicacao) }}</h3>
             }
-
-            
-
-           
           </div>
 
         </button>
@@ -83,48 +85,51 @@
       }
     </div>
 
+    <!-- Painel lateral com os detalhes da edição ou artigo -->
     @if (edicaoSelecionada) {
-        <div class="offcanvas offcanvas-end" tabindex="-1" id="livroInformacoes"
-            aria-labelledby="livroInformacoesLabel">
+      <div
+        class="offcanvas offcanvas-end"
+        tabindex="-1"
+        id="livroInformacoes"
+        aria-labelledby="livroInformacoesLabel">
 
-            <div class="offcanvas-body">
+        <div class="offcanvas-body">
 
-                <div class="offcontainer">
-                    <div class="offcapalivro">
-                      
-                        <img [src]="edicaoSelecionada.capa" [alt]="'Capa do livro ' + edicaoSelecionada.titulo">
-                        
-                    </div>
-                </div>
-
-                <h2 id="livroInformacoesLabel">
-                    {{ edicaoSelecionada.titulo }}
-                </h2>
-
-                <h3>{{ edicaoSelecionada.data_publicacao }}</h3>
-
-                <p>
-                    {{ edicaoSelecionada.descricao || 'Sinopse não informada.' }}
-                </p>
-
-                  @if (edicaoSelecionada.pdf) {
-        <a
-          class="abrirPdf"
-          [href]="urlPdf(edicaoSelecionada)"
-          target="_blank"
-          rel="noopener noreferrer">
-
-          {{ edicaoSelecionada.tipo === 'edicao'
-            ? 'Abrir edição completa'
-            : 'Ler artigo completo' }}
-        </a>
-      }
-
+          <div class="offcontainer">
+            <div class="offcapalivro">
+              <img
+                [src]="edicaoSelecionada.capa"
+                [alt]="'Capa do livro ' + edicaoSelecionada.titulo">
             </div>
-        </div>
-        }
+          </div>
 
-    <!-- Paginação -->
+          <h2 id="livroInformacoesLabel">
+            {{ edicaoSelecionada.titulo }}
+          </h2>
+
+          <h3>{{ edicaoSelecionada.data_publicacao }}</h3>
+
+          <p>
+            {{ edicaoSelecionada.descricao || 'Sinopse não informada.' }}
+          </p>
+
+          @if (edicaoSelecionada.pdf) {
+            <a
+              class="abrirPdf"
+              [href]="urlPdf(edicaoSelecionada)"
+              target="_blank"
+              rel="noopener noreferrer">
+
+              {{ edicaoSelecionada.tipo === 'edicao'
+                ? 'Abrir edição completa'
+                : 'Ler artigo completo' }}
+            </a>
+          }
+
+        </div>
+      </div>
+    }
+
     <mat-paginator
       [length]="conteudosFiltrados.length"
       [pageSize]="tamanhoPagina"
