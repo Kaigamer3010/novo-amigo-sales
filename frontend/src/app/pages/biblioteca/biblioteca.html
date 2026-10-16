@@ -104,7 +104,7 @@
         }
 
         <mat-paginator [length]="livrosFiltrados.length" [pageSize]="5" [pageIndex]="0"
-            [disabled]="livrosFiltrados.length === 0" (page)="mudarPagina($event)">
+            [disabled]="livrosFiltrados.length === 0" (page)="mudarPagina($event)" hidePageSize="true">
         </mat-paginator>
 
         }
