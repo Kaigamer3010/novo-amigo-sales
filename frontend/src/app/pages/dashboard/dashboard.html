@@ -1,152 +1,190 @@
 <main>
-    <div class="backDash">
+  <div class="backDash">
+  </div>
 
-    </div>
-
-    <div class="tela">
+  <div class="tela">
     <div class="cards">
 
-        <!-- total de livros -->
+      <!-- Total de livros -->
+      <div class="livrosCards">
+        <div class="lcard1">
+          <div class="iconeCard">
+            <img src="images/open-book.png" class="imgCardIcon" alt="">
+          </div>
+        </div>
 
-        <div class="livrosCards">
-            <div class="lcard1">
-                <div class="iconeCard"><img src="images\open-book.png" class="imgCardIcon" alt=""></div>
-            </div>
-            <div class="lcard2"> <h5 style="color: gray;">Total de livros</h5> <span class="numeroNosCards">{{totalLivros}}</span></div>
+        <div class="lcard2">
+          <h5 style="color: gray;">Total de livros</h5>
+          <span class="numeroNosCards">{{ totalLivros }}</span>
         </div>
-        
-        <!-- livros disponiveis -->
-        
-        <div class="livrosCards">
-            <div class="lcard1">
-                <div class="iconeCard"><img src="images\mark.png" class="imgCardIcon" alt=""></div>
-            </div>
-            <div class="lcard2"> <h5 style="color: var(--correct-color);">Disponíveis</h5> <span class="numeroNosCards">{{livrosDisponiveis}}</span></div>
+      </div>
+
+      <!-- Livros disponíveis -->
+      <div class="livrosCards">
+        <div class="lcard1">
+          <div class="iconeCard">
+            <img src="images/mark.png" class="imgCardIcon" alt="">
+          </div>
         </div>
-        
-        <!-- livros indisponiveis -->
-        
-        <div class="livrosCards">
-            <div class="lcard1">
-                <div class="iconeCard"><img src="images\shape.png" class="imgCardIcon" alt=""></div>
-            </div>
-            <div class="lcard2"> <h5 style="color: var(--wrong-color);">Indisponíveis</h5> <span class="numeroNosCards">{{livrosIndisponiveis}}</span></div>
+
+        <div class="lcard2">
+          <h5 style="color: var(--correct-color);">Disponíveis</h5>
+          <span class="numeroNosCards">{{ livrosDisponiveis }}</span>
         </div>
-        
-        <!-- categorias -->
-        
-        <div class="livrosCards">
-            <div class="lcard1">
-                <div class="iconeCard" style="background-color: var(--primary-color);"><img src="images\plus.png" class="imgCardIcon" alt=""></div>
-            </div>
-            <div class="lcard2"> <h5>Categorias</h5> <span class="numeroNosCards">101</span></div>
+      </div>
+
+      <!-- Livros indisponíveis -->
+      <div class="livrosCards">
+        <div class="lcard1">
+          <div class="iconeCard">
+            <img src="images/shape.png" class="imgCardIcon" alt="">
+          </div>
         </div>
-        
-        
+
+        <div class="lcard2">
+          <h5 style="color: var(--wrong-color);">Indisponíveis</h5>
+          <span class="numeroNosCards">{{ livrosIndisponiveis }}</span>
+        </div>
+      </div>
+
+      <!-- Categorias: clique para adicionar -->
+      <div
+        class="livrosCards"
+        role="button"
+        tabindex="0"
+        title="Adicionar categoria"
+        (click)="abrirAdicionarCategoria()"
+        (keydown.enter)="abrirAdicionarCategoria()">
+
+        <div class="lcard1">
+          <div class="iconeCard" style="background-color: var(--primary-color);">
+            <img src="images/plus.png" class="imgCardIcon" alt="Adicionar categoria">
+          </div>
+        </div>
+
+        <div class="lcard2">
+          <h5>Categorias</h5>
+          <span class="numeroNosCards">{{ totalCategorias }}</span>
+        </div>
+      </div>
+
     </div>
 
     <div class="container">
+      <div class="header">
 
-        <div class="header">
-
-            <div class="header1"><span style="font-size: 1.5rem; font-weight: bold;">Livros recentes</span></div>
-            <div class="header2"> <button id="adLivro" (click)="abrirAdicionarLivro()">+ Adicionar livro</button> </div>
-
+        <div class="header1">
+          <span style="font-size: 1.5rem; font-weight: bold;">
+            Livros recentes
+          </span>
         </div>
 
+        <div class="header2">
+          <button
+            id="adLivro"
+            type="button"
+            (click)="abrirAdicionarLivro()">
+            + Adicionar livro
+          </button>
+        </div>
 
-        <table class="book-table">
-            <thead>
-                <tr>
-                    <th>Título</th>
-                    <th>Autor</th>
-                    <th>Categoria</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
+      </div>
 
-            <tbody>
-        @for (livro of livrosRecentes; track livro.id) {
+      <table class="book-table">
+        <thead>
           <tr>
-            <td class="book-title">
-              {{ livro.titulo }}
-            </td>
-
-            <td class="muted-text">
-              {{ livro.autor }}
-            </td>
-
-            <td class="muted-text">
-              {{ livro.categoria }}
-            </td>
-
-            <td>
-              <span
-                class="status-badge"
-                [class.status-available]="livro.disponivel"
-                [class.status-unavailable]="!livro.disponivel">
-                {{ livro.disponivel ? 'Disponível' : 'Indisponível' }}
-              </span>
-            </td>
-
-            <td>
-              <div class="action-buttons">
-
-                <button
-                  class="edit-button"
-                  type="button"
-                  title="Editar livro"
-                  (click)="editarLivro(livro)">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                       width="22" height="22"
-                       viewBox="0 0 24 24"
-                       fill="none"
-                       stroke="currentColor"
-                       stroke-width="2"
-                       stroke-linecap="round"
-                       stroke-linejoin="round">
-                    <path d="M12 20h9"/>
-                    <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
-                  </svg>
-                </button>
-
-                <button
-                  class="delete-button"
-                  type="button"
-                  title="Excluir livro"
-                  (click)="excluirLivro(livro.id)">
-                  <svg xmlns="http://www.w3.org/2000/svg"
-                       width="22" height="22"
-                       viewBox="0 0 24 24"
-                       fill="none"
-                       stroke="currentColor"
-                       stroke-width="1.8"
-                       stroke-linecap="round"
-                       stroke-linejoin="round">
-                    <path d="M3 6h18"/>
-                    <path d="M8 6V4h8v2"/>
-                    <path d="m19 6-1 14H6L5 6"/>
-                    <path d="M10 10v6"/>
-                    <path d="M14 10v6"/>
-                  </svg>
-                </button>
-
-              </div>
-            </td>
+            <th>Título</th>
+            <th>Autor</th>
+            <th>Categoria</th>
+            <th>Status</th>
+            <th>Ações</th>
           </tr>
-        } @empty {
-          <tr>
-            <td colspan="5" class="empty-message">
-              Nenhum livro cadastrado.
-            </td>
-          </tr>
-        }
-      </tbody>
+        </thead>
 
-        </table>
+        <tbody>
+          @for (livro of livrosRecentes; track livro.id) {
+            <tr>
+              <td class="book-title">
+                {{ livro.titulo }}
+              </td>
 
+              <td class="muted-text">
+                {{ livro.autor }}
+              </td>
 
+              <td class="muted-text">
+                {{ livro.categoria }}
+              </td>
+
+              <td>
+                <span
+                  class="status-badge"
+                  [class.status-available]="livro.disponivel"
+                  [class.status-unavailable]="!livro.disponivel">
+                  {{ livro.disponivel ? 'Disponível' : 'Indisponível' }}
+                </span>
+              </td>
+
+              <td>
+                <div class="action-buttons">
+
+                  <button
+                    class="edit-button"
+                    type="button"
+                    title="Editar livro"
+                    (click)="editarLivro(livro)">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="2"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                    </svg>
+                  </button>
+
+                  <button
+                    class="delete-button"
+                    type="button"
+                    title="Excluir livro"
+                    (click)="excluirLivro(livro.id)">
+
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="22"
+                      height="22"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      stroke-width="1.8"
+                      stroke-linecap="round"
+                      stroke-linejoin="round">
+                      <path d="M3 6h18"/>
+                      <path d="M8 6V4h8v2"/>
+                      <path d="m19 6-1 14H6L5 6"/>
+                      <path d="M10 10v6"/>
+                      <path d="M14 10v6"/>
+                    </svg>
+                  </button>
+
+                </div>
+              </td>
+            </tr>
+          } @empty {
+            <tr>
+              <td colspan="5" class="empty-message">
+                Nenhum livro cadastrado.
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
     </div>
-</div>
+  </div>
 </main>

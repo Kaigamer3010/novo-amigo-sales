@@ -1,0 +1,96 @@
+
+main {
+  width: 100%;
+  background-color: var(--background-color);
+}
+
+.tituloCategoria {
+  padding: 12px 14px;
+  background-color: var(--primary-color);
+}
+
+.tituloCategoria h2 {
+  margin: 0;
+  color: white;
+  font-family: var(--font-montserrat);
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.conteudoCategoria {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  max-height: 65vh;
+  overflow-y: auto;
+}
+
+.itemCategoria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #cbcbcb;
+  border-radius: 5px;
+}
+
+.edicaoCategoria {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+
+.edicaoCategoria input {
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #cbcbcb;
+  border-radius: 5px;
+  box-sizing: border-box;
+}
+
+.acoesCategoria {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.botoesCategoria {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
+.acoesCategoria button,
+.botoesCategoria button {
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.botaoSalvar {
+  border: 1px solid var(--primary-color);
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.botaoCancelar {
+  border: 1px solid #cbcbcb;
+  background-color: white;
+}
+
+.botaoExcluir {
+  border: 1px solid var(--wrong-color);
+  background-color: white;
+  color: var(--wrong-color);
+}
+
+.mensagemErro {
+  margin: 0;
+  color: var(--wrong-color);
+  font-size: 0.85rem;
+}

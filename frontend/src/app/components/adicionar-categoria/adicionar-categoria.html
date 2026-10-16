@@ -1,0 +1,46 @@
+
+<main>
+  <div class="tituloCategoria">
+    <h2>ADICIONAR CATEGORIA</h2>
+  </div>
+
+  <div class="conteudoCategoria">
+    <label for="nomeCategoria">Nome da categoria:</label>
+
+    <input
+      id="nomeCategoria"
+      type="text"
+      placeholder="Ex.: Romance"
+      [(ngModel)]="nomeCategoria"
+      (input)="erro = ''"
+      maxlength="100"
+    />
+
+    @if (erro) {
+      <p class="mensagemErro">{{ erro }}</p>
+    }
+
+    <div class="botoesCategoria">
+      <button
+        type="button"
+        class="botaoCancelar"
+        (click)="cancelar()">
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        class="botaoSalvar"
+        (click)="salvarCategoria()">
+        Salvar categoria
+      </button>
+    </div>
+
+    <button
+      type="button"
+      class="botaoGerenciar"
+      (click)="gerenciarCategorias()">
+      Gerenciar categorias
+    </button>
+  </div>
+</main>

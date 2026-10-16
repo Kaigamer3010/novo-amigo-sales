@@ -1,0 +1,75 @@
+
+<main>
+  <div class="tituloCategoria">
+    <h2>GERENCIAR CATEGORIAS</h2>
+  </div>
+
+  <div class="conteudoCategoria">
+    @if (categorias.length === 0) {
+      <p>Nenhuma categoria cadastrada.</p>
+    }
+
+    @for (categoria of categorias; track $index) {
+      <div class="itemCategoria">
+        @if (categoriaEditando === $index) {
+          <div class="edicaoCategoria">
+            <input
+              type="text"
+              [(ngModel)]="novoNome"
+              (input)="erro = ''"
+              maxlength="100"
+              aria-label="Nome da categoria"
+            />
+
+            <div class="acoesCategoria">
+              <button
+                type="button"
+                class="botaoSalvar"
+                (click)="salvarEdicao()">
+                Salvar
+              </button>
+
+              <button
+                type="button"
+                class="botaoCancelar"
+                (click)="cancelarEdicao()">
+                Cancelar
+              </button>
+            </div>
+          </div>
+        } @else {
+          <span>{{ categoria }}</span>
+
+          <div class="acoesCategoria">
+            <button
+              type="button"
+              class="botaoSalvar"
+              (click)="editarCategoria($index)">
+              Editar
+            </button>
+
+            <button
+              type="button"
+              class="botaoExcluir"
+              (click)="excluirCategoria($index)">
+              Excluir
+            </button>
+          </div>
+        }
+      </div>
+    }
+
+    @if (erro) {
+      <p class="mensagemErro">{{ erro }}</p>
+    }
+
+    <div class="botoesCategoria">
+      <button
+        type="button"
+        class="botaoCancelar"
+        (click)="fechar()">
+        Concluir
+      </button>
+    </div>
+  </div>
+</main>

@@ -39,24 +39,24 @@ Route::middleware('auth:sanctum')->group(function () {
 
 #Livro
 
-Route::get('/livros', [LivroController::class, 'index']); //publico para que todos tenham acesso    
+Route::get('/livros', [LivroController::class, 'index']);
+Route::get('/livros/buscar-isbn/{isbn}', [LivroController::class, 'buscarPorIsbn']);
 Route::get('/livros/{id}', [LivroController::class, 'show']);
 
+// Operações que exigem login 
 Route::middleware('auth:sanctum')->group(function () {
-    // Rota específica de busca por ISBN — precisa vir ANTES da rota /livros/{id},
-    // senão o Laravel pode confundir "buscar-isbn" com um {id}
-    Route::get('/livros/buscar-isbn/{isbn}', [LivroController::class, 'buscarPorIsbn']);
-
     Route::post('/livros', [LivroController::class, 'store']);
     Route::put('/livros/{id}', [LivroController::class, 'update']);
     Route::delete('/livros/{id}', [LivroController::class, 'destroy']);
 });
 
 #Genero
+Route::get('/generos', [GeneroController::class, 'index']);
+Route::get('/generos/{id}', [GeneroController::class, 'show']);
+
+// Operações que exigem login
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/generos', [GeneroController::class, 'index']);
     Route::post('/generos', [GeneroController::class, 'store']);
-    Route::get('/generos/{id}', [GeneroController::class, 'show']);
     Route::put('/generos/{id}', [GeneroController::class, 'update']);
     Route::delete('/generos/{id}', [GeneroController::class, 'destroy']);
 });

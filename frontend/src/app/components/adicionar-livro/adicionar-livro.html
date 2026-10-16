@@ -1,35 +1,98 @@
 <main>
-    <div class="h1CadastrarAvisos">
+  <div class="h1CadastrarAvisos">
     <h1>ADICIONAR LIVRO</h1>
   </div>
+
   <div class="container">
-  <div class="conteudo">
+    <div class="conteudo">
+      <div class="l-half">
+        <div class="isbnBusca">
+          <input
+            type="text"
+            placeholder="Digite o ISBN do livro"
+            [(ngModel)]="isbn"
+            (keyup.enter)="buscarLivro()"
+          />
 
-    <div class="l-half">
+          <button
+            id="buscarButton"
+            type="button"
+            (click)="buscarLivro()"
+            [disabled]="carregandoBusca"
+          >
+            {{ carregandoBusca ? 'Buscando...' : 'Buscar' }}
+          </button>
+        </div>
 
-    <div class="isbnBusca">
-        <input type="text" placeholder="Digite o ISBN do livro">
-        <button id="buscarButton">Buscar</button>
+        <h3>Título:</h3>
+        <input
+          class="info"
+          type="text"
+          placeholder="Título do livro"
+          [(ngModel)]="titulo"
+        />
+
+        <h3>Autor:</h3>
+        <input
+          class="info"
+          type="text"
+          placeholder="Nome do autor"
+          [(ngModel)]="autor"
+        />
+
+        <h3>Ano de publicação:</h3>
+        <input
+          class="info"
+          type="text"
+          maxlength="4"
+          placeholder="Ex.: 2024"
+          [(ngModel)]="anoPublicacao"
+        />
+
+        <h3>Categoria:</h3>
+        <select class="info" [(ngModel)]="generoSelecionado">
+          <option [ngValue]="null">Selecione uma categoria</option>
+          <option *ngFor="let genero of generos" [ngValue]="genero.id">
+            {{ genero.genero }}
+          </option>
+        </select>
+
+        <h3>Sinopse:</h3>
+        <textarea
+          class="sinopse"
+          placeholder="Sinopse do livro (opcional)"
+          [(ngModel)]="sinopse"
+        ></textarea>
+      </div>
+
+      <div class="r-half">
+        <div class="capa">
+          <img
+            *ngIf="imagem"
+            [src]="imagem"
+            [alt]="'Capa de ' + titulo"
+          />
+
+          <span *ngIf="!imagem">A capa aparecerá aqui</span>
+        </div>
+      </div>
     </div>
 
-    <h3>Título:</h3>
-    <div class="info"></div>
-    <h3>Autor:</h3>
-    <div class="info"></div>
-    <h3>Ano de publicação</h3>
-    <div class="info"></div>
+    <p class="mensagem erro" *ngIf="mensagemErro">
+      {{ mensagemErro }}
+    </p>
 
-</div>
+    <p class="mensagem sucesso" *ngIf="mensagemSucesso">
+      {{ mensagemSucesso }}
+    </p>
 
-<div class="r-half">
-
-<div class="capa"></div>
-
-</div>
-
-
-
-</div>
-<button id="adicionarButton">ADICIONAR</button>
+    <button
+      id="adicionarButton"
+      type="button"
+      (click)="adicionarLivro()"
+      [disabled]="salvando"
+    >
+      {{ salvando ? 'Cadastrando...' : 'ADICIONAR' }}
+    </button>
   </div>
 </main>

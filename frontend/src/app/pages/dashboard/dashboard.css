@@ -130,3 +130,7 @@ td{
     width: 35px;
     height: 35px;
 }
+
+.cards .livrosCards[role="button"] {
+  cursor: pointer;
+}
