@@ -1,98 +1,96 @@
 <main>
   <div class="h1CadastrarAvisos">
-    <h1>ADICIONAR LIVRO</h1>
+    <h1>{{ editando ? 'EDITAR LIVRO' : 'ADICIONAR LIVRO' }}</h1>
+
   </div>
 
   <div class="container">
     <div class="conteudo">
-      <div class="l-half">
-        <div class="isbnBusca">
-          <input
-            type="text"
-            placeholder="Digite o ISBN do livro"
-            [(ngModel)]="isbn"
-            (keyup.enter)="buscarLivro()"
-          />
 
-          <button
-            id="buscarButton"
-            type="button"
-            (click)="buscarLivro()"
-            [disabled]="carregandoBusca"
-          >
+
+      <div class="l-half">
+
+        <h3>ISBN:</h3>
+
+        <div class="isbnBusca">
+          <input class="info" type="text" id="isbn" name="isbn" placeholder="Digite o ISBN do livro" [(ngModel)]="isbn"
+            (keyup.enter)="buscarLivro()">
+
+          <button id="buscarButton" type="button" (click)="buscarLivro()" [disabled]="carregandoBusca">
             {{ carregandoBusca ? 'Buscando...' : 'Buscar' }}
           </button>
         </div>
 
         <h3>Título:</h3>
-        <input
-          class="info"
-          type="text"
-          placeholder="Título do livro"
-          [(ngModel)]="titulo"
-        />
+        <input class="info" type="text" id="titulo" name="titulo" placeholder="Título do livro" [(ngModel)]="titulo">
 
-        <h3>Autor:</h3>
-        <input
-          class="info"
-          type="text"
-          placeholder="Nome do autor"
-          [(ngModel)]="autor"
-        />
+        <h3>Autor(es):</h3>
+        <input class="info" type="text" id="autor" name="autor" placeholder="Separe vários autores por vírgula"
+          [(ngModel)]="autor">
 
         <h3>Ano de publicação:</h3>
-        <input
-          class="info"
-          type="text"
-          maxlength="4"
-          placeholder="Ex.: 2024"
-          [(ngModel)]="anoPublicacao"
-        />
+        <input class="info" type="number" id="anoPublicacao" name="anoPublicacao" min="1000" max="9999"
+          placeholder="Ex.: 2024" [(ngModel)]="anoPublicacao">
 
-        <h3>Categoria:</h3>
-        <select class="info" [(ngModel)]="generoSelecionado">
-          <option [ngValue]="null">Selecione uma categoria</option>
-          <option *ngFor="let genero of generos" [ngValue]="genero.id">
+        <h3>Gênero:</h3>
+        <select class="info" id="generoSelecionado" name="generoSelecionado" [(ngModel)]="generoSelecionado">
+
+          <option [ngValue]="null">Selecione um gênero</option>
+
+          @for (genero of generos; track genero.id) {
+          <option [ngValue]="genero.id">
             {{ genero.genero }}
           </option>
+          }
         </select>
 
+        <h3>Quantidade de exemplares:</h3>
+        <input class="info" type="number" id="quantidadeExemplares" name="quantidadeExemplares" min="1" step="1"
+          [(ngModel)]="quantidadeExemplares">
+
+        <h3>Localização na biblioteca:</h3>
+        <input class="info" type="text" id="localizacoes" name="localizacoes" placeholder="Ex.: Estante A, prateleira 2"
+          [(ngModel)]="localizacoes">
+
         <h3>Sinopse:</h3>
-        <textarea
-          class="sinopse"
-          placeholder="Sinopse do livro (opcional)"
-          [(ngModel)]="sinopse"
-        ></textarea>
+        <textarea class="sinopse" id="sinopse" name="sinopse" placeholder="Sinopse do livro (opcional)"
+          [(ngModel)]="sinopse">
+        </textarea>
+
       </div>
+
 
       <div class="r-half">
         <div class="capa">
-          <img
-            *ngIf="imagem"
-            [src]="imagem"
-            [alt]="'Capa de ' + titulo"
-          />
-
-          <span *ngIf="!imagem">A capa aparecerá aqui</span>
+          @if (imagem) {
+          <img [src]="imagem" [alt]="'Capa de ' + titulo">
+          } @else {
+          <span>A capa do livro aparecerá aqui</span>
+          }
         </div>
       </div>
+
     </div>
 
-    <p class="mensagem erro" *ngIf="mensagemErro">
+    @if (mensagemErro) {
+    <p class="mensagem erro" role="alert">
       {{ mensagemErro }}
     </p>
+    }
 
-    <p class="mensagem sucesso" *ngIf="mensagemSucesso">
+    @if (mensagemSucesso) {
+    <p class="mensagem sucesso" role="status">
       {{ mensagemSucesso }}
     </p>
+    }
 
-    <button
-      id="adicionarButton"
-      type="button"
-      (click)="adicionarLivro()"
-      [disabled]="salvando"
-    >
-      {{ salvando ? 'Cadastrando...' : 'ADICIONAR' }}
+    <button id="adicionarButton" type="button" (click)="adicionarLivro()" [disabled]="salvando">
+      {{
+      salvando
+      ? (editando ? 'Salvando alterações...' : 'Cadastrando...')
+      : (editando ? 'SALVAR ALTERAÇÕES' : 'ADICIONAR LIVRO')
+      }}
     </button>
+
   </div>
 </main>

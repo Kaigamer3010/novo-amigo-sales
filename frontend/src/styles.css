@@ -19,10 +19,12 @@
     font-family: var(--font-montserrat);
 }
 
+
 html {
   scrollbar-gutter: stable;
-  background-color:#721111;
+  background-color: var(--background-color);
 }
+
 
 body {
     margin: 0;

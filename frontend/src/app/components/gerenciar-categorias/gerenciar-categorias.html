@@ -5,70 +5,80 @@
   </div>
 
   <div class="conteudoCategoria">
-    @if (categorias.length === 0) {
-      <p>Nenhuma categoria cadastrada.</p>
-    }
-
-    @for (categoria of categorias; track $index) {
-      <div class="itemCategoria">
-        @if (categoriaEditando === $index) {
-          <div class="edicaoCategoria">
-            <input
-              type="text"
-              [(ngModel)]="novoNome"
-              (input)="erro = ''"
-              maxlength="100"
-              aria-label="Nome da categoria"
-            />
-
-            <div class="acoesCategoria">
-              <button
-                type="button"
-                class="botaoSalvar"
-                (click)="salvarEdicao()">
-                Salvar
-              </button>
-
-              <button
-                type="button"
-                class="botaoCancelar"
-                (click)="cancelarEdicao()">
-                Cancelar
-              </button>
-            </div>
-          </div>
-        } @else {
-          <span>{{ categoria }}</span>
-
-          <div class="acoesCategoria">
-            <button
-              type="button"
-              class="botaoSalvar"
-              (click)="editarCategoria($index)">
-              Editar
-            </button>
-
-            <button
-              type="button"
-              class="botaoExcluir"
-              (click)="excluirCategoria($index)">
-              Excluir
-            </button>
-          </div>
-        }
-      </div>
-    }
-
     @if (erro) {
       <p class="mensagemErro">{{ erro }}</p>
     }
 
+    @if (carregando) {
+      <p>Carregando categorias...</p>
+    } @else {
+      @for (categoria of categorias; track categoria.id) {
+        <div class="itemCategoria">
+          @if (categoriaEditando === categoria.id) {
+            <div class="edicaoCategoria">
+              <label [for]="'categoria-' + categoria.id">
+                Nome da categoria
+              </label>
+
+              <input
+                [id]="'categoria-' + categoria.id"
+                [name]="'categoria-' + categoria.id"
+                type="text"
+                [(ngModel)]="novoNome"
+                [disabled]="salvando">
+
+              <div class="acoesCategoria">
+                <button
+                  class="botaoSalvar"
+                  type="button"
+                  [disabled]="salvando"
+                  (click)="salvarEdicao()">
+                  {{ salvando ? 'Salvando...' : 'Salvar' }}
+                </button>
+
+                <button
+                  class="botaoCancelar"
+                  type="button"
+                  [disabled]="salvando"
+                  (click)="cancelarEdicao()">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          } @else {
+            <span>{{ categoria.genero }}</span>
+
+            <div class="acoesCategoria">
+              <button
+                class="botaoSalvar"
+                type="button"
+                [disabled]="salvando"
+                (click)="editarCategoria(categoria.id)">
+                Editar
+              </button>
+
+              <button
+                class="botaoExcluir"
+                type="button"
+                [disabled]="salvando"
+                (click)="excluirCategoria(categoria.id)">
+                Excluir
+              </button>
+            </div>
+          }
+        </div>
+      } @empty {
+        <p>Nenhuma categoria cadastrada.</p>
+      }
+    }
+
     <div class="botoesCategoria">
       <button
-        type="button"
         class="botaoCancelar"
+        type="button"
+        [disabled]="salvando"
         (click)="fechar()">
-        Concluir
+        Fechar
       </button>
     </div>
   </div>

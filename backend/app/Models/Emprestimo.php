@@ -1,13 +1,14 @@
 <?php
-
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Emprestimo extends Model
 {
     protected $fillable = [
         'livro_id',
+        'exemplar_id',
         'nome_aluno',
         'data_emprestimo',
         'data_devolucao_prevista',
@@ -23,14 +24,20 @@ class Emprestimo extends Model
         ];
     }
 
-    public function livro()
+    public function livro(): BelongsTo
     {
         return $this->belongsTo(Livro::class);
+    }
+
+    public function exemplar(): BelongsTo
+    {
+        return $this->belongsTo(Exemplar::class);
     }
 
     public function estaAtrasado(): bool
     {
         return $this->data_devolucao === null
+            && $this->data_devolucao_prevista !== null
             && $this->data_devolucao_prevista->isBefore(today());
     }
 }

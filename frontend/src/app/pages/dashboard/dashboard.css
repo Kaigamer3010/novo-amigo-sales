@@ -1,136 +1,454 @@
-main{
-    width: 100%;
-    height: 90vh;
-    display: flex;
-    flex-direction: column;
+
+:host {
+  display: block;
+  width: 100%;
+  min-height: 90vh;
+  color: var(--text-color, #252525);
+  font-family: var(--font-montserrat, Arial, sans-serif);
 }
 
-.backDash{
-    width: 100%;
-    height: 15vh;
-    background-color: gray;
+* {
+  box-sizing: border-box;
 }
 
-.tela{
-    width: 100%;
-    padding-left: 110px;
-    padding-right: 110px;
+main {
+  width: 100%;
+  min-height: 90vh;
+  padding-bottom: 40px;
 }
 
-.cards{
-    width: 100%;
-    display: flex;
-    padding-top: 30px;
-    gap: 50px;
+.backDash {
+  width: 100%;
+  height: 15vh;
+  background-color: gray;
 }
 
-.livrosCards{
-    width: 25%;
-    height: 110px;
-    border: 1px solid rgba(162, 162, 162, 0.214);
-    border-radius: 5px;
-    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.244);
-    display: flex;
+.backDash h1 {
+  margin: 0 0 7px;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  font-weight: 700;
 }
 
-.iconeCard{
-    width: 45px;
-    height: 45px;
-    background-color: rgb(220, 219, 219);
-    border: 1px solid gray;
-    border-radius: 5px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    overflow: hidden;
+.backDash p {
+  margin: 0;
+  color: #f3dddd;
+  font-size: 0.95rem;
 }
 
-.numeroNosCards{
-    font-size: 1.5rem;
-    font-weight: bold;
+.tela {
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 24px clamp(16px, 7vw, 110px);
 }
 
-.lcard1{
-    width: 30%;
-    display: flex;
-    justify-content: center;
-    padding: 20px;
+.dashboard-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 26px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #e5e5e5;
 }
 
-.lcard2{
-    width: 70%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-}
-
-.container{
-    width: 100%;
-    height: 100%;
-    border: 1px solid gray;
-    border-radius: 5px;
-    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.244);
-    margin-top: 30px;
-    padding: 20px;
-    overflow: hidden;
-}
-
-.header{
-    width: 100%;
-    display: flex;
-    padding-top: 5px;
-}
-
-#adLivro{
-    width: 180px;
-    padding: 5px;
-    border-radius: 5px;
-    border: 1px solid var(--primary-color);
-    font-size: 0.8rem;
-    font-family: var(--font-montserrat);
-    font-weight: bold;
-    color: white;
-    background-color: var(--primary-color);
-}
-
-.header1{
-    width: 50%;
-    display: flex;
-    justify-content: start;
-}
-
-.header2{
-    width: 50%;
-    display: flex;
-    justify-content: end;
-}
-
-table{
-    width: 100%;
-    margin-top: 30px;
-    border: 1px solid #cbcbcb;
-}
-
-thead{
-  background-color: #cbcbcb;
-}
-
-.book-table th, td{
-    width: 20%;
-    text-align: center;
-    padding: 3px;
-}
-
-td{
-    border: 1px solid #cbcbcb;
-}
-
-.imgCardIcon{
-    width: 35px;
-    height: 35px;
-}
-
-.cards .livrosCards[role="button"] {
+.dashboard-nav button {
+  min-height: 42px;
+  padding: 10px 17px;
+  border: 1px solid #dedede;
+  border-radius: 7px;
+  background: #fff;
+  color: #363636;
+  font: inherit;
+  font-size: 0.9rem;
+  font-weight: 600;
   cursor: pointer;
+  transition: background-color 0.2s, color 0.2s, border-color 0.2s;
+}
+
+.dashboard-nav button:hover {
+  border-color: var(--primary-color, #721111);
+  color: var(--primary-color, #721111);
+}
+
+.dashboard-nav button.ativo {
+  border-color: var(--primary-color, #721111);
+  background: var(--primary-color, #721111);
+  color: #fff;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.livrosCards {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  min-width: 0;
+  min-height: 105px;
+  padding: 18px;
+  border: 1px solid #e7e7e7;
+  border-radius: 9px;
+  background: #fff;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 5%);
+}
+
+.card-categorias {
+  width: 100%;
+  text-align: left;
+  font-family: inherit;
+  cursor: pointer;
+}
+
+.card-categorias:hover {
+  border-color: var(--primary-color, #721111);
+}
+
+.iconeCard {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border: 1px solid #e5dada;
+  border-radius: 8px;
+  background: #faf3f3;
+}
+
+.imgCardIcon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+
+.lcard2 {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.lcard2 h5 {
+  margin: 0;
+  color: #686868;
+  font-size: 0.82rem;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.numeroNosCards {
+  color: #252525;
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.container {
+  width: 100%;
+  margin-top: 22px;
+  padding: 24px;
+  border: 1px solid #e6e6e6;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 5%);
+}
+
+.secao-conteudo {
+  margin-top: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 15px;
+  margin-bottom: 20px;
+}
+
+.header h2 {
+  margin: 0 0 6px;
+  color: #292929;
+  font-size: 1.2rem;
+  font-weight: 700;
+}
+
+.header p {
+  margin: 0;
+  color: #737373;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.botao-principal,
+.botao-secundario,
+.botao-devolver {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 38px;
+  padding: 9px 14px;
+  border: 1px solid var(--primary-color, #721111);
+  border-radius: 6px;
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: filter 0.2s;
+}
+
+.botao-principal {
+  background: var(--primary-color, #721111);
+  color: #fff;
+}
+
+.botao-secundario {
+  background: #fff;
+  color: var(--primary-color, #721111);
+}
+
+.botao-devolver {
+  border-color: #721111;
+  background: #fff;
+  color: #721111;
+  white-space: nowrap;
+}
+
+.botao-principal:hover:not(:disabled),
+.botao-secundario:hover,
+.botao-devolver:hover {
+  filter: brightness(0.94);
+}
+
+.botao-principal:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.tabela-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.book-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  font-size: 0.88rem;
+}
+
+.book-table th,
+.book-table td {
+  padding: 13px 12px;
+  border-bottom: 1px solid #ededed;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.book-table th {
+  background: #f7f4f4;
+  color: #454545;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.book-table tbody tr:hover {
+  background: #fcfafa;
+}
+
+.book-title {
+  min-width: 170px;
+  font-weight: 600;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 20px;
+  font-size: 0.76rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status-available {
+  background: #e7f5eb;
+  color: #246a3b;
+}
+
+.status-unavailable {
+  background: #fbe9e8;
+  color: #9f2924;
+}
+
+.status-pendente {
+  background: #fff3d6;
+  color: #805600;
+}
+
+.empty-message {
+  padding: 24px !important;
+  color: #777;
+  text-align: center !important;
+}
+
+.form-emprestimo {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: end;
+  gap: 18px;
+  padding: 20px;
+  border: 1px solid #e9e1e1;
+  border-radius: 9px;
+  background: #fdfbfb;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+
+.campo label {
+  color: #333;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  border: 1px solid #d5d5d5;
+  border-radius: 6px;
+  background: #fff;
+  color: #252525;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: 2px solid rgb(114 17 17 / 15%);
+  border-color: var(--primary-color, #721111);
+}
+
+.form-emprestimo > .botao-principal {
+  justify-self: start;
+}
+
+.mensagem,
+.aviso {
+  grid-column: 1 / -1;
+  margin: 0;
+  padding: 11px 13px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.86rem;
+  line-height: 1.5;
+}
+
+.erro {
+  border-color: #f0c6c3;
+  background: #fff2f1;
+  color: #a5221b;
+}
+
+.sucesso {
+  border-color: #b8dfc7;
+  background: #effaf2;
+  color: #206b3b;
+}
+
+.aviso {
+  border-color: #f0dfb1;
+  background: #fff9e9;
+  color: #765700;
+}
+
+.subtitulo-tabela {
+  margin-top: 30px;
+  padding-top: 22px;
+  border-top: 1px solid #e8e8e8;
+}
+
+button:focus-visible {
+  outline: 3px solid rgb(114 17 17 / 25%);
+  outline-offset: 2px;
+}
+
+@media (max-width: 1100px) {
+  .cards {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .tela {
+    padding-right: 24px;
+    padding-left: 24px;
+  }
+}
+
+@media (max-width: 650px) {
+  .backDash {
+    min-height: 100px;
+    padding: 20px;
+  }
+
+  .tela {
+    padding: 18px 14px;
+  }
+
+  .dashboard-nav {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .dashboard-nav button {
+    padding: 9px;
+    font-size: 0.82rem;
+  }
+
+  .cards {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .livrosCards {
+    min-height: 88px;
+  }
+
+  .container {
+    padding: 15px;
+  }
+
+  .header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .form-emprestimo {
+    grid-template-columns: 1fr;
+    padding: 14px;
+  }
+
+  .form-emprestimo > .botao-principal {
+    width: 100%;
+  }
+
+  .mensagem,
+  .aviso {
+    grid-column: auto;
+  }
+
+  .subtitulo-tabela {
+    margin-top: 22px;
+  }
+
+  .book-table {
+    min-width: 700px;
+  }
 }

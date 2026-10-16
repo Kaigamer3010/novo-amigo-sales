@@ -1,146 +1,330 @@
-main{
-    width: 100%;
-    height: 100%;
-    background-color: var(--background-color);
+
+:host {
+  display: block;
+  width: 100%;
+  color: var(--text-color, #252525);
+  font-family: var(--font-montserrat, Arial, sans-serif);
 }
 
-.conteudo{
-    width: 100%;
-    display: flex;
-    padding: 10px;
+* {
+  box-sizing: border-box;
 }
 
-.isbnBusca{
-    margin-bottom: 10px;
+main {
+  width: 100%;
+  background-color: var(--background-color, #ffffff);
 }
 
-.container{
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
+/* Cabeçalho */
+
+.h1CadastrarAvisos {
+  padding: 15px 20px;
+  background-color: var(--primary-color);
 }
 
-#adicionarButton{
-    width: 120px;
-    border-radius: 5px;
-    border: none;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1px;
-    font-weight: bold;
+.h1CadastrarAvisos h1 {
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.4;
+  letter-spacing: 0.035em;
 }
 
-#buscarButton{
-    width: 70px;
-    margin-left: 10px;
-    border-radius: 5px;
-    border: none;
-    background-color: var(--primary-color);
-    color: white;
-    padding: 1px;
-    font-weight: bold;
+/* Área do formulário */
+
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 14px;
+  width: 100%;
+  max-height: calc(90vh - 60px);
+  padding: 20px;
+  overflow-y: auto;
+  background-color: var(--background-color, #ffffff);
 }
 
-.l-half{
-    width: 60%;
-    padding: 5px;
+.conteudo {
+  display: flex;
+  align-items: flex-start;
+  gap: 22px;
+  width: 100%;
+  padding: 0;
 }
 
-.r-half{
-    width: 40%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 5px;
-    padding-left: 20px;
-    padding-right: 20px;
+/* Coluna dos campos */
+
+.l-half {
+  display: flex;
+  flex: 3;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+  padding: 0;
 }
 
-.capa{
-    width: 100%;
-    height: 100%;
-    border: 1px solid black;
-    overflow: hidden;
+.l-half h3 {
+  margin: 9px 0 1px;
+  color: var(--text-color, #303030);
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.4;
 }
 
-.info{
-    width: 100%;
-    height: 25px;
-    border: 1px solid black;
-    background-color: white;
+/* Busca pelo ISBN */
+
+.isbnBusca {
+  display: flex;
+  align-items: stretch;
+  gap: 9px;
+  width: 100%;
+  margin-bottom: 9px;
 }
 
-h3{
-    font-size: 1rem;
+.isbnBusca input {
+  flex: 1;
+  min-width: 0;
 }
 
-.h1CadastrarAvisos{
-    padding-top:8px;
-    padding-bottom: 1px;
-    padding-left: 14px;
-    background-color: var(--primary-color);
+input[type="text"],
+.info,
+.sinopse {
+  width: 100%;
+  border: 1px solid #d3d7dd;
+  border-radius: 6px;
+  background-color: #ffffff;
+  color: var(--text-color, #252525);
+  font: inherit;
+  font-size: 0.88rem;
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
-.h1CadastrarAvisos h1{
-    color: white;
-    font-size: 1.5rem;
-    font-family: var(--font-montserrat);
-    font-weight: bold;
+input[type="text"],
+.info {
+  min-height: 36px;
+  padding: 8px 10px;
+}
+
+input[type="text"]::placeholder,
+.info::placeholder,
+.sinopse::placeholder {
+  color: #888f98;
+  opacity: 1;
+}
+
+input[type="text"]:focus,
+.info:focus,
+.sinopse:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px
+    color-mix(in srgb, var(--primary-color) 15%, transparent);
 }
 
 .info {
-  box-sizing: border-box;
-  padding: 4px 6px;
-  font-family: inherit;
-  font-size: 0.9rem;
+  display: block;
 }
 
 select.info {
-  height: 30px;
+  height: 38px;
+  cursor: pointer;
 }
 
 .sinopse {
-  width: 100%;
-  min-height: 70px;
-  box-sizing: border-box;
-  padding: 6px;
+  min-height: 90px;
+  padding: 10px;
   resize: vertical;
-  border: 1px solid black;
+  line-height: 1.5;
+}
+
+input:disabled,
+select:disabled,
+textarea:disabled {
+  background-color: #f1f2f4;
+  color: #727780;
+  cursor: not-allowed;
+}
+
+/* Botões */
+
+#buscarButton,
+#adicionarButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 36px;
+  padding: 8px 15px;
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  background-color: var(--primary-color);
+  color: #ffffff;
   font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  line-height: 1.3;
+  cursor: pointer;
+  transition:
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
+}
+
+#buscarButton {
+  flex-shrink: 0;
+  min-width: 78px;
+}
+
+#adicionarButton {
+  align-self: flex-end;
+  min-width: 145px;
+  margin-top: 2px;
+}
+
+#buscarButton:hover:not(:disabled),
+#adicionarButton:hover:not(:disabled) {
+  filter: brightness(0.92);
+  box-shadow: 0 3px 8px rgb(0 0 0 / 10%);
+}
+
+#buscarButton:active:not(:disabled),
+#adicionarButton:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: 3px solid
+    color-mix(in srgb, var(--primary-color) 35%, transparent);
+  outline-offset: 2px;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+/* Coluna da capa */
+
+.r-half {
+  display: flex;
+  flex: 2;
+  justify-content: center;
+  align-items: flex-start;
+  min-width: 0;
+  padding: 30px 0 0;
 }
 
 .capa {
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 200px;
-  color: #666;
+  width: 100%;
+  max-width: 230px;
+  min-height: 260px;
+  padding: 12px;
+  overflow: hidden;
+  border: 1px solid #e0e3e8;
+  border-radius: 9px;
+  background-color: #f7f8fa;
+  color: #747b85;
   text-align: center;
+  font-size: 0.88rem;
+  line-height: 1.5;
 }
 
 .capa img {
+  display: block;
   width: 100%;
-  height: 100%;
-  max-height: 280px;
+  max-height: 290px;
   object-fit: contain;
+  border-radius: 4px;
 }
 
+/* Mensagens de retorno */
+
 .mensagem {
-  max-width: 90%;
-  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 10px 12px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font-size: 0.84rem;
+  line-height: 1.5;
   overflow-wrap: anywhere;
 }
 
 .erro {
-  color: #b42318;
+  border-color: #f0c6c3;
+  background-color: #fff2f1;
+  color: #a5221b;
 }
 
 .sucesso {
-  color: #18753c;
+  border-color: #b8dfc7;
+  background-color: #effaf2;
+  color: #206b3b;
 }
 
-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
+/* Adaptação para telas menores */
+
+@media (max-width: 520px) {
+  .h1CadastrarAvisos {
+    padding: 13px 16px;
+  }
+
+  .h1CadastrarAvisos h1 {
+    font-size: 1.05rem;
+  }
+
+  .container {
+    padding: 16px;
+    gap: 12px;
+  }
+
+  .conteudo {
+    flex-direction: column;
+    gap: 14px;
+  }
+
+  .l-half,
+  .r-half {
+    width: 100%;
+    flex: auto;
+  }
+
+  .r-half {
+    padding: 4px 0;
+  }
+
+  .capa {
+    min-height: 180px;
+    max-width: 200px;
+  }
+
+  .capa img {
+    max-height: 230px;
+  }
+
+  .sinopse {
+    min-height: 80px;
+  }
+
+  #adicionarButton {
+    align-self: stretch;
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
 }

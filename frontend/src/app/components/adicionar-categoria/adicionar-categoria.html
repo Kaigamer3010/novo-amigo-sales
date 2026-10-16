@@ -4,17 +4,19 @@
     <h2>ADICIONAR CATEGORIA</h2>
   </div>
 
-  <div class="conteudoCategoria">
-    <label for="nomeCategoria">Nome da categoria:</label>
+  <form class="conteudoCategoria" (ngSubmit)="salvarCategoria()">
+    <label for="nomeCategoria">
+      Nome da categoria
+    </label>
 
     <input
       id="nomeCategoria"
+      name="nomeCategoria"
       type="text"
-      placeholder="Ex.: Romance"
+      placeholder="Digite o nome da categoria"
       [(ngModel)]="nomeCategoria"
-      (input)="erro = ''"
-      maxlength="100"
-    />
+      [disabled]="salvando"
+      required>
 
     @if (erro) {
       <p class="mensagemErro">{{ erro }}</p>
@@ -22,25 +24,27 @@
 
     <div class="botoesCategoria">
       <button
-        type="button"
         class="botaoCancelar"
+        type="button"
+        [disabled]="salvando"
         (click)="cancelar()">
         Cancelar
       </button>
 
       <button
+        class="botaoGerenciar"
         type="button"
+        [disabled]="salvando"
+        (click)="gerenciarCategorias()">
+        Gerenciar categorias
+      </button>
+
+      <button
         class="botaoSalvar"
-        (click)="salvarCategoria()">
-        Salvar categoria
+        type="submit"
+        [disabled]="salvando">
+        {{ salvando ? 'Salvando...' : 'Salvar' }}
       </button>
     </div>
-
-    <button
-      type="button"
-      class="botaoGerenciar"
-      (click)="gerenciarCategorias()">
-      Gerenciar categorias
-    </button>
-  </div>
+  </form>
 </main>

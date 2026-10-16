@@ -1,190 +1,415 @@
+
 <main>
-  <div class="backDash">
-  </div>
+  <div class="backDash"></div>
 
   <div class="tela">
-    <div class="cards">
+    <nav class="dashboard-nav" aria-label="Seções da biblioteca">
+      <button
+        type="button"
+        [class.ativo]="secaoAtual === 'inicio'"
+        (click)="mudarSecao('inicio')">
+        Visão geral
+      </button>
 
-      <!-- Total de livros -->
-      <div class="livrosCards">
-        <div class="lcard1">
-          <div class="iconeCard">
-            <img src="images/open-book.png" class="imgCardIcon" alt="">
+      <button
+        type="button"
+        [class.ativo]="secaoAtual === 'emprestimos'"
+        (click)="mudarSecao('emprestimos')">
+        Empréstimos
+      </button>
+
+      <button
+        type="button"
+        [class.ativo]="secaoAtual === 'atrasados'"
+        (click)="mudarSecao('atrasados')">
+        Atrasados
+      </button>
+    </nav>
+
+    @if (secaoAtual === 'inicio') {
+      <section>
+        <div class="cards">
+          <div class="livrosCards">
+            <div class="iconeCard">
+              <img src="images/open-book.png" class="imgCardIcon" alt="">
+            </div>
+
+            <div class="lcard2">
+              <h5>Total de livros</h5>
+              <span class="numeroNosCards">{{ totalLivros }}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="lcard2">
-          <h5 style="color: gray;">Total de livros</h5>
-          <span class="numeroNosCards">{{ totalLivros }}</span>
-        </div>
-      </div>
+          <div class="livrosCards">
+            <div class="iconeCard">
+              <img src="images/mark.png" class="imgCardIcon" alt="">
+            </div>
 
-      <!-- Livros disponíveis -->
-      <div class="livrosCards">
-        <div class="lcard1">
-          <div class="iconeCard">
-            <img src="images/mark.png" class="imgCardIcon" alt="">
+            <div class="lcard2">
+              <h5>Livros disponíveis</h5>
+              <span class="numeroNosCards">{{ livrosDisponiveis }}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="lcard2">
-          <h5 style="color: var(--correct-color);">Disponíveis</h5>
-          <span class="numeroNosCards">{{ livrosDisponiveis }}</span>
-        </div>
-      </div>
+          <div class="livrosCards">
+            <div class="iconeCard">
+              <img src="images/shape.png" class="imgCardIcon" alt="">
+            </div>
 
-      <!-- Livros indisponíveis -->
-      <div class="livrosCards">
-        <div class="lcard1">
-          <div class="iconeCard">
-            <img src="images/shape.png" class="imgCardIcon" alt="">
+            <div class="lcard2">
+              <h5>Livros emprestados</h5>
+              <span class="numeroNosCards">{{ livrosIndisponiveis }}</span>
+            </div>
           </div>
-        </div>
 
-        <div class="lcard2">
-          <h5 style="color: var(--wrong-color);">Indisponíveis</h5>
-          <span class="numeroNosCards">{{ livrosIndisponiveis }}</span>
-        </div>
-      </div>
-
-      <!-- Categorias: clique para adicionar -->
-      <div
-        class="livrosCards"
-        role="button"
-        tabindex="0"
-        title="Adicionar categoria"
-        (click)="abrirAdicionarCategoria()"
-        (keydown.enter)="abrirAdicionarCategoria()">
-
-        <div class="lcard1">
-          <div class="iconeCard" style="background-color: var(--primary-color);">
-            <img src="images/plus.png" class="imgCardIcon" alt="Adicionar categoria">
-          </div>
-        </div>
-
-        <div class="lcard2">
-          <h5>Categorias</h5>
-          <span class="numeroNosCards">{{ totalCategorias }}</span>
-        </div>
-      </div>
-
-    </div>
-
-    <div class="container">
-      <div class="header">
-
-        <div class="header1">
-          <span style="font-size: 1.5rem; font-weight: bold;">
-            Livros recentes
-          </span>
-        </div>
-
-        <div class="header2">
           <button
-            id="adLivro"
+            class="livrosCards card-categorias"
             type="button"
-            (click)="abrirAdicionarLivro()">
-            + Adicionar livro
+            title="Adicionar ou gerenciar categorias"
+            (click)="abrirAdicionarCategoria()">
+
+            <div class="iconeCard">
+              <img src="images/plus.png" class="imgCardIcon" alt="">
+            </div>
+
+            <div class="lcard2">
+              <h5>Categorias</h5>
+              <span class="numeroNosCards">{{ totalCategorias }}</span>
+            </div>
           </button>
         </div>
 
-      </div>
+        <section class="container">
+          <div class="header">
+            <div>
+              <h2>Livros recentes</h2>
+              <p>Últimos livros cadastrados na biblioteca.</p>
+            </div>
 
-      <table class="book-table">
-        <thead>
-          <tr>
-            <th>Título</th>
-            <th>Autor</th>
-            <th>Categoria</th>
-            <th>Status</th>
-            <th>Ações</th>
-          </tr>
-        </thead>
+            <button
+              class="botao-principal"
+              type="button"
+              (click)="abrirAdicionarLivro()">
+              + Cadastrar livro
+            </button>
+          </div>
 
-        <tbody>
-          @for (livro of livrosRecentes; track livro.id) {
-            <tr>
-              <td class="book-title">
-                {{ livro.titulo }}
-              </td>
+          <div class="tabela-wrapper">
+            <table class="book-table">
+              <thead>
+                <tr>
+                  <th>Título</th>
+                  <th>Autor</th>
+                  <th>Gênero</th>
+                  <th>Exemplares disponíveis</th>
+                  <th>Status</th>
+                  <th>Ações</th>
+                </tr>
+              </thead>
 
-              <td class="muted-text">
-                {{ livro.autor }}
-              </td>
+              <tbody>
+                @for (livro of livrosRecentes; track livro.id) {
+                  <tr>
+                    <td class="book-title">
+                      {{ livro.titulo }}
+                    </td>
 
-              <td class="muted-text">
-                {{ livro.categoria }}
-              </td>
+                    <td>
+                      {{ livro.autor || '—' }}
+                    </td>
 
-              <td>
-                <span
-                  class="status-badge"
-                  [class.status-available]="livro.disponivel"
-                  [class.status-unavailable]="!livro.disponivel">
-                  {{ livro.disponivel ? 'Disponível' : 'Indisponível' }}
-                </span>
-              </td>
+                    <td>
+                      {{ livro.categoria || '—' }}
+                    </td>
 
-              <td>
-                <div class="action-buttons">
+                    <td>
+                      {{ livro.quantidadeDisponivel }}
+                    </td>
 
-                  <button
-                    class="edit-button"
-                    type="button"
-                    title="Editar livro"
-                    (click)="editarLivro(livro)">
+                    <td>
+                      <span
+                        class="status-badge"
+                        [class.status-available]="livro.disponivel"
+                        [class.status-unavailable]="!livro.disponivel">
+                        {{ livro.disponivel ? 'Disponível' : 'Indisponível' }}
+                      </span>
+                    </td>
 
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="2"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path d="M12 20h9"/>
-                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
-                    </svg>
-                  </button>
+                    <td>
+                      <div class="action-buttons">
+                        <button
+                          class="edit-button"
+                          type="button"
+                          title="Editar livro"
+                          aria-label="Editar livro"
+                          (click)="editarLivro(livro)">
 
-                  <button
-                    class="delete-button"
-                    type="button"
-                    title="Excluir livro"
-                    (click)="excluirLivro(livro.id)">
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M12 20h9"/>
+                            <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                          </svg>
+                        </button>
 
-                    <svg
-                      xmlns="http://www.w3.org/2000/svg"
-                      width="22"
-                      height="22"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      stroke-width="1.8"
-                      stroke-linecap="round"
-                      stroke-linejoin="round">
-                      <path d="M3 6h18"/>
-                      <path d="M8 6V4h8v2"/>
-                      <path d="m19 6-1 14H6L5 6"/>
-                      <path d="M10 10v6"/>
-                      <path d="M14 10v6"/>
-                    </svg>
-                  </button>
+                        <button
+                          class="delete-button"
+                          type="button"
+                          title="Excluir livro"
+                          aria-label="Excluir livro"
+                          (click)="excluirLivro(livro.id)">
 
-                </div>
-              </td>
-            </tr>
-          } @empty {
-            <tr>
-              <td colspan="5" class="empty-message">
-                Nenhum livro cadastrado.
-              </td>
-            </tr>
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="20"
+                            height="20"
+                            viewBox="0 0 24 24"
+                            fill="none"
+                            stroke="currentColor"
+                            stroke-width="2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round">
+                            <path d="M3 6h18"/>
+                            <path d="M8 6V4h8v2"/>
+                            <path d="m19 6-1 14H6L5 6"/>
+                            <path d="M10 10v6"/>
+                            <path d="M14 10v6"/>
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="6" class="empty-message">
+                      Nenhum livro cadastrado.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+    }
+
+    @if (secaoAtual === 'emprestimos') {
+      <section class="container secao-conteudo">
+        <div class="header">
+          <div>
+            <h2>Registrar empréstimo</h2>
+            <p>Escolha um livro disponível e informe o nome do aluno.</p>
+          </div>
+        </div>
+
+        <form class="form-emprestimo" (ngSubmit)="registrarEmprestimo()">
+          <div class="campo">
+            <label for="nomeAluno">Nome do aluno</label>
+            <input
+              id="nomeAluno"
+              name="nomeAluno"
+              type="text"
+              [(ngModel)]="nomeAluno"
+              placeholder="Digite o nome completo do aluno"
+              required>
+          </div>
+
+          <div class="campo">
+            <label for="livroSelecionado">Livro</label>
+            <select
+              id="livroSelecionado"
+              name="livroSelecionado"
+              [(ngModel)]="livroSelecionadoId"
+              required>
+
+              <option [ngValue]="null">Selecione um livro</option>
+
+              @for (livro of livrosParaEmprestimo; track livro.id) {
+                <option [ngValue]="livro.id">
+                  {{ livro.titulo }} — {{ livro.quantidadeDisponivel }}
+                  {{ livro.quantidadeDisponivel === 1
+                    ? 'exemplar disponível'
+                    : 'exemplares disponíveis' }}
+                </option>
+              }
+            </select>
+          </div>
+
+          @if (livrosParaEmprestimo.length === 0) {
+            <p class="aviso">
+              Não há exemplares disponíveis para empréstimo no momento.
+            </p>
           }
-        </tbody>
-      </table>
-    </div>
+
+          @if (mensagemEmprestimoErro) {
+            <p class="mensagem erro" role="alert">
+              {{ mensagemEmprestimoErro }}
+            </p>
+          }
+
+          @if (mensagemEmprestimoSucesso) {
+            <p class="mensagem sucesso" role="status">
+              {{ mensagemEmprestimoSucesso }}
+            </p>
+          }
+
+          <button
+            class="botao-principal"
+            type="submit"
+            [disabled]="salvandoEmprestimo || livrosParaEmprestimo.length === 0">
+            {{ salvandoEmprestimo
+              ? 'Registrando...'
+              : 'Registrar empréstimo' }}
+          </button>
+        </form>
+
+        <div class="header subtitulo-tabela">
+          <div>
+            <h2>Empréstimos registrados</h2>
+          </div>
+
+          <button
+            class="botao-secundario"
+            type="button"
+            (click)="carregarEmprestimos()">
+            Atualizar
+          </button>
+        </div>
+
+        @if (carregandoEmprestimos) {
+          <p class="empty-message">Carregando empréstimos...</p>
+        } @else {
+          <div class="tabela-wrapper">
+            <table class="book-table">
+              <thead>
+                <tr>
+                  <th>Aluno</th>
+                  <th>Livro</th>
+                  <th>Exemplar</th>
+                  <th>Data do empréstimo</th>
+                  <th>Devolução prevista</th>
+                  <th>Status</th>
+                  <th>Ação</th>
+                </tr>
+              </thead>
+
+              <tbody>
+                @for (emprestimo of emprestimos; track emprestimo.id) {
+                  <tr>
+                    <td>{{ emprestimo.nome_aluno }}</td>
+                    <td>{{ emprestimo.livro?.titulo || '—' }}</td>
+                    <td>{{ emprestimo.exemplar?.codigo || '—' }}</td>
+                    <td>{{ emprestimo.data_emprestimo || '—' }}</td>
+                    <td>{{ emprestimo.data_devolucao_prevista || '—' }}</td>
+                    <td>
+                      @if (emprestimo.data_devolucao) {
+                        <span class="status-badge status-available">
+                          Devolvido
+                        </span>
+                      } @else if (estaAtrasado(emprestimo)) {
+                        <span class="status-badge status-unavailable">
+                          Atrasado
+                        </span>
+                      } @else {
+                        <span class="status-badge status-pendente">
+                          Em aberto
+                        </span>
+                      }
+                    </td>
+                    <td>
+                      @if (!emprestimo.data_devolucao) {
+                        <button
+                          class="botao-devolver"
+                          type="button"
+                          (click)="devolverEmprestimo(emprestimo)">
+                          Registrar devolução
+                        </button>
+                      } @else {
+                        —
+                      }
+                    </td>
+                  </tr>
+                } @empty {
+                  <tr>
+                    <td colspan="7" class="empty-message">
+                      Nenhum empréstimo encontrado.
+                    </td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </section>
+    }
+
+    @if (secaoAtual === 'atrasados') {
+      <section class="container secao-conteudo">
+        <div class="header">
+          <div>
+            <h2>Empréstimos atrasados</h2>
+            <p>
+              Empréstimos que ainda não foram devolvidos após a data prevista.
+            </p>
+          </div>
+
+          <button
+            class="botao-secundario"
+            type="button"
+            (click)="carregarEmprestimosAtrasados()">
+            Atualizar
+          </button>
+        </div>
+
+        <div class="tabela-wrapper">
+          <table class="book-table">
+            <thead>
+              <tr>
+                <th>Aluno</th>
+                <th>Livro</th>
+                <th>Exemplar</th>
+                <th>Devolução prevista</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (
+                emprestimo of emprestimosAtrasados;
+                track emprestimo.id
+              ) {
+                <tr>
+                  <td>{{ emprestimo.nome_aluno }}</td>
+                  <td>{{ emprestimo.livro?.titulo || '—' }}</td>
+                  <td>{{ emprestimo.exemplar?.codigo || '—' }}</td>
+                  <td>{{ emprestimo.data_devolucao_prevista || '—' }}</td>
+                  <td>
+                    <button
+                      class="botao-devolver"
+                      type="button"
+                      (click)="devolverEmprestimo(emprestimo)">
+                      Registrar devolução
+                    </button>
+                  </td>
+                </tr>
+              } @empty {
+                <tr>
+                  <td colspan="5" class="empty-message">
+                    Nenhum empréstimo atrasado.
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
   </div>
 </main>
