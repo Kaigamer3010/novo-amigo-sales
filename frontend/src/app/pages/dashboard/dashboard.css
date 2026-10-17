@@ -655,9 +655,7 @@ select:focus-visible {
   outline-offset: 2px;
 }
 
-/* =====================================
-   TELAS MÉDIAS
-   ===================================== */
+
 
 @media (max-width: 1100px) {
   .cards {
@@ -679,9 +677,7 @@ select:focus-visible {
   }
 }
 
-/* =====================================
-   TABLETS E CELULARES
-   ===================================== */
+
 
 @media (max-width: 650px) {
   .backDash {
@@ -778,7 +774,7 @@ select:focus-visible {
     padding-top: 20px;
   }
 
-  /* As tabelas rolam horizontalmente sem deformar as colunas */
+  
   .tabela-wrapper {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
@@ -823,7 +819,7 @@ select:focus-visible {
   }
 }
 
-/* Celulares estreitos */
+
 @media (max-width: 380px) {
   .tela {
     padding-right: 10px;
@@ -858,3 +854,197 @@ select:focus-visible {
     transition-duration: 0.01ms !important;
   }
 }
+
+
+
+
+.campo-busca-livro {
+  position: relative;
+  width: 100%;
+}
+
+.campo-busca-livro > label {
+  display: block;
+  margin-bottom: 8px;
+  color: #292f2b;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.campo-busca-livro > input[type="search"] {
+  display: block;
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border: 1px solid #d5dbd7;
+  border-radius: 8px;
+  outline: none;
+  background: #fff;
+  color: #252b27;
+  font: inherit;
+  font-size: 14px;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.campo-busca-livro > input[type="search"]:focus {
+  border-color: #315b45;
+  box-shadow: 0 0 0 3px rgba(49, 91, 69, 0.12);
+}
+
+.campo-busca-livro > input[type="search"]::placeholder {
+  color: #929a94;
+}
+
+
+
+.livro-selecionado {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 10px;
+  padding: 13px 15px;
+  border: 1px solid #cbdccf;
+  border-radius: 8px;
+  background: #f1f7f2;
+  color: #48564c;
+  font-size: 13px;
+}
+
+.livro-selecionado span {
+  overflow-wrap: anywhere;
+}
+
+.livro-selecionado strong {
+  color: #315b45;
+}
+
+.livro-selecionado button {
+  flex-shrink: 0;
+  padding: 7px 12px;
+  border: 1px solid #cbdccf;
+  border-radius: 6px;
+  background: #fff;
+  color: #315b45;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.livro-selecionado button:hover {
+  background: #e4efe6;
+}
+
+
+
+.resultados-livros {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  max-height: 280px;
+  margin-top: 8px;
+  padding: 7px;
+  overflow-y: auto;
+  border: 1px solid #e0e5e1;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.06);
+}
+
+.resultado-livro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid transparent;
+  border-radius: 7px;
+  background: #fff;
+  color: #303732;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s ease, border-color 0.2s ease;
+}
+
+.resultado-livro:hover,
+.resultado-livro:focus-visible {
+  border-color: #cbdccf;
+  outline: none;
+  background: #f2f7f3;
+}
+
+.resultado-livro strong {
+  color: #29332c;
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.resultado-livro span {
+  color: #68736b;
+  font-size: 12px;
+  overflow-wrap: anywhere;
+}
+
+.resultado-livro small {
+  color: #315b45;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+
+
+.sem-resultados {
+  margin: 0;
+  padding: 18px 12px;
+  color: #737c75;
+  font-size: 13px;
+  line-height: 1.6;
+  text-align: center;
+}
+
+
+
+.resultados-livros::-webkit-scrollbar {
+  width: 7px;
+}
+
+.resultados-livros::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #f3f5f3;
+}
+
+.resultados-livros::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #c8d1ca;
+}
+
+.resultados-livros::-webkit-scrollbar-thumb:hover {
+  background: #9eafa2;
+}
+
+/* Ajustes para celulares */
+
+@media (max-width: 600px) {
+  .livro-selecionado {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .livro-selecionado button {
+    width: 100%;
+  }
+
+  .resultados-livros {
+    max-height: 240px;
+  }
+
+  .resultado-livro {
+    padding: 11px;
+  }
+}
+

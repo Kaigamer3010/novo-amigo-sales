@@ -1,5 +1,4 @@
 
-
 import {
   Component,
   OnInit,
@@ -17,7 +16,6 @@ import { AdicionarLivro } from '../../components/adicionar-livro/adicionar-livro
 import { AdicionarCategoria } from '../../components/adicionar-categoria/adicionar-categoria';
 import { GerenciarCategorias } from '../../components/gerenciar-categorias/gerenciar-categorias';
 import { GerenciarLivros } from '../../components/gerenciar-livros/gerenciar-livros';
-
 
 type SecaoDashboard = 'inicio' | 'emprestimos' | 'atrasados';
 
@@ -53,9 +51,29 @@ export class Dashboard implements OnInit {
   nomeAluno = '';
   livroSelecionadoId: number | null = null;
 
+  // Pesquisa de livros para registrar empréstimos.
+  buscaLivroEmprestimo = '';
+  mostrarResultadosLivros = false;
 
   dataEmprestimo = this.dataHojeLocal();
   prazoDevolucaoDias = 7;
+
+  // Pesquisas das tabelas.
+  buscaEmprestimos = '';
+  buscaAtrasados = '';
+
+  carregandoEmprestimos = false;
+  salvandoEmprestimo = false;
+
+  mensagemEmprestimoErro = '';
+  mensagemEmprestimoSucesso = '';
+
+  constructor(private livrosService: LivrosService) {}
+
+  ngOnInit(): void {
+    this.carregarLivrosRecentes();
+    this.carregarCategorias();
+  }
 
   private dataHojeLocal(): string {
     const hoje = new Date();
@@ -82,22 +100,6 @@ export class Dashboard implements OnInit {
     data.setDate(data.getDate() + Number(this.prazoDevolucaoDias));
 
     return data.toLocaleDateString('pt-BR');
-  }
-
-
-  buscaEmprestimos = '';
-
-  carregandoEmprestimos = false;
-  salvandoEmprestimo = false;
-
-  mensagemEmprestimoErro = '';
-  mensagemEmprestimoSucesso = '';
-
-  constructor(private livrosService: LivrosService) { }
-
-  ngOnInit(): void {
-    this.carregarLivrosRecentes();
-    this.carregarCategorias();
   }
 
   private opcoesRequisicao() {
@@ -131,7 +133,6 @@ export class Dashboard implements OnInit {
       ?? mensagemPadrao;
   }
 
-
   private emprestimoEstaAtivo(emprestimo: any): boolean {
     if (!emprestimo) {
       return false;
@@ -159,12 +160,7 @@ export class Dashboard implements OnInit {
     ).trim().toLocaleLowerCase('pt-BR');
 
     if (
-      [
-        'devolvido',
-        'devolvida',
-        'finalizado',
-        'finalizada'
-      ].includes(status)
+      ['devolvido', 'devolvida', 'finalizado', 'finalizada'].includes(status)
     ) {
       return false;
     }
@@ -190,7 +186,6 @@ export class Dashboard implements OnInit {
     this.cdr.detectChanges();
   }
 
-
   carregarLivrosRecentes(): void {
     this.livrosService.obterLivros().subscribe({
       next: (resposta: any) => {
@@ -205,37 +200,34 @@ export class Dashboard implements OnInit {
 
           const quantidadeDisponivel =
             livro.quantidade_disponivel !== undefined &&
-              livro.quantidade_disponivel !== null
+            livro.quantidade_disponivel !== null
               ? Number(livro.quantidade_disponivel)
               : (
-                [
-                  'disponível',
-                  'disponivel',
-                  '1',
-                  'true'
-                ].includes(disponibilidade)
-                  ? 1
-                  : 0
-              );
+                  ['disponível', 'disponivel', '1', 'true'].includes(
+                    disponibilidade
+                  )
+                    ? 1
+                    : 0
+                );
 
           const quantidadeEmprestada =
             livro.quantidade_emprestada !== undefined &&
-              livro.quantidade_emprestada !== null
+            livro.quantidade_emprestada !== null
               ? Number(livro.quantidade_emprestada)
               : Math.max(
-                0,
-                Number(livro.quantidade_exemplares ?? 0) -
-                quantidadeDisponivel
-              );
+                  0,
+                  Number(livro.quantidade_exemplares ?? 0) -
+                  quantidadeDisponivel
+                );
 
           const generos = Array.isArray(livro.generos)
             ? livro.generos
-              .map((genero: any) =>
-                typeof genero === 'string'
-                  ? genero
-                  : genero?.genero
-              )
-              .filter(Boolean)
+                .map((genero: any) =>
+                  typeof genero === 'string'
+                    ? genero
+                    : genero?.genero
+                )
+                .filter(Boolean)
             : [];
 
           return {
@@ -270,6 +262,18 @@ export class Dashboard implements OnInit {
           0
         );
 
+        const selecionado = this.todosLivros.find(
+          (livro: any) =>
+            Number(livro.id) === Number(this.livroSelecionadoId)
+        );
+
+        if (
+          this.livroSelecionadoId !== null &&
+          (!selecionado || selecionado.quantidadeDisponivel < 1)
+        ) {
+          this.limparLivroSelecionado();
+        }
+
         this.cdr.detectChanges();
       },
       error: (erro) => {
@@ -278,13 +282,57 @@ export class Dashboard implements OnInit {
     });
   }
 
-
   get livrosParaEmprestimo(): any[] {
     return this.todosLivros.filter(
       (livro: any) => Number(livro.quantidadeDisponivel) > 0
     );
   }
 
+  get livrosEncontradosParaEmprestimo(): any[] {
+    const termo = this.normalizarTexto(this.buscaLivroEmprestimo);
+
+    if (!termo || this.livroSelecionadoId !== null) {
+      return [];
+    }
+
+    return this.livrosParaEmprestimo.filter((livro: any) => {
+      const titulo = this.normalizarTexto(livro.titulo);
+      const isbn = this.obterIsbn(livro);
+
+      return titulo.includes(termo) || isbn.includes(termo);
+    }).slice(0, 10);
+  }
+
+  selecionarLivroEmprestimo(livro: any): void {
+    if (!livro || Number(livro.quantidadeDisponivel) < 1) {
+      this.mensagemEmprestimoErro =
+        'Esse livro não tem exemplares disponíveis para empréstimo.';
+      return;
+    }
+
+    this.livroSelecionadoId = Number(livro.id);
+    this.buscaLivroEmprestimo = livro.titulo;
+    this.mostrarResultadosLivros = false;
+
+    this.mensagemEmprestimoErro = '';
+    this.mensagemEmprestimoSucesso = '';
+
+    this.cdr.detectChanges();
+  }
+
+  limparLivroSelecionado(): void {
+    this.livroSelecionadoId = null;
+    this.buscaLivroEmprestimo = '';
+    this.mostrarResultadosLivros = false;
+  }
+
+  aoAlterarBuscaLivro(): void {
+    this.livroSelecionadoId = null;
+    this.mostrarResultadosLivros =
+      this.normalizarTexto(this.buscaLivroEmprestimo).length > 0;
+
+    this.mensagemEmprestimoErro = '';
+  }
 
   get emprestimosFiltrados(): any[] {
     const termo = this.normalizarTexto(this.buscaEmprestimos);
@@ -309,11 +357,65 @@ export class Dashboard implements OnInit {
         ''
       );
 
+      const isbn = this.obterIsbn(emprestimo.livro);
+
       return (
         nomeAluno.includes(termo) ||
-        tituloLivro.includes(termo)
+        tituloLivro.includes(termo) ||
+        isbn.includes(termo)
       );
     });
+  }
+
+  // Filtra os empréstimos atrasados por aluno, título ou ISBN.
+  get emprestimosAtrasadosFiltrados(): any[] {
+    const termo = this.normalizarTexto(this.buscaAtrasados);
+
+    if (!termo) {
+      return this.emprestimosAtrasados;
+    }
+
+    return this.emprestimosAtrasados.filter((emprestimo: any) => {
+      const nomeAluno = this.normalizarTexto(
+        emprestimo.nome_aluno ??
+        emprestimo.aluno?.nome ??
+        emprestimo.usuario?.nome ??
+        emprestimo.nome_completo ??
+        ''
+      );
+
+      const tituloLivro = this.normalizarTexto(
+        emprestimo.livro?.titulo ??
+        emprestimo.titulo_livro ??
+        emprestimo.livro_titulo ??
+        ''
+      );
+
+      const isbn = this.obterIsbn(emprestimo.livro);
+
+      return (
+        nomeAluno.includes(termo) ||
+        tituloLivro.includes(termo) ||
+        isbn.includes(termo)
+      );
+    });
+  }
+
+  // Aceita os nomes de campos ISBN mais comuns usados pela API.
+  private obterIsbn(livro: any): string {
+    if (!livro) {
+      return '';
+    }
+
+    return this.normalizarTexto(
+      livro.isbn ??
+      livro.ISBN ??
+      livro.isbn13 ??
+      livro.isbn_13 ??
+      livro.codigo_isbn ??
+      livro.codigoIsbn ??
+      ''
+    );
   }
 
   private normalizarTexto(valor: unknown): string {
@@ -406,7 +508,6 @@ export class Dashboard implements OnInit {
     });
   }
 
-
   excluirLivro(id: number): void {
     const livro = this.todosLivros.find(
       (item: any) => Number(item.id) === Number(id)
@@ -433,26 +534,23 @@ export class Dashboard implements OnInit {
       this.opcoesRequisicao()
     ).subscribe({
       next: (resposta) => {
-        const mensagem = resposta?.mensagem
-          ?? 'Operação concluída com sucesso!';
-
-        window.alert(mensagem);
-
+        window.alert(
+          resposta?.mensagem ?? 'Operação concluída com sucesso!'
+        );
         this.carregarLivrosRecentes();
       },
       error: (erro) => {
         console.error('Erro ao excluir ou arquivar livro:', erro);
 
-        const mensagem = this.erroApi(
-          erro,
-          'Não foi possível retirar o livro do catálogo.'
+        window.alert(
+          this.erroApi(
+            erro,
+            'Não foi possível retirar o livro do catálogo.'
+          )
         );
-
-        window.alert(mensagem);
       }
     });
   }
-
 
   abrirAdicionarCategoria(): void {
     this.dialog.open(AdicionarCategoria, {
@@ -491,7 +589,6 @@ export class Dashboard implements OnInit {
     });
   }
 
-
   carregarEmprestimos(): void {
     this.carregandoEmprestimos = true;
 
@@ -524,7 +621,6 @@ export class Dashboard implements OnInit {
       }
     });
   }
-
 
   carregarEmprestimosAtrasados(): void {
     this.http.get<any>(
@@ -571,7 +667,6 @@ export class Dashboard implements OnInit {
       return;
     }
 
-
     if (!this.dataEmprestimo) {
       this.mensagemEmprestimoErro = 'Selecione a data do empréstimo.';
       return;
@@ -586,7 +681,6 @@ export class Dashboard implements OnInit {
         'Informe um prazo entre 1 e 365 dias.';
       return;
     }
-
 
     const livroSelecionado = this.todosLivros.find(
       (livro: any) =>
@@ -606,14 +700,12 @@ export class Dashboard implements OnInit {
 
     this.salvandoEmprestimo = true;
 
-
     const dados = {
       livro_id: Number(this.livroSelecionadoId),
       nome_aluno: nome,
       data_emprestimo: this.dataEmprestimo,
       prazo_devolucao_dias: Number(this.prazoDevolucaoDias)
     };
-
 
     this.http.post(
       `${this.apiUrl}/emprestimos`,
@@ -623,7 +715,7 @@ export class Dashboard implements OnInit {
       next: () => {
         this.salvandoEmprestimo = false;
         this.nomeAluno = '';
-        this.livroSelecionadoId = null;
+        this.limparLivroSelecionado();
         this.dataEmprestimo = this.dataHojeLocal();
         this.prazoDevolucaoDias = 7;
 
@@ -650,7 +742,6 @@ export class Dashboard implements OnInit {
       }
     });
   }
-
 
   devolverEmprestimo(emprestimo: any): void {
     if (!this.emprestimoEstaAtivo(emprestimo)) {
