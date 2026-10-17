@@ -5,6 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Aviso } from '../../models/avisos';
 import { AvisosSalaService } from '../../service/avisos-sala';
+import { GradeHorarios } from '../../components/grade-horarios/grade-horarios';
 
 
 @Component({
@@ -21,6 +22,11 @@ export class Sala {
     private cdr: ChangeDetectorRef
   ) {}
 
+  abrirGradeHorarios() {
+      this.dialog.open(GradeHorarios, {
+        panelClass: 'cardapio-dialog'
+      });
+    }
 
  noticias: Aviso[] = [];
 noticiasVisiveis: Aviso[] = [];
