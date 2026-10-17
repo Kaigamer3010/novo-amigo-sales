@@ -38,9 +38,9 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 #Livro
-
 Route::get('/livros', [LivroController::class, 'index']);
 Route::get('/livros/buscar-isbn/{isbn}', [LivroController::class, 'buscarPorIsbn']);
+Route::get('/livros/buscar-titulo/{titulo}', [LivroController::class, 'buscarPorTitulo']);
 Route::get('/livros/{id}', [LivroController::class, 'show']);
 
 // Operações que exigem login 

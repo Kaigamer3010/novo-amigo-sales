@@ -11,25 +11,17 @@ use Illuminate\Validation\ValidationException;
 
 class LivroController extends Controller
 {
-    /**
-     * Contagens feitas diretamente na tabela de exemplares.
-     */
     private function contagensExemplares(): array
     {
         return [
             'exemplares as total_exemplares',
-
             'exemplares as quantidade_disponivel' =>
                 fn ($query) => $query->where('status', 'disponivel'),
-
             'exemplares as quantidade_emprestada' =>
                 fn ($query) => $query->where('status', 'emprestado'),
         ];
     }
 
-    /**
-     * Formata um livro para a API.
-     */
     private function formatarLivro(Livro $livro): array
     {
         $livro->loadMissing('generos');
@@ -44,19 +36,16 @@ class LivroController extends Controller
 
         if ($disponiveis === null) {
             $disponiveis = $livro->exemplares()
-                ->where('status', 'disponivel')
-                ->count();
+                ->where('status', 'disponivel')->count();
         }
 
         if ($emprestados === null) {
             $emprestados = $livro->exemplares()
-                ->where('status', 'emprestado')
-                ->count();
+                ->where('status', 'emprestado')->count();
         }
 
         $resultado = $livro->toArray();
 
-        // Envia os IDs e nomes dos gêneros para permitir edição.
         $resultado['generos'] = $livro->generos
             ->map(fn ($genero) => [
                 'id' => (int) $genero->id,
@@ -69,10 +58,9 @@ class LivroController extends Controller
         $resultado['quantidade_disponivel'] = (int) $disponiveis;
         $resultado['quantidade_emprestada'] = (int) $emprestados;
 
-        // Usa o total real quando já existem exemplares cadastrados.
-        // Para livros antigos ainda sem exemplares, mantém a quantidade
-        // originalmente armazenada para facilitar sua regularização.
-        $quantidadeSalva = (int) ($livro->getAttribute('quantidade_exemplares') ?? 0);
+        $quantidadeSalva = (int) (
+            $livro->getAttribute('quantidade_exemplares') ?? 0
+        );
 
         $resultado['quantidade_exemplares'] = (int) $total > 0
             ? (int) $total
@@ -84,9 +72,6 @@ class LivroController extends Controller
         return $resultado;
     }
 
-    /**
-     * Lista somente os livros ativos no catálogo.
-     */
     public function index()
     {
         $livros = Livro::where('ativo', true)
@@ -101,9 +86,6 @@ class LivroController extends Controller
         );
     }
 
-    /**
-     * Consulta um livro ativo.
-     */
     public function show($id)
     {
         $livro = Livro::where('ativo', true)
@@ -114,9 +96,6 @@ class LivroController extends Controller
         return response()->json($this->formatarLivro($livro));
     }
 
-    /**
-     * Cadastra um livro e cria seus exemplares físicos.
-     */
     public function store(Request $request)
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -141,8 +120,6 @@ class LivroController extends Controller
         unset($dados['generos']);
 
         $quantidade = (int) $dados['quantidade_exemplares'];
-
-        // A disponibilidade real será derivada do estado dos exemplares.
         $dados['disponibilidade'] = true;
 
         $livro = DB::transaction(function () use (
@@ -151,8 +128,6 @@ class LivroController extends Controller
             $quantidade
         ) {
             $livro = Livro::create($dados);
-
-            // Livros novos entram ativos no catálogo.
             $livro->ativo = true;
             $livro->save();
 
@@ -182,9 +157,6 @@ class LivroController extends Controller
         return response()->json($this->formatarLivro($livro), 201);
     }
 
-    /**
-     * Atualiza os dados de um livro e sincroniza seus exemplares.
-     */
     public function update(Request $request, $id)
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -212,10 +184,7 @@ class LivroController extends Controller
         ]);
 
         $generos = $dados['generos'] ?? null;
-        unset($dados['generos']);
-
-        // A disponibilidade não pode ser alterada manualmente.
-        unset($dados['disponibilidade']);
+        unset($dados['generos'], $dados['disponibilidade']);
 
         $livroAtualizado = DB::transaction(function () use (
             $dados,
@@ -250,7 +219,6 @@ class LivroController extends Controller
 
             $totalAtual = $livro->exemplares()->count();
 
-            // Não exclui exemplares que tenham histórico de empréstimos.
             if ($quantidadeDesejada < $totalAtual) {
                 $remover = $totalAtual - $quantidadeDesejada;
 
@@ -275,8 +243,6 @@ class LivroController extends Controller
                 }
             }
 
-            // Completa os exemplares se a quantidade tiver aumentado
-            // ou se o livro antigo ainda não tiver cópias cadastradas.
             $totalAtual = $livro->exemplares()->count();
             $sequencia = 1;
 
@@ -303,7 +269,6 @@ class LivroController extends Controller
                 $totalAtual++;
             }
 
-            // Sincroniza a localização das cópias físicas.
             $livro->exemplares()->update([
                 'localizacao' => $livro->localizacoes,
             ]);
@@ -327,9 +292,6 @@ class LivroController extends Controller
         return response()->json($this->formatarLivro($livroAtualizado));
     }
 
-    /**
-     * Exclui livros sem histórico ou arquiva livros com histórico.
-     */
     public function destroy($id)
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -365,9 +327,6 @@ class LivroController extends Controller
         });
     }
 
-    /**
-     * Busca dados bibliográficos pelo ISBN.
-     */
     public function buscarPorIsbn($isbn)
     {
         $chave = env('GOOGLE_BOOKS_API_KEY');
@@ -382,19 +341,16 @@ class LivroController extends Controller
         try {
             $isbns = [$numero];
 
-            // Converte ISBN-10 para ISBN-13.
             if (strlen($numero) === 10) {
                 $base13 = '978' . substr($numero, 0, 9);
                 $soma = 0;
 
                 for ($i = 0; $i < 12; $i++) {
-                    $peso = ($i % 2 === 0) ? 1 : 3;
-                    $soma += (int) $base13[$i] * $peso;
+                    $soma += (int) $base13[$i] * (($i % 2 === 0) ? 1 : 3);
                 }
 
                 $isbns[] = $base13 . ((10 - ($soma % 10)) % 10);
             } elseif (str_starts_with($numero, '978')) {
-                // Converte ISBN-13 para ISBN-10 quando possível.
                 $base10 = substr($numero, 3, 9);
                 $soma = 0;
 
@@ -414,101 +370,181 @@ class LivroController extends Controller
             }
 
             $isbns = array_values(array_unique($isbns));
-            $fonteRespondeu = false;
 
-            // 1. Google Books.
+            $livro = [
+                'titulo' => '',
+                'sinopse' => '',
+                'autores' => [],
+                'ano_publicacao' => '',
+                'imagem' => '',
+                'isbn' => $numero,
+            ];
+
+            $preencher = function (array $dados) use (&$livro) {
+                foreach ([
+                    'titulo',
+                    'sinopse',
+                    'ano_publicacao',
+                    'imagem',
+                ] as $campo) {
+                    if (
+                        empty($livro[$campo])
+                        && isset($dados[$campo])
+                        && is_string($dados[$campo])
+                        && trim($dados[$campo]) !== ''
+                    ) {
+                        $livro[$campo] = trim($dados[$campo]);
+                    }
+                }
+
+                if (empty($livro['autores']) && !empty($dados['autores'])) {
+                    $autores = is_array($dados['autores'])
+                        ? $dados['autores']
+                        : [$dados['autores']];
+
+                    $livro['autores'] = array_values(array_unique(
+                        array_filter(
+                            array_map(
+                                fn ($autor) => is_string($autor)
+                                    ? trim($autor)
+                                    : (is_array($autor)
+                                        ? trim($autor['name'] ?? '')
+                                        : ''),
+                                $autores
+                            ),
+                            fn ($autor) => $autor !== ''
+                        )
+                    ));
+                }
+            };
+
+            // BrasilAPI
+            foreach ($isbns as $isbnBusca) {
+                try {
+                    $resposta = Http::connectTimeout(2)
+                        ->timeout(5)
+                        ->acceptJson()
+                        ->get("https://brasilapi.com.br/api/isbn/v1/{$isbnBusca}");
+
+                    if ($resposta->successful()) {
+                        $dados = $resposta->json() ?? [];
+                        $ano = (string) ($dados['year'] ?? '');
+
+                        $preencher([
+                            'titulo' => $dados['title'] ?? '',
+                            'sinopse' => $dados['synopsis'] ?? '',
+                            'autores' => $dados['authors'] ?? [],
+                            'ano_publicacao' => preg_match(
+                                '/\b(?:18|19|20|21)\d{2}\b/',
+                                $ano,
+                                $matches
+                            ) ? $matches[0] : '',
+                            'imagem' => $dados['cover_url'] ?? '',
+                        ]);
+                    }
+                } catch (\Throwable $e) {
+                }
+            }
+
+            // Google Books
             if (!empty($chave)) {
                 foreach ($isbns as $isbnBusca) {
                     try {
                         $resposta = Http::connectTimeout(2)
-                            ->timeout(3)
+                            ->timeout(4)
                             ->acceptJson()
                             ->get(
                                 'https://www.googleapis.com/books/v1/volumes',
                                 [
                                     'q' => "isbn:{$isbnBusca}",
                                     'key' => $chave,
+                                    'maxResults' => 5,
                                 ]
                             );
 
                         if (!$resposta->successful()) {
-                            \Log::warning('Google Books retornou erro', [
-                                'isbn' => $isbnBusca,
-                                'status' => $resposta->status(),
+                            continue;
+                        }
+
+                        foreach ($resposta->json('items', []) as $item) {
+                            $info = $item['volumeInfo'] ?? [];
+
+                            if (empty($info['title'])) {
+                                continue;
+                            }
+
+                            $ano = (string) ($info['publishedDate'] ?? '');
+
+                            $preencher([
+                                'titulo' => $info['title'] ?? '',
+                                'sinopse' => $info['description'] ?? '',
+                                'autores' => $info['authors'] ?? [],
+                                'ano_publicacao' => preg_match(
+                                    '/\b(?:18|19|20|21)\d{2}\b/',
+                                    $ano,
+                                    $matches
+                                ) ? $matches[0] : '',
+                                'imagem' => $info['imageLinks']['thumbnail']
+                                    ?? $info['imageLinks']['smallThumbnail']
+                                    ?? '',
                             ]);
 
-                            continue;
+                            if (
+                                !empty($livro['titulo'])
+                                && !empty($livro['autores'])
+                                && !empty($livro['ano_publicacao'])
+                                && !empty($livro['sinopse'])
+                                && !empty($livro['imagem'])
+                            ) {
+                                break 2;
+                            }
                         }
-
-                        $fonteRespondeu = true;
-                        $dadosGoogle = $resposta->json() ?? [];
-                        $info = $dadosGoogle['items'][0]['volumeInfo'] ?? null;
-
-                        if (!$info || empty($info['title'])) {
-                            continue;
-                        }
-
-                        $ano = $info['publishedDate'] ?? '';
-
-                        return response()->json([
-                            'titulo' => $info['title'],
-                            'sinopse' => $info['description'] ?? '',
-                            'autores' => $info['authors'] ?? [],
-                            'ano_publicacao' => substr($ano, 0, 4),
-                            'imagem' => $info['imageLinks']['thumbnail'] ?? '',
-                            'isbn' => $isbn,
-                        ]);
                     } catch (\Throwable $e) {
-                        \Log::warning('Falha no Google Books', [
-                            'mensagem' => $e->getMessage(),
-                        ]);
                     }
                 }
             }
 
-            // 2. Open Library: consulta direta pelo ISBN.
+            // Open Library
             try {
                 $bibkeys = implode(',', array_map(
                     fn ($item) => "ISBN:{$item}",
                     $isbns
                 ));
 
-                $respostaOpen = Http::connectTimeout(2)
-                    ->timeout(4)
-                    ->withHeaders([
-                        'User-Agent' => 'JornalSales/1.0',
-                    ])
+                $resposta = Http::connectTimeout(2)
+                    ->timeout(5)
+                    ->withHeaders(['User-Agent' => 'JornalSales/1.0'])
                     ->get('https://openlibrary.org/api/books', [
                         'bibkeys' => $bibkeys,
                         'jscmd' => 'data',
                         'format' => 'json',
                     ]);
 
-                if ($respostaOpen->successful()) {
-                    $fonteRespondeu = true;
-                    $resultados = $respostaOpen->json() ?? [];
+                if ($resposta->successful()) {
+                    $resultados = $resposta->json() ?? [];
 
                     foreach ($isbns as $isbnBusca) {
-                        $livroEncontrado = $resultados["ISBN:{$isbnBusca}"] ?? null;
+                        $dados = $resultados["ISBN:{$isbnBusca}"] ?? [];
 
-                        if (!$livroEncontrado || empty($livroEncontrado['title'])) {
+                        if (empty($dados['title'])) {
                             continue;
                         }
 
-                        $autores = array_values(array_filter(array_map(
+                        $autores = array_map(
                             fn ($autor) => $autor['name'] ?? '',
-                            $livroEncontrado['authors'] ?? []
-                        )));
+                            $dados['authors'] ?? []
+                        );
 
-                        $data = (string) ($livroEncontrado['publish_date'] ?? '');
+                        $data = (string) ($dados['publish_date'] ?? '');
+
                         $ano = preg_match(
                             '/\b(?:18|19|20|21)\d{2}\b/',
                             $data,
                             $matches
                         ) ? $matches[0] : '';
 
-                        $sinopse = $livroEncontrado['description']
-                            ?? $livroEncontrado['notes']
+                        $sinopse = $dados['description']
+                            ?? $dados['notes']
                             ?? '';
 
                         if (is_array($sinopse)) {
@@ -517,83 +553,139 @@ class LivroController extends Controller
                                 ?? '';
                         }
 
-                        $imagem = $livroEncontrado['cover']['medium']
-                            ?? $livroEncontrado['cover']['large']
-                            ?? $livroEncontrado['cover']['small']
-                            ?? '';
-
-                        return response()->json([
-                            'titulo' => $livroEncontrado['title'],
-                            'sinopse' => is_string($sinopse) ? $sinopse : '',
+                        $preencher([
+                            'titulo' => $dados['title'] ?? '',
+                            'sinopse' => is_string($sinopse)
+                                ? strip_tags($sinopse)
+                                : '',
                             'autores' => $autores,
                             'ano_publicacao' => $ano,
-                            'imagem' => $imagem,
-                            'isbn' => $isbn,
+                            'imagem' => $dados['cover']['large']
+                                ?? $dados['cover']['medium']
+                                ?? $dados['cover']['small']
+                                ?? '',
                         ]);
                     }
                 }
             } catch (\Throwable $e) {
-                \Log::warning('Falha na consulta direta à Open Library', [
-                    'mensagem' => $e->getMessage(),
-                ]);
             }
 
-            // 3. Última tentativa: pesquisa no catálogo Open Library.
+            // Open Library Search
             foreach ($isbns as $isbnBusca) {
                 try {
-                    $busca = Http::connectTimeout(2)
-                        ->timeout(4)
-                        ->withHeaders([
-                            'User-Agent' => 'JornalSales/1.0',
-                        ])
+                    $resposta = Http::connectTimeout(2)
+                        ->timeout(5)
+                        ->withHeaders(['User-Agent' => 'JornalSales/1.0'])
                         ->get('https://openlibrary.org/search.json', [
                             'isbn' => $isbnBusca,
                             'fields' => 'title,author_name,first_publish_year,cover_i',
-                            'limit' => 1,
+                            'limit' => 5,
                         ]);
 
-                    if (!$busca->successful()) {
+                    if (!$resposta->successful()) {
                         continue;
                     }
 
-                    $fonteRespondeu = true;
-                    $documento = $busca->json('docs.0');
+                    foreach ($resposta->json('docs', []) as $dados) {
+                        if (empty($dados['title'])) {
+                            continue;
+                        }
 
-                    if (!$documento || empty($documento['title'])) {
-                        continue;
+                        $imagem = !empty($dados['cover_i'])
+                            ? 'https://covers.openlibrary.org/b/id/'
+                                . $dados['cover_i'] . '-L.jpg'
+                            : '';
+
+                        $preencher([
+                            'titulo' => $dados['title'] ?? '',
+                            'autores' => $dados['author_name'] ?? [],
+                            'ano_publicacao' => isset($dados['first_publish_year'])
+                                ? (string) $dados['first_publish_year']
+                                : '',
+                            'imagem' => $imagem,
+                        ]);
+
+                        if (
+                            !empty($livro['titulo'])
+                            && !empty($livro['autores'])
+                            && !empty($livro['ano_publicacao'])
+                            && !empty($livro['sinopse'])
+                            && !empty($livro['imagem'])
+                        ) {
+                            break 2;
+                        }
                     }
-
-                    $imagem = !empty($documento['cover_i'])
-                        ? 'https://covers.openlibrary.org/b/id/'
-                            . $documento['cover_i'] . '-L.jpg'
-                        : '';
-
-                    return response()->json([
-                        'titulo' => $documento['title'],
-                        'sinopse' => '',
-                        'autores' => $documento['author_name'] ?? [],
-                        'ano_publicacao' => isset($documento['first_publish_year'])
-                            ? (string) $documento['first_publish_year']
-                            : '',
-                        'imagem' => $imagem,
-                        'isbn' => $isbn,
-                    ]);
                 } catch (\Throwable $e) {
-                    \Log::warning('Falha na busca do catálogo Open Library', [
-                        'mensagem' => $e->getMessage(),
-                    ]);
                 }
             }
 
-            if (!$fonteRespondeu) {
-                return response()->json([
-                    'erro' => 'As fontes de livros estão indisponíveis. Tente novamente.',
-                ], 503);
+            // Crossref
+            foreach ($isbns as $isbnBusca) {
+                try {
+                    $resposta = Http::connectTimeout(2)
+                        ->timeout(5)
+                        ->acceptJson()
+                        ->get('https://api.crossref.org/works', [
+                            'filter' => "isbn:{$isbnBusca}",
+                            'rows' => 5,
+                        ]);
+
+                    if (!$resposta->successful()) {
+                        continue;
+                    }
+
+                    foreach ($resposta->json('message.items', []) as $dados) {
+                        $titulo = $dados['title'][0] ?? '';
+
+                        if ($titulo === '') {
+                            continue;
+                        }
+
+                        $autores = array_map(
+                            fn ($autor) => trim(
+                                ($autor['given'] ?? '') . ' '
+                                . ($autor['family'] ?? '')
+                            ),
+                            $dados['author'] ?? []
+                        );
+
+                        $data = $dados['published-print']['date-parts'][0]
+                            ?? $dados['published-online']['date-parts'][0]
+                            ?? $dados['created']['date-parts'][0]
+                            ?? [];
+
+                        $ano = isset($data[0]) ? (string) $data[0] : '';
+
+                        $preencher([
+                            'titulo' => $titulo,
+                            'autores' => $autores,
+                            'ano_publicacao' => $ano,
+                            'sinopse' => isset($dados['abstract'])
+                                ? strip_tags($dados['abstract'])
+                                : '',
+                        ]);
+
+                        if (
+                            !empty($livro['titulo'])
+                            && !empty($livro['autores'])
+                            && !empty($livro['ano_publicacao'])
+                            && !empty($livro['sinopse'])
+                            && !empty($livro['imagem'])
+                        ) {
+                            break 2;
+                        }
+                    }
+                } catch (\Throwable $e) {
+                }
             }
 
-            return response()->json([
-                'erro' => 'Livro não encontrado. Você pode preencher os dados manualmente.',
-            ], 404);
+            if (empty($livro['titulo'])) {
+                return response()->json([
+                    'erro' => 'Livro não encontrado. Você pode preencher os dados manualmente.',
+                ], 404);
+            }
+
+            return response()->json($livro);
         } catch (\Throwable $e) {
             \Log::error('Erro ao buscar livro por ISBN', [
                 'mensagem' => $e->getMessage(),
@@ -601,6 +693,158 @@ class LivroController extends Controller
 
             return response()->json([
                 'erro' => 'Erro ao consultar as fontes de livros.',
+            ], 500);
+        }
+    }
+
+    public function buscarPorTitulo($titulo)
+    {
+        $termo = trim((string) $titulo);
+
+        if (mb_strlen($termo) < 2) {
+            return response()->json([
+                'erro' => 'Digite pelo menos 2 caracteres do título.',
+            ], 422);
+        }
+
+        try {
+            $livros = [];
+
+            // Google Books
+            $parametros = [
+                'q' => 'intitle:' . $termo,
+                'maxResults' => 5,
+                'printType' => 'books',
+            ];
+
+            $chave = env('GOOGLE_BOOKS_API_KEY');
+
+            if (!empty($chave)) {
+                $parametros['key'] = $chave;
+            }
+
+            try {
+                $resposta = Http::connectTimeout(2)
+                    ->timeout(5)
+                    ->acceptJson()
+                    ->get(
+                        'https://www.googleapis.com/books/v1/volumes',
+                        $parametros
+                    );
+
+                if ($resposta->successful()) {
+                    foreach ($resposta->json('items', []) as $item) {
+                        $info = $item['volumeInfo'] ?? [];
+
+                        if (empty($info['title'])) {
+                            continue;
+                        }
+
+                        $isbn = '';
+
+                        foreach ($info['industryIdentifiers'] ?? [] as $identificador) {
+                            if (
+                                in_array(
+                                    $identificador['type'] ?? '',
+                                    ['ISBN_13', 'ISBN_10'],
+                                    true
+                                )
+                            ) {
+                                $isbn = $identificador['identifier'] ?? '';
+
+                                if (($identificador['type'] ?? '') === 'ISBN_13') {
+                                    break;
+                                }
+                            }
+                        }
+
+                        $data = (string) ($info['publishedDate'] ?? '');
+
+                        $ano = preg_match(
+                            '/\b(?:18|19|20|21)\d{2}\b/',
+                            $data,
+                            $matches
+                        ) ? $matches[0] : '';
+
+                        $livros[] = [
+                            'titulo' => $info['title'],
+                            'sinopse' => $info['description'] ?? '',
+                            'autores' => $info['authors'] ?? [],
+                            'ano_publicacao' => $ano,
+                            'imagem' => $info['imageLinks']['thumbnail']
+                                ?? $info['imageLinks']['smallThumbnail']
+                                ?? '',
+                            'isbn' => $isbn,
+                        ];
+                    }
+                }
+            } catch (\Throwable $e) {
+            }
+
+            // Open Library
+            if (count($livros) < 5) {
+                try {
+                    $resposta = Http::connectTimeout(2)
+                        ->timeout(5)
+                        ->withHeaders(['User-Agent' => 'JornalSales/1.0'])
+                        ->get('https://openlibrary.org/search.json', [
+                            'title' => $termo,
+                            'fields' => 'title,author_name,first_publish_year,cover_i,isbn',
+                            'limit' => 5,
+                        ]);
+
+                    if ($resposta->successful()) {
+                        foreach ($resposta->json('docs', []) as $dados) {
+                            if (empty($dados['title'])) {
+                                continue;
+                            }
+
+                            $isbn = $dados['isbn'][0] ?? '';
+
+                            $imagem = !empty($dados['cover_i'])
+                                ? 'https://covers.openlibrary.org/b/id/'
+                                    . $dados['cover_i'] . '-L.jpg'
+                                : '';
+
+                            $ano = isset($dados['first_publish_year'])
+                                ? (string) $dados['first_publish_year']
+                                : '';
+
+                            $livros[] = [
+                                'titulo' => $dados['title'],
+                                'sinopse' => '',
+                                'autores' => $dados['author_name'] ?? [],
+                                'ano_publicacao' => $ano,
+                                'imagem' => $imagem,
+                                'isbn' => $isbn,
+                            ];
+                        }
+                    }
+                } catch (\Throwable $e) {
+                }
+            }
+
+            $livros = collect($livros)
+                ->unique(fn ($livro) => mb_strtolower(
+                    $livro['titulo'] . '|' . $livro['isbn']
+                ))
+                ->values()
+                ->all();
+
+            if (empty($livros)) {
+                return response()->json([
+                    'erro' => 'Nenhum livro encontrado com esse título. Tente outro termo ou preencha os dados manualmente.',
+                ], 404);
+            }
+
+            return response()->json($livros);
+        } catch (\Throwable $e) {
+            \Log::error('Erro ao buscar livro por título', [
+                'mensagem' => $e->getMessage(),
+            ]);
+
+            return response()->json([
+                'erro' => 'Não foi possível consultar as fontes de livros.',
             ], 500);
         }
     }

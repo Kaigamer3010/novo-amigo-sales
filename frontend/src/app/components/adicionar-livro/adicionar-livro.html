@@ -1,14 +1,54 @@
 <main>
   <div class="h1CadastrarAvisos">
     <h1>{{ editando ? 'EDITAR LIVRO' : 'ADICIONAR LIVRO' }}</h1>
-
   </div>
 
   <div class="container">
     <div class="conteudo">
-
-
       <div class="l-half">
+
+        <h3>Pesquisar por título:</h3>
+
+        <div class="isbnBusca">
+          <input class="info" type="text" id="tituloBusca" name="tituloBusca" placeholder="Ex.: Dom Casmurro"
+            [(ngModel)]="tituloBusca" (keyup.enter)="buscarPorTitulo()">
+
+          <button id="buscarTituloButton" type="button" (click)="buscarPorTitulo()" [disabled]="buscandoPorTitulo">
+            {{ buscandoPorTitulo ? 'Pesquisando...' : 'Pesquisar' }}
+          </button>
+        </div>
+
+        @if (resultadosBusca.length > 0) {
+        <div class="resultadosBusca">
+          <h3>Resultados encontrados:</h3>
+
+          @for (livro of resultadosBusca; track $index) {
+          <div class="resultadoLivro">
+            @if (livro.imagem) {
+            <img class="miniaturaCapa" [src]="livro.imagem" [alt]="'Capa de ' + livro.titulo">
+            }
+
+            <div class="dadosResultado">
+              <strong>{{ livro.titulo }}</strong>
+
+              <p>
+                Autor:
+                {{ autoresDoLivro(livro) }}
+              </p>
+
+              <p>Ano: {{ livro.ano_publicacao || 'Não informado' }}</p>
+              <p>ISBN: {{ livro.isbn || 'Não informado' }}</p>
+
+              <button type="button" (click)="selecionarLivro(livro)">
+                Selecionar este livro
+              </button>
+            </div>
+          </div>
+          }
+        </div>
+        }
+
+        <hr>
 
         <h3>ISBN:</h3>
 
@@ -17,7 +57,7 @@
             (keyup.enter)="buscarLivro()">
 
           <button id="buscarButton" type="button" (click)="buscarLivro()" [disabled]="carregandoBusca">
-            {{ carregandoBusca ? 'Buscando...' : 'Buscar' }}
+            {{ carregandoBusca ? 'Buscando...' : 'Buscar ISBN' }}
           </button>
         </div>
 
@@ -34,7 +74,6 @@
 
         <h3>Gênero:</h3>
         <select class="info" id="generoSelecionado" name="generoSelecionado" [(ngModel)]="generoSelecionado">
-
           <option [ngValue]="null">Selecione um gênero</option>
 
           @for (genero of generos; track genero.id) {
@@ -54,11 +93,8 @@
 
         <h3>Sinopse:</h3>
         <textarea class="sinopse" id="sinopse" name="sinopse" placeholder="Sinopse do livro (opcional)"
-          [(ngModel)]="sinopse">
-        </textarea>
-
+          [(ngModel)]="sinopse"></textarea>
       </div>
-
 
       <div class="r-half">
         <div class="capa">
@@ -69,7 +105,6 @@
           }
         </div>
       </div>
-
     </div>
 
     @if (mensagemErro) {
@@ -84,13 +119,20 @@
     </p>
     }
 
-    <button id="adicionarButton" type="button" (click)="adicionarLivro()" [disabled]="salvando">
-      {{
-      salvando
-      ? (editando ? 'Salvando alterações...' : 'Cadastrando...')
-      : (editando ? 'SALVAR ALTERAÇÕES' : 'ADICIONAR LIVRO')
-      }}
-    </button>
+
+    <div class="botoesFormulario">
+      <button id="limparButton" type="button" (click)="limparFormulario()" [disabled]="salvando">
+        LIMPAR CAMPOS
+      </button>
+
+      <button id="adicionarButton" type="button" (click)="adicionarLivro()" [disabled]="salvando">
+        {{
+        salvando
+        ? (editando ? 'Salvando alterações...' : 'Cadastrando...')
+        : (editando ? 'SALVAR ALTERAÇÕES' : 'ADICIONAR LIVRO')
+        }}
+      </button>
+    </div>
 
   </div>
 </main>

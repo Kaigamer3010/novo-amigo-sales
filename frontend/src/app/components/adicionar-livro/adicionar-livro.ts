@@ -69,6 +69,10 @@ export class AdicionarLivro {
   sinopse = '';
   imagem = '';
 
+  tituloBusca = '';
+  resultadosBusca: DadosLivro[] = [];
+  buscandoPorTitulo = false;
+
   generos: Genero[] = [];
   generoSelecionado: number | null = null;
 
@@ -150,6 +154,7 @@ export class AdicionarLivro {
 
         if (this.editando) {
           const livro = this.dadosDialogo?.livro;
+
           const categoriaAtual = String(
             livro?.categoria ?? ''
           ).trim().toLocaleLowerCase();
@@ -186,7 +191,8 @@ export class AdicionarLivro {
     const isbnLimpo = this.isbn.trim();
 
     if (!isbnLimpo) {
-      this.mensagemErro = 'Digite o ISBN do livro antes de buscar.';
+      this.mensagemErro =
+        'Digite o ISBN do livro antes de buscar.';
       return;
     }
 
@@ -196,19 +202,7 @@ export class AdicionarLivro {
       `${this.apiUrl}/livros/buscar-isbn/${encodeURIComponent(isbnLimpo)}`
     ).subscribe({
       next: (livro) => {
-        this.titulo = livro.titulo ?? '';
-
-        this.autor = Array.isArray(livro.autores)
-          ? livro.autores.join(', ')
-          : String(livro.autores ?? '');
-
-        this.anoPublicacao = String(
-          livro.ano_publicacao ?? ''
-        ).slice(0, 4);
-
-        this.sinopse = livro.sinopse ?? '';
-        this.imagem = livro.imagem ?? '';
-        this.isbn = livro.isbn ?? isbnLimpo;
+        this.preencherFormulario(livro);
 
         this.carregandoBusca = false;
         this.mensagemSucesso = 'Dados do livro encontrados!';
@@ -216,9 +210,10 @@ export class AdicionarLivro {
         this.cdr.markForCheck();
       },
       error: (erro) => {
-        console.error('Erro ao buscar livro:', erro);
+        console.error('Erro ao buscar livro por ISBN:', erro);
 
         this.carregandoBusca = false;
+
         this.mensagemErro =
           erro.error?.erro ??
           erro.error?.message ??
@@ -227,6 +222,82 @@ export class AdicionarLivro {
         this.cdr.markForCheck();
       }
     });
+  }
+
+  buscarPorTitulo(): void {
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+    this.resultadosBusca = [];
+
+    const tituloLimpo = this.tituloBusca.trim();
+
+    if (!tituloLimpo) {
+      this.mensagemErro =
+        'Digite o título do livro que deseja pesquisar.';
+      return;
+    }
+
+    this.buscandoPorTitulo = true;
+
+    this.http.get<DadosLivro[]>(
+      `${this.apiUrl}/livros/buscar-titulo/${encodeURIComponent(tituloLimpo)}`
+    ).subscribe({
+      next: (resposta) => {
+        this.resultadosBusca = Array.isArray(resposta)
+          ? resposta
+          : [];
+
+        this.buscandoPorTitulo = false;
+
+        if (this.resultadosBusca.length === 0) {
+          this.mensagemErro =
+            'Nenhum livro foi encontrado com esse título.';
+        }
+
+        this.cdr.markForCheck();
+      },
+      error: (erro) => {
+        console.error('Erro ao buscar livro por título:', erro);
+
+        this.buscandoPorTitulo = false;
+
+        this.mensagemErro =
+          erro.error?.erro ??
+          erro.error?.message ??
+          'Não foi possível pesquisar pelo título. Verifique se o Laravel está funcionando.';
+
+        this.cdr.markForCheck();
+      }
+    });
+  }
+
+  selecionarLivro(livro: DadosLivro): void {
+    this.preencherFormulario(livro);
+
+    this.resultadosBusca = [];
+    this.tituloBusca = livro.titulo;
+
+    this.mensagemErro = '';
+    this.mensagemSucesso =
+      'Livro selecionado! Confira os dados antes de salvar.';
+
+    this.cdr.markForCheck();
+  }
+
+  private preencherFormulario(livro: DadosLivro): void {
+    this.titulo = livro.titulo ?? '';
+
+    this.autor = Array.isArray(livro.autores)
+      ? livro.autores.join(', ')
+      : String(livro.autores ?? '');
+
+    this.anoPublicacao = String(
+      livro.ano_publicacao ?? ''
+    ).slice(0, 4);
+
+    this.sinopse = livro.sinopse ?? '';
+    this.imagem = livro.imagem ?? '';
+    this.isbn = livro.isbn ?? '';
   }
 
   adicionarLivro(): void {
@@ -257,7 +328,8 @@ export class AdicionarLivro {
     }
 
     if (this.generoSelecionado === null) {
-      this.mensagemErro = 'Selecione um gênero para o livro.';
+      this.mensagemErro =
+        'Selecione um gênero para o livro.';
       return;
     }
 
@@ -301,8 +373,6 @@ export class AdicionarLivro {
       localizacoes: this.localizacoes.trim() || null
     };
 
-    // Um cadastro novo começa com exemplares disponíveis.
-    // Na edição, não alteramos manualmente a disponibilidade.
     if (!this.editando) {
       dados.disponibilidade = true;
     }
@@ -311,15 +381,15 @@ export class AdicionarLivro {
 
     const requisicao = this.editando
       ? this.http.put(
-          `${this.apiUrl}/livros/${this.livroId}`,
-          dados,
-          this.opcoesRequisicao()
-        )
+        `${this.apiUrl}/livros/${this.livroId}`,
+        dados,
+        this.opcoesRequisicao()
+      )
       : this.http.post(
-          `${this.apiUrl}/livros`,
-          dados,
-          this.opcoesRequisicao()
-        );
+        `${this.apiUrl}/livros`,
+        dados,
+        this.opcoesRequisicao()
+      );
 
     requisicao.subscribe({
       next: (resposta) => {
@@ -331,6 +401,7 @@ export class AdicionarLivro {
         );
 
         this.salvando = false;
+
         this.mensagemSucesso = this.editando
           ? 'Livro atualizado com sucesso!'
           : 'Livro cadastrado com sucesso!';
@@ -360,8 +431,8 @@ export class AdicionarLivro {
           this.mensagemErro = errosValidacao
             ? Object.values(errosValidacao).flat().join(' ')
             : erro.error?.erro ??
-              erro.error?.message ??
-              'Confira os dados preenchidos.';
+            erro.error?.message ??
+            'Confira os dados preenchidos.';
         } else {
           this.mensagemErro =
             erro.error?.erro ??
@@ -373,4 +444,38 @@ export class AdicionarLivro {
       }
     });
   }
+
+  autoresDoLivro(livro: DadosLivro): string {
+    return Array.isArray(livro.autores)
+      ? livro.autores.join(', ')
+      : String(livro.autores ?? '');
+  }
+
+
+  limparFormulario(): void {
+    this.isbn = '';
+    this.titulo = '';
+    this.autor = '';
+    this.anoPublicacao = '';
+    this.sinopse = '';
+    this.imagem = '';
+
+    this.tituloBusca = '';
+    this.resultadosBusca = [];
+    this.buscandoPorTitulo = false;
+    this.carregandoBusca = false;
+
+    this.quantidadeExemplares = 1;
+    this.localizacoes = '';
+
+    this.generoSelecionado = this.editando
+      ? this.generoInicialId
+      : null;
+
+    this.mensagemErro = '';
+    this.mensagemSucesso = '';
+
+    this.cdr.markForCheck();
+  }
+
 }
