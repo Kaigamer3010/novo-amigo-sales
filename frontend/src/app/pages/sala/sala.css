@@ -1,0 +1,103 @@
+
+
+
+main{
+    width: 100%;
+    height: 92vh;
+    display: flex;
+    flex-direction: column;
+    padding-bottom: 10px;
+}
+
+.backDash {
+  width: 100%;
+  height: 18vh;
+  background-color: gray;
+}
+
+.sub-main{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: row;
+    padding-left: 210px;
+    padding-right: 210px;
+}
+
+.p-col{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+}
+
+.f-floor{
+    width: 100%;
+    height: 45%;
+    border: 1px solid red;
+    padding: 5px;
+}
+
+.s-floor{
+    width: 100%;
+    height: 55%;
+    border: 1px solid red;
+    padding: 5px;
+}
+
+.s-col{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    padding: 5px;
+    background-color: rgb(159, 237, 237);
+}
+
+.p-andar{
+    width: 100%;
+    height: 60%;
+    border: 1px solid red;
+    padding: 5px;
+}
+
+.s-andar{
+    width: 100%;
+    height: 40%;
+    border: 1px solid red;
+    padding: 5px;
+}
+
+.gradeHorarios{
+    width: 100%;
+    height: 200px;
+    background-color: blue;
+    border-radius: 5px;
+}
+
+
+.cards{
+    display: flex;
+    gap:30px;
+}
+
+#paginacao-aviso{
+    background-color: #faf8f4;
+    display: flex;
+    justify-content: start;
+}
+
+:host ::ng-deep #paginacao-aviso .mat-mdc-paginator-page-size {
+  display: none !important;
+}
+
+:host ::ng-deep #paginacao-aviso .mat-mdc-paginator-range-label {
+  display: none !important;
+}
+
+:host ::ng-deep .paginator-avisos .mat-mdc-icon-button {
+    justify-content: flex-start;
+}
+
+

@@ -1,1 +1,40 @@
-<p>sala works!</p>
+<main>
+  <div class="backDash"></div>
+
+  <div class="sub-main">
+    <div class="p-col">
+
+      <div class="f-floor">
+        <div class="gradeHorarios"></div>
+      </div>
+
+      <div class="s-floor">
+        <h2 style="font-size: 1.4rem;">COMUNICADOS:</h2>
+
+        <div class="cards">
+          @for (aviso of noticiasVisiveis; track aviso.id) {
+            <app-avisos-sala-component
+              [titulo]="aviso.titulo"
+              [descricao]="aviso.descricao">
+            </app-avisos-sala-component>
+        }
+        
+    </div>
+          <mat-paginator
+            id="paginacao-aviso"
+            [length]="noticias.length"
+            [pageSize]="2"
+            hidePageSize="length"
+            [pageSizeOptions]="[2]"
+            (page)="mudarPagina($event)">
+          </mat-paginator>
+      </div>
+
+    </div>
+
+    <div class="s-col">
+      <div class="p-andar"></div>
+      <div class="s-andar"></div>
+    </div>
+  </div>
+</main>
