@@ -1,6 +1,7 @@
 <?php
 namespace App\Http\Controllers;
 
+use App\Models\Emprestimo;
 use App\Models\Exemplar;
 use App\Models\Livro;
 use Illuminate\Http\Request;
@@ -36,12 +37,14 @@ class LivroController extends Controller
 
         if ($disponiveis === null) {
             $disponiveis = $livro->exemplares()
-                ->where('status', 'disponivel')->count();
+                ->where('status', 'disponivel')
+                ->count();
         }
 
         if ($emprestados === null) {
             $emprestados = $livro->exemplares()
-                ->where('status', 'emprestado')->count();
+                ->where('status', 'emprestado')
+                ->count();
         }
 
         $resultado = $livro->toArray();
@@ -138,7 +141,11 @@ class LivroController extends Controller
             for ($i = 1; $i <= $quantidade; $i++) {
                 Exemplar::create([
                     'livro_id' => $livro->id,
-                    'codigo' => sprintf('LIV-%04d-EX-%03d', $livro->id, $i),
+                    'codigo' => sprintf(
+                        'LIV-%04d-EX-%03d',
+                        $livro->id,
+                        $i
+                    ),
                     'localizacao' => $livro->localizacoes,
                     'status' => 'disponivel',
                 ]);
@@ -177,7 +184,12 @@ class LivroController extends Controller
             'imagem' => ['sometimes', 'nullable', 'string', 'max:2048'],
             'categoria' => ['sometimes', 'nullable', 'string', 'max:255'],
             'disponibilidade' => ['sometimes', 'boolean'],
-            'quantidade_exemplares' => ['sometimes', 'required', 'integer', 'min:1'],
+            'quantidade_exemplares' => [
+                'sometimes',
+                'required',
+                'integer',
+                'min:1',
+            ],
             'localizacoes' => ['sometimes', 'nullable', 'string', 'max:255'],
             'generos' => ['sometimes', 'nullable', 'array'],
             'generos.*' => ['integer', 'distinct', 'exists:generos,id'],
@@ -301,6 +313,34 @@ class LivroController extends Controller
                 ->lockForUpdate()
                 ->firstOrFail();
 
+            /*
+             * REGRA 1:
+             * Não permitir excluir nem arquivar um livro que ainda
+             * tenha algum empréstimo sem devolução registrada.
+             *
+             * Verificamos tanto os empréstimos vinculados diretamente
+             * ao livro quanto os vinculados aos exemplares dele.
+             */
+            $temEmprestimoEmAberto = Emprestimo::where('livro_id', $livro->id)
+                ->whereNull('data_devolucao')
+                ->exists()
+                || $livro->exemplares()
+                    ->whereHas('emprestimos', function ($query) {
+                        $query->whereNull('data_devolucao');
+                    })
+                    ->exists();
+
+            if ($temEmprestimoEmAberto) {
+                return response()->json([
+                    'erro' => 'Não é possível excluir este livro porque existe um empréstimo em aberto. Registre a devolução antes de excluí-lo.',
+                ], 422);
+            }
+
+            /*
+             * REGRA 2:
+             * Se existir histórico de empréstimos já finalizados,
+             * arquivamos o livro para preservar o histórico.
+             */
             $temHistorico = $livro->emprestimos()->exists()
                 || $livro->exemplares()
                     ->whereHas('emprestimos')
@@ -316,6 +356,11 @@ class LivroController extends Controller
                 ]);
             }
 
+            /*
+             * REGRA 3:
+             * Se não houver empréstimos abertos nem histórico,
+             * podemos excluir o livro e seus exemplares.
+             */
             $livro->generos()->detach();
             $livro->exemplares()->delete();
             $livro->delete();
@@ -346,7 +391,8 @@ class LivroController extends Controller
                 $soma = 0;
 
                 for ($i = 0; $i < 12; $i++) {
-                    $soma += (int) $base13[$i] * (($i % 2 === 0) ? 1 : 3);
+                    $soma += (int) $base13[$i]
+                        * (($i % 2 === 0) ? 1 : 3);
                 }
 
                 $isbns[] = $base13 . ((10 - ($soma % 10)) % 10);
@@ -424,7 +470,9 @@ class LivroController extends Controller
                     $resposta = Http::connectTimeout(2)
                         ->timeout(5)
                         ->acceptJson()
-                        ->get("https://brasilapi.com.br/api/isbn/v1/{$isbnBusca}");
+                        ->get(
+                            "https://brasilapi.com.br/api/isbn/v1/{$isbnBusca}"
+                        );
 
                     if ($resposta->successful()) {
                         $dados = $resposta->json() ?? [];
@@ -451,16 +499,16 @@ class LivroController extends Controller
                 foreach ($isbns as $isbnBusca) {
                     try {
                         $resposta = Http::connectTimeout(2)
-                            ->timeout(4)
-                            ->acceptJson()
-                            ->get(
-                                'https://www.googleapis.com/books/v1/volumes',
-                                [
-                                    'q' => "isbn:{$isbnBusca}",
-                                    'key' => $chave,
-                                    'maxResults' => 5,
-                                ]
-                            );
+                        ->timeout(4)
+                        ->acceptJson()
+                        ->get(
+                            'https://www.googleapis.com/books/v1/volumes',
+                            [
+                                'q' => "isbn:{$isbnBusca}",
+                                'key' => $chave,
+                                'maxResults' => 5,
+                            ]
+                        );
 
                         if (!$resposta->successful()) {
                             continue;
