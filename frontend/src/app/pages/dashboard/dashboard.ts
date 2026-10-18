@@ -2,11 +2,17 @@
 import {
   Component,
   OnInit,
-  ChangeDetectorRef,
-  inject
+  LOCALE_ID,
+  inject,
+  ChangeDetectorRef
 } from '@angular/core';
 
-import { DatePipe } from '@angular/common';
+import {
+  DatePipe,
+  registerLocaleData
+} from '@angular/common';
+
+import localePt from '@angular/common/locales/pt';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { FormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -17,12 +23,17 @@ import { AdicionarCategoria } from '../../components/adicionar-categoria/adicion
 import { GerenciarCategorias } from '../../components/gerenciar-categorias/gerenciar-categorias';
 import { GerenciarLivros } from '../../components/gerenciar-livros/gerenciar-livros';
 
+registerLocaleData(localePt);
+
 type SecaoDashboard = 'inicio' | 'emprestimos' | 'atrasados';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
   imports: [FormsModule, MatDialogModule, DatePipe],
+  providers: [
+    { provide: LOCALE_ID, useValue: 'pt-BR' }
+  ],
   templateUrl: './dashboard.html',
   styleUrl: './dashboard.css'
 })
@@ -51,14 +62,12 @@ export class Dashboard implements OnInit {
   nomeAluno = '';
   livroSelecionadoId: number | null = null;
 
-  // Pesquisa de livros para registrar empréstimos.
   buscaLivroEmprestimo = '';
   mostrarResultadosLivros = false;
 
   dataEmprestimo = this.dataHojeLocal();
   prazoDevolucaoDias = 7;
 
-  // Pesquisas das tabelas.
   buscaEmprestimos = '';
   buscaAtrasados = '';
 
@@ -73,6 +82,12 @@ export class Dashboard implements OnInit {
   ngOnInit(): void {
     this.carregarLivrosRecentes();
     this.carregarCategorias();
+    this.carregarEmprestimos();
+    this.carregarEmprestimosAtrasados();
+  }
+
+  private atualizarTela(): void {
+    this.cdr.detectChanges();
   }
 
   private dataHojeLocal(): string {
@@ -183,7 +198,7 @@ export class Dashboard implements OnInit {
       this.carregarEmprestimosAtrasados();
     }
 
-    this.cdr.detectChanges();
+    this.atualizarTela();
   }
 
   carregarLivrosRecentes(): void {
@@ -274,10 +289,11 @@ export class Dashboard implements OnInit {
           this.limparLivroSelecionado();
         }
 
-        this.cdr.detectChanges();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao carregar livros:', erro);
+        this.atualizarTela();
       }
     });
   }
@@ -295,12 +311,14 @@ export class Dashboard implements OnInit {
       return [];
     }
 
-    return this.livrosParaEmprestimo.filter((livro: any) => {
-      const titulo = this.normalizarTexto(livro.titulo);
-      const isbn = this.obterIsbn(livro);
+    return this.livrosParaEmprestimo
+      .filter((livro: any) => {
+        const titulo = this.normalizarTexto(livro.titulo);
+        const isbn = this.obterIsbn(livro);
 
-      return titulo.includes(termo) || isbn.includes(termo);
-    }).slice(0, 10);
+        return titulo.includes(termo) || isbn.includes(termo);
+      })
+      .slice(0, 10);
   }
 
   selecionarLivroEmprestimo(livro: any): void {
@@ -316,8 +334,6 @@ export class Dashboard implements OnInit {
 
     this.mensagemEmprestimoErro = '';
     this.mensagemEmprestimoSucesso = '';
-
-    this.cdr.detectChanges();
   }
 
   limparLivroSelecionado(): void {
@@ -367,7 +383,6 @@ export class Dashboard implements OnInit {
     });
   }
 
-  // Filtra os empréstimos atrasados por aluno, título ou ISBN.
   get emprestimosAtrasadosFiltrados(): any[] {
     const termo = this.normalizarTexto(this.buscaAtrasados);
 
@@ -401,7 +416,6 @@ export class Dashboard implements OnInit {
     });
   }
 
-  // Aceita os nomes de campos ISBN mais comuns usados pela API.
   private obterIsbn(livro: any): string {
     if (!livro) {
       return '';
@@ -456,10 +470,11 @@ export class Dashboard implements OnInit {
           .filter(Boolean);
 
         this.totalCategorias = this.categorias.length;
-        this.cdr.detectChanges();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao carregar categorias:', erro);
+        this.atualizarTela();
       }
     });
   }
@@ -606,7 +621,7 @@ export class Dashboard implements OnInit {
         );
 
         this.carregandoEmprestimos = false;
-        this.cdr.detectChanges();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao carregar empréstimos:', erro);
@@ -617,7 +632,7 @@ export class Dashboard implements OnInit {
           'Não foi possível carregar os empréstimos.'
         );
 
-        this.cdr.detectChanges();
+        this.atualizarTela();
       }
     });
   }
@@ -636,7 +651,7 @@ export class Dashboard implements OnInit {
           (emprestimo: any) => this.emprestimoEstaAtivo(emprestimo)
         );
 
-        this.cdr.detectChanges();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao carregar empréstimos atrasados:', erro);
@@ -646,7 +661,7 @@ export class Dashboard implements OnInit {
           'Não foi possível carregar a lista de atrasados.'
         );
 
-        this.cdr.detectChanges();
+        this.atualizarTela();
       }
     });
   }
@@ -725,8 +740,7 @@ export class Dashboard implements OnInit {
         this.carregarLivrosRecentes();
         this.carregarEmprestimos();
         this.carregarEmprestimosAtrasados();
-
-        this.cdr.detectChanges();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao registrar empréstimo:', erro);
@@ -738,7 +752,7 @@ export class Dashboard implements OnInit {
         );
 
         this.carregarLivrosRecentes();
-        this.cdr.detectChanges();
+        this.atualizarTela();
       }
     });
   }
@@ -782,11 +796,10 @@ export class Dashboard implements OnInit {
         this.mensagemEmprestimoSucesso =
           'Devolução registrada com sucesso!';
 
-        this.cdr.detectChanges();
-
         this.carregarLivrosRecentes();
         this.carregarEmprestimos();
         this.carregarEmprestimosAtrasados();
+        this.atualizarTela();
       },
       error: (erro) => {
         console.error('Erro ao registrar devolução:', erro);
@@ -796,7 +809,7 @@ export class Dashboard implements OnInit {
           'Não foi possível registrar a devolução.'
         );
 
-        this.cdr.detectChanges();
+        this.atualizarTela();
       }
     });
   }
