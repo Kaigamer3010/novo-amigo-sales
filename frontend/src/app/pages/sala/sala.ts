@@ -23,11 +23,15 @@ export class Sala {
     private cdr: ChangeDetectorRef
   ) {}
 
-  abrirGradeHorarios() {
-      this.dialog.open(GradeHorariosComponent, {
-        panelClass: 'cardapio-dialog'
-      });
-    }
+ abrirGradeHorarios() {
+  this.dialog.open(GradeHorariosComponent, {
+    width: '800px',
+    maxWidth: '95vw',
+    height: '100%',
+    maxHeight: '310px',
+    panelClass: 'cardapio-dialog'
+  });
+}
 
  noticias: Aviso[] = [];
 noticiasVisiveis: Aviso[] = [];
