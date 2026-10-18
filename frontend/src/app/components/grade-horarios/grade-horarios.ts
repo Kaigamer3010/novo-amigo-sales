@@ -1,7 +1,10 @@
 
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
+
 import { GradeHorarios } from '../../models/gradeHorario';
+import { HorariosGradeService } from '../../service/horarios-grade';
+import { AuthService } from '../../service/auth';
 
 @Component({
   selector: 'app-grade-horarios',
@@ -10,48 +13,14 @@ import { GradeHorarios } from '../../models/gradeHorario';
   templateUrl: './grade-horarios.html',
   styleUrl: './grade-horarios.css',
 })
-export class GradeHorariosComponent {
-  horarios: GradeHorarios[] = [
-    // Segunda-feira
-    { id: 1, sala_id: 1, dia_semana: 'segunda', materia: 'Matemática', hora_inicio: '07:00' },
-    { id: 2, sala_id: 1, dia_semana: 'segunda', materia: 'Português', hora_inicio: '07:50' },
-    { id: 3, sala_id: 1, dia_semana: 'segunda', materia: 'Desenvolvimento de Sistemas', hora_inicio: '08:40' },
-    { id: 4, sala_id: 1, dia_semana: 'segunda', materia: 'Inglês', hora_inicio: '09:50' },
-    { id: 5, sala_id: 1, dia_semana: 'segunda', materia: 'Banco de Dados', hora_inicio: '10:40' },
-    { id: 6, sala_id: 1, dia_semana: 'segunda', materia: 'Programação Web', hora_inicio: '07:00' },
+export class GradeHorariosComponent implements OnInit {
+  private horariosService = inject(HorariosGradeService);
+  private authService = inject(AuthService);
 
-    // Terça-feira
-    { id: 7, sala_id: 1, dia_semana: 'terca', materia: 'Física', hora_inicio: '07:50' },
-    { id: 8, sala_id: 1, dia_semana: 'terca', materia: 'História', hora_inicio: '08:40' },
-    { id: 9, sala_id: 1, dia_semana: 'terca', materia: 'Banco de Dados', hora_inicio: '09:50' },
-    { id: 10, sala_id: 1, dia_semana: 'terca', materia: 'Matemática', hora_inicio: '07:00' },
-    { id: 11, sala_id: 1, dia_semana: 'terca', materia: 'Química', hora_inicio: '07:50' },
-    { id: 12, sala_id: 1, dia_semana: 'terca', materia: 'Desenvolvimento de Sistemas', hora_inicio: '08:40' },
+  horarios: GradeHorarios[] = [];
 
-    // Quarta-feira
-    { id: 13, sala_id: 1, dia_semana: 'quarta', materia: 'Educação Física', hora_inicio: '09:50' },
-    { id: 14, sala_id: 1, dia_semana: 'quarta', materia: 'Português', hora_inicio: '07:00' },
-    { id: 15, sala_id: 1, dia_semana: 'quarta', materia: 'Programação Web', hora_inicio: '07:50' },
-    { id: 16, sala_id: 1, dia_semana: 'quarta', materia: 'Geografia', hora_inicio: '08:40' },
-    { id: 17, sala_id: 1, dia_semana: 'quarta', materia: 'Inglês', hora_inicio: '09:50' },
-
-    // Quinta-feira
-    { id: 18, sala_id: 1, dia_semana: 'quinta', materia: 'Banco de Dados', hora_inicio: '07:00' },
-    { id: 19, sala_id: 1, dia_semana: 'quinta', materia: 'Matemática', hora_inicio: '07:50' },
-    { id: 20, sala_id: 1, dia_semana: 'quinta', materia: 'Desenvolvimento de Sistemas', hora_inicio: '08:40' },
-    { id: 21, sala_id: 1, dia_semana: 'quinta', materia: 'Filosofia', hora_inicio: '09:50' },
-    { id: 22, sala_id: 1, dia_semana: 'quinta', materia: 'Filosofia', hora_inicio: '09:50' },
-    { id: 23, sala_id: 1, dia_semana: 'quinta', materia: 'Filosofia', hora_inicio: '09:50' },
-    
-
-    // Sexta-feira
-    { id: 24, sala_id: 1, dia_semana: 'sexta', materia: 'Banco de Dados', hora_inicio: '07:00' },
-    { id: 25, sala_id: 1, dia_semana: 'sexta', materia: 'Matemática', hora_inicio: '07:50' },
-    { id: 26, sala_id: 1, dia_semana: 'sexta', materia: 'Desenvolvimento de Sistemas', hora_inicio: '08:40' },
-    { id: 27, sala_id: 1, dia_semana: 'sexta', materia: 'Filosofia', hora_inicio: '09:50' },
-    { id: 28, sala_id: 1, dia_semana: 'sexta', materia: 'Filosofia', hora_inicio: '09:50' },
-    { id: 29, sala_id: 1, dia_semana: 'sexta', materia: 'Filosofia', hora_inicio: '09:50' },
-  ];
+  carregando = true;
+  erro = '';
 
   diaSelecionado = 'segunda';
 
@@ -62,6 +31,37 @@ export class GradeHorariosComponent {
     { dia_semana: 'quinta', letra: 'Q', nome: 'Quinta-feira' },
     { dia_semana: 'sexta', letra: 'S', nome: 'Sexta-feira' },
   ];
+
+  ngOnInit(): void {
+    this.carregarHorarios();
+  }
+
+  carregarHorarios(): void {
+    this.carregando = true;
+    this.erro = '';
+
+    
+    const salaId = this.authService.obterUsuario()?.sala_id ?? 1;
+
+    this.horariosService.obterHorario(salaId).subscribe({
+      next: (horarios) => {
+        this.horarios = horarios;
+        this.carregando = false;
+      },
+      error: (erro) => {
+        console.error('Erro ao carregar horários:', erro);
+
+        this.erro =
+          erro.status === 401
+            ? 'Faça login para consultar os horários.'
+            : erro.status === 403
+              ? 'Você não tem autorização para consultar os horários.'
+              : 'Não foi possível carregar os horários. Verifique o servidor.';
+
+        this.carregando = false;
+      },
+    });
+  }
 
   selecionarDia(dia: string): void {
     this.diaSelecionado = dia;

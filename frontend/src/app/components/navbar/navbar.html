@@ -6,27 +6,22 @@
     <img id="hamburguer" src="images/hamburger.png" alt="">
   </a>
 
- 
-<div class="perfil-position">
-  @if (auth.usuario$ | async; as usuario) {
+
+  <div class="perfil-position">
+    @if (auth.usuario$ | async; as usuario) {
     <div class="perfil-login">
-      <button
-        type="button"
-        class="btn-perfil"
-        (click)="abrirPerfil()"
-        title="Meu perfil"
-      >
+      <button type="button" class="btn-perfil" (click)="abrirPerfil()" title="Meu perfil">
         <img src="images/user.png" alt="Meu perfil">
       </button>
     </div>
-  } @else {
+    } @else {
     <div class="perfil-login">
       <button type="button" (click)="abrirLogin()">
         <img src="images/user.png" alt="Entrar">
       </button>
     </div>
-  }
-</div>
+    }
+  </div>
 
 
 
@@ -44,18 +39,20 @@
       <a class="rotas" routerLink="/pg-biblioteca">
         <ul>BIBLIOTECA</ul>
       </a>
-      @if (auth.temCargo(['aluno'])) {
+
+      @if (auth.temCargo(['aluno', 'administrador'])) {
       <a class="rotas" routerLink="/pg-sala">
-        <ul>SALA</ul>
+        <ul>ÁREA DO ALUNO</ul>
       </a>
       }
+
       @if (auth.temCargo(['administrador'])) {
       <a class="rotas" routerLink="/editar-pg-inicial">
         <ul>EDITAR PÁGINA INICIAL</ul>
       </a>
       }
       @if (auth.temCargo(['bibliotecario', 'administrador'])) {
-        <a class="rotas" routerLink="/pg-dashboard">
+      <a class="rotas" routerLink="/pg-dashboard">
         <ul>DASHBOARD</ul>
       </a>
       }

@@ -1,39 +1,134 @@
-/* -------------------------- config de avisos----------------------------------- */
 
-.aviso-card{
-    width: 190px;
-    height: 210px;
-    border: 0.5px solid rgba(128, 128, 128, 0.444);
-    border-radius: 5px;
-    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.325);
-    background-color: white;
-    padding: 10px;   
-    padding-top: 10px;
-    overflow: hidden;
+/* ========================================
+   CARDS DE AVISOS — JORNAL SALES
+======================================== */
+
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+
+  --cor-principal: var(--primary-color, #721111);
+  --cor-texto: var(--text-color, #252525);
+  --cor-secundaria: #666666;
+  --cor-borda: #bdbbbb;
 }
 
-hr{
-    opacity: 100;
-    border-top: 2.5px solid;
+* {
+  box-sizing: border-box;
 }
 
-.titulo-h5{
-    width: 100%;
-    height: 15%;
+/* ========================================
+   CARD
+======================================== */
+
+.aviso-card {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  min-height: 170px;
+  height: auto;
+  padding: 16px;
+
+  background: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 10px;
+  box-shadow: 0 3px 12px rgb(0 0 0 / 4%);
+
+  overflow-wrap: anywhere;
+  overflow: hidden;
+
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.card-titulo{
-    font-family: var(--font-league-spartan);
-    font-size: 1.3rem ;
-    color: black;
-    font-weight: bold;
-    margin-top: 25px;
-    line-height: 1;
+.aviso-card:hover {
+  border-color: #d8baba;
+  box-shadow: 0 4px 14px rgb(0 0 0 / 7%);
 }
 
-.p-conteudo{
-    color: gray;
-    font-family: arial;
-    font-size: 0.9rem ;
-    line-height: 1.2;
+/* ========================================
+   TÍTULO
+======================================== */
+
+.titulo-h5 {
+  width: 100%;
+  height: auto;
+  margin: 0;
+  padding: 0;
+}
+
+.card-titulo {
+  margin: 0;
+  color: var(--cor-texto);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   SEPARADOR
+======================================== */
+
+.aviso-card hr,
+hr {
+  width: 100%;
+  margin: 10px 0;
+  border: 0;
+  border-top: 2px solid var(--cor-principal);
+  opacity: 0.85;
+}
+
+/* ========================================
+   TEXTO DO AVISO
+======================================== */
+
+.p-conteudo {
+  margin: 0;
+  color: var(--cor-secundaria);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 0.86rem;
+  font-weight: 400;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+}
+
+/* ========================================
+   CELULARES
+======================================== */
+
+@media (max-width: 650px) {
+  .aviso-card {
+    min-height: 0;
+    padding: 14px;
+    border-radius: 8px;
+  }
+
+  .card-titulo {
+    font-size: 1rem;
+  }
+
+  .aviso-card hr,
+  hr {
+    margin: 8px 0;
+  }
+
+  .p-conteudo {
+    font-size: 0.84rem;
+    line-height: 1.5;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .aviso-card {
+    transition: none;
+  }
 }

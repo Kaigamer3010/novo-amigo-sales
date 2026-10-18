@@ -1,71 +1,214 @@
-<main>
-    <div class="first-floor">
-        <div class="carrossel">
-            <div class="carrossel-half">
-                <h5>Bem-vindo(a) ao Sales!</h5>
-                <h3>O jornal da escola <br> Técnica de Tatuí</h3>
-                <a href="https://etecsalesgomes.cps.sp.gov.br/a-etec-sales-gomes/"><button id="saiba-mais">SAIBA MAIS →</button></a>
+
+<main class="pagina-inicial">
+  <section class="hero">
+    <img
+      class="hero-imagem"
+      src="/images/etec-carrosel.jpg"
+      alt="ETEC Sales Gomes"
+    />
+
+    <div class="hero-sobreposicao"></div>
+
+    <div class="hero-conteudo">
+      <span class="hero-identificacao">
+        <span class="hero-linha"></span>
+        JORNAL SALES · ETEC SALES GOMES
+      </span>
+
+      <h1>
+        Tudo o que acontece<br />
+        na nossa <span>escola.</span>
+      </h1>
+
+      <p>
+        Notícias, informações e novidades para manter
+        você conectado à comunidade escolar.
+      </p>
+
+      <a
+        class="hero-botao"
+        href="https://etecsalesgomes.cps.sp.gov.br/a-etec-sales-gomes/"
+        target="_blank"
+        rel="noopener noreferrer"
+      >
+        CONHEÇA A NOSSA ESCOLA
+        <span>↗</span>
+      </a>
+    </div>
+
+    <div class="hero-inferior">
+      <span>INFORMAÇÃO QUE CONECTA</span>
+      <a href="#conteudo">DESCUBRA MAIS <span>↓</span></a>
+    </div>
+  </section>
+
+  <div class="conteudo-pagina" id="conteudo">
+    <section class="secao-atalhos" aria-label="Acessos rápidos">
+      <a class="atalho-card" routerLink="/pg-biblioteca">
+        <div class="atalho-cabecalho">
+          <span class="atalho-icone">▤</span>
+          <span class="atalho-seta">↗</span>
+        </div>
+
+        <div class="atalho-corpo">
+          <h2>Biblioteca</h2>
+          <p>Encontre livros e explore novos conhecimentos.</p>
+        </div>
+
+        <span class="atalho-acao">ACESSAR BIBLIOTECA <span>→</span></span>
+      </a>
+
+      <button
+        type="button"
+        class="atalho-card"
+        (click)="abrirCardapio()"
+      >
+        <div class="atalho-cabecalho">
+          <span class="atalho-icone">✳</span>
+          <span class="atalho-seta">↗</span>
+        </div>
+
+        <div class="atalho-corpo">
+          <h2>Cardápio escolar</h2>
+          <p>Consulte as opções de alimentação da escola.</p>
+        </div>
+
+        <span class="atalho-acao">CONSULTAR CARDÁPIO <span>→</span></span>
+      </button>
+
+      <a class="atalho-card" href="#avisos">
+        <div class="atalho-cabecalho">
+          <span class="atalho-icone">◷</span>
+          <span class="atalho-seta">↓</span>
+        </div>
+
+        <div class="atalho-corpo">
+          <h2>Avisos e notícias</h2>
+          <p>Acompanhe os comunicados e fique por dentro.</p>
+        </div>
+
+        <span class="atalho-acao">VER COMUNICADOS <span>→</span></span>
+      </a>
+    </section>
+
+    <section class="secao-avisos" id="avisos">
+      <div class="cabecalho-secao">
+        <div class="cabecalho-texto">
+          <span class="sobretitulo">INFORMAÇÃO EM DESTAQUE</span>
+          <h2>Novidades da escola<span class="ponto-titulo">.</span></h2>
+          <p>Confira os últimos avisos publicados no Jornal Sales.</p>
+        </div>
+
+        <div class="avisos-total">
+          <span class="avisos-total-numero">{{ noticias.length }}</span>
+          <span class="avisos-total-texto">
+            {{ noticias.length === 1 ? 'aviso publicado' : 'avisos publicados' }}
+          </span>
+        </div>
+      </div>
+
+      @if (carregandoAvisos) {
+        <div class="estado-avisos">
+          <span class="estado-icone estado-carregando">◷</span>
+          <p>Carregando os avisos...</p>
+        </div>
+      } @else if (noticias.length === 0) {
+        <div class="estado-avisos">
+          <span class="estado-icone">i</span>
+          <p>Nenhum aviso disponível no momento.</p>
+        </div>
+      } @else {
+        <div class="grade-avisos">
+          @for (noticia of noticiasVisiveis; track noticia.id) {
+            <app-aviso
+              [titulo]="noticia.titulo"
+              [descricao]="noticia.descricao"
+            ></app-aviso>
+          }
+        </div>
+
+        @if (noticias.length > 4) {
+          <div class="paginacao-avisos">
+            <mat-paginator
+              id="paginacao-aviso"
+              [length]="noticias.length"
+              [pageSize]="4"
+              [pageSizeOptions]="[4]"
+              [hidePageSize]="true"
+              (page)="mudarPagina($event)"
+            ></mat-paginator>
+          </div>
+        }
+      }
+    </section>
+
+    <section class="secao-escola">
+      <div class="escola-galeria">
+        <div class="galeria-foto-principal">
+          <img
+            src="/images/condutor-sobe.jpeg"
+            alt="Atividade da comunidade escolar"
+            loading="lazy"
+          />
+          <span class="galeria-legenda">NOSSA COMUNIDADE</span>
+        </div>
+
+        <div class="galeria-foto-secundaria">
+          <img
+            src="/images/etec-sobre-1.webp"
+            alt="Espaço da ETEC Sales Gomes"
+            loading="lazy"
+          />
+        </div>
+
+        <span class="galeria-detalhe" aria-hidden="true">SG.</span>
+      </div>
+
+      <div class="escola-informacoes">
+        <span class="sobretitulo">CONHEÇA A ETEC SALES GOMES</span>
+
+        <h2>
+          Conhecimento para hoje.
+          <span>Oportunidades para o futuro.</span>
+        </h2>
+
+        <p class="escola-descricao">
+          A ETEC Sales Gomes faz parte da trajetória de muitos estudantes,
+          oferecendo formação, aprendizado e preparação profissional.
+          Um espaço para desenvolver habilidades, descobrir interesses
+          e construir novos caminhos.
+        </p>
+
+        <div class="escola-pilares">
+          <div class="escola-pilar">
+            <span class="pilar-numero">01</span>
+            <div>
+              <h3>Aprendizado</h3>
+              <p>Conhecimento que acompanha o estudante.</p>
             </div>
+          </div>
+
+          <div class="escola-pilar">
+            <span class="pilar-numero">02</span>
+            <div>
+              <h3>Formação</h3>
+              <p>Desenvolvimento acadêmico e profissional.</p>
+            </div>
+          </div>
         </div>
-    </div>
 
-    <div class="second-floor">
-        <div class="f-half">
-            <a class="biblioteca-box" routerLink="/pg-biblioteca"></a>
+        <a
+          class="escola-botao"
+          href="https://etecsalesgomes.cps.sp.gov.br/a-etec-sales-gomes/"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          SAIBA MAIS SOBRE A ESCOLA
+          <span>↗</span>
+        </a>
+      </div>
+    </section>
 
-            <button class="cardapio-box" (click)="abrirCardapio()" ></button>
-        </div>
-
-
-        
-<div class="s-half">
-  <h1 id="avisos-h1">AVISOS</h1>
-
-  @if (carregandoAvisos) {
-  <p>Carregando avisos...</p>
-} @else if (noticias.length === 0) {
-  <p>Nenhum aviso disponível.</p>
-}
-
-  <div class="cards">
-    @for (noticia of noticiasVisiveis; track noticia.id) {
-      <app-aviso
-        [titulo]="noticia.titulo"
-        [descricao]="noticia.descricao">
-      </app-aviso>
-    }
+  
   </div>
-
-  <mat-paginator
-    id="paginacao-aviso"
-    [length]="noticias.length"
-    [pageSize]="4"
-    [pageSizeOptions]="[4]"
-    (page)="mudarPagina($event)">
-  </mat-paginator>
-</div>
-
-
-    </div>
-
-    <div class="third-floor">
-
-        <div class="metade-esquerda">
-                <div id="foto-sobre-1"><div class="sombra-lateral"></div></div>
-                <div id="foto-sobre-2"><div class="sombra-lateral"></div></div>
-        </div>
-        <div class="metade-direita">
-                <h1>Conheça nossa escola</h1>
-                <div class="textoEscola">
-                    <p>O desenvolvimento assegura performance satisfatórios. O mercado proporciona crescimento consistentes. A empresa oferece inovação significativos. O projeto apresenta resultados consistentes. O desenvolvimento garante qualidade satisfatórios. <br> A empresa garante qualidade significativos. Nosso objetivo garante qualidade relevantes. <br> O desenvolvimento assegura performance satisfatórios. O mercado proporciona crescimento consistentes. A empresa oferece inovação significativos. </p>
-                </div>
-                <div class="informacoes3floor">
-                    <div class="primeiraInf"><h6>Ensino Médio e Técnico</h6></div>
-                    <div class="segundaInf"><h6>Mais de 90 Anos</h6></div>
-                </div>
-                <a href="https://etecsalesgomes.cps.sp.gov.br/a-etec-sales-gomes/"><button id="saiba-mais">SAIBA MAIS →</button></a>
-        </div>
-
-    </div>
-
 </main>

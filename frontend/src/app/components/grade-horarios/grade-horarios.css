@@ -1,131 +1,289 @@
 
+/* ========================================
+   GRADE DE HORÁRIOS — JORNAL SALES
+======================================== */
+
 :host {
   display: block;
+  width: 100%;
   height: 100%;
   min-height: 0;
+
+  --cor-principal: var(--primary-color, #721111);
+  --cor-texto: var(--text-color, #252525);
+  --cor-secundaria: #666666;
+  --cor-borda: #e6e6e6;
+  --cor-fundo: #f8f8f8;
+  --raio-card: 10px;
+  --sombra-card: 0 3px 12px rgb(0 0 0 / 4%);
+
+  font-family: var(--font-montserrat, Arial, sans-serif);
 }
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   ÁREA PRINCIPAL
+======================================== */
 
 main {
   width: 100%;
   height: 100%;
-  box-sizing: border-box;
-  background-color: var(--background-color);
   overflow-y: auto;
+  background: #ffffff;
+  color: var(--cor-texto);
+  scrollbar-width: thin;
+  scrollbar-color: #d0d0d0 transparent;
+}
+
+/* ========================================
+   CABEÇALHO
+======================================== */
+
+.head {
+  width: 100%;
+  padding: 18px 20px;
+  background: var(--cor-principal);
+  border-radius: 10px 10px 0 0;
 }
 
 h1 {
-    font-size: 1.7rem;
-    color: rgb(255, 249, 241);
-    margin: 0;
+  margin: 0;
+  color: #ffffff;
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.4;
 }
 
-h3 {
-    font-family: var(--font-montserrat);
-    font-size: 1.3rem;
+/* ========================================
+   CONTEÚDO
+======================================== */
+
+.subMain {
+  padding: 18px;
+  background: #ffffff;
+}
+
+/* ========================================
+   SELEÇÃO DOS DIAS DA SEMANA
+======================================== */
+
+.dias {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  padding: 4px 0 14px;
 }
 
 .inicialDaSemana {
-    font-family: var(--font-montserrat);
-    font-size: 1.4rem;
-    width: 80px;
-    height: 60px;
-    background: #f5f5f5;
-    border: none;
-    border-radius: 5px;
-    margin-left: 5px;
-    margin-right: 5px;
-    box-shadow: 1px 1px 10px rgba(0, 0, 0, 0.39);
-    position: relative;
-    z-index: 1;
-    cursor: pointer;
+  position: relative;
+  z-index: 1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 80px;
+  height: 54px;
+  margin: 0;
+  padding: 8px;
+
+  color: #555555;
+  background: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: 8px;
+
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 1rem;
+  font-weight: 600;
+
+  cursor: pointer;
+  transition:
+    color 160ms ease,
+    background-color 160ms ease,
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.inicialDaSemana:hover {
+  color: var(--cor-principal);
+  background: #fcf8f8;
+  border-color: #d8baba;
 }
 
 .inicialDaSemana.diaSelecionado {
-    background-color: white;
+  color: #ffffff;
+  background: var(--cor-principal);
+  border-color: var(--cor-principal);
+  box-shadow: 0 2px 6px rgb(114 17 17 / 16%);
 }
 
-.subMain {
-    padding: 10px;
+.inicialDaSemana:focus-visible {
+  outline: 2px solid var(--cor-principal);
+  outline-offset: 3px;
 }
 
-.head {
-    width: 100%;
-    box-sizing: border-box;
-    background-color: var(--secondary-color);
-    padding: 10px 15px;
-}
-
-.dias {
-    display: flex;
-    justify-content: center;
-    gap: 0;
-}
+/* ========================================
+   QUADRO DE AULAS
+======================================== */
 
 .conteudo {
-    box-sizing: border-box;
-    padding: 20px 26px;
-    min-height: 160px;
-    background-color: white;
-    margin-top: -5px;
-    box-shadow: 0px 8px 10px rgba(0, 0, 0, 0.195);
-    position: relative;
-    z-index: 5;
+  position: relative;
+  z-index: 2;
 
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    column-gap: 24px;
-    row-gap: 8px;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 22px;
+  row-gap: 0;
+
+  width: 100%;
+  min-height: 150px;
+  margin-top: 0;
+  padding: 8px 20px;
+
+  background: #ffffff;
+  border: 1px solid var(--cor-borda);
+  border-radius: var(--raio-card);
+  box-shadow: var(--sombra-card);
 }
 
+/* ========================================
+   CADA AULA
+======================================== */
+
 .aula {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-width: 0;
+  padding: 15px 12px;
+  border-bottom: 1px solid #eeeeee;
+}
+
+.aula:nth-last-child(-n + 2) {
+  border-bottom: none;
 }
 
 .hora {
-    font-family: var(--font-montserrat);
-    font-size: 0.9rem;
-    color: gray;
+  margin-bottom: 5px;
+  color: var(--cor-secundaria);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.5;
 }
 
 .materia {
-    font-family: var(--font-montserrat);
-    font-size: 1.2rem;
-    color: #111;
-    overflow-wrap: anywhere;
+  color: var(--cor-texto);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.45;
+  overflow-wrap: anywhere;
 }
 
-.sem-aulas {
-    grid-column: 1 / -1;
-    text-align: center;
-    color: gray;
-    font-family: var(--font-montserrat);
-    margin: auto;
-}
+/* ========================================
+   PERÍODO
+======================================== */
 
 .periodoh3 {
-    font-size: 1.05rem;
-    font-family: Arial, sans-serif;
-    color: gray;
+  margin: 20px 0 10px;
+  color: var(--cor-principal);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 0.95rem;
+  font-weight: 700;
 }
 
+/* ========================================
+   DIA SEM AULAS
+======================================== */
+
+.sem-aulas {
+  grid-column: 1 / -1;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  min-height: 120px;
+  margin: 0;
+  padding: 20px;
+
+  color: var(--cor-secundaria);
+  font-family: var(--font-montserrat, Arial, sans-serif);
+  font-size: 0.9rem;
+  line-height: 1.6;
+  text-align: center;
+}
+
+/* ========================================
+   TELAS MENORES
+======================================== */
+
 @media (max-width: 500px) {
-    .inicialDaSemana {
-        width: 100%;
-        max-width: 80px;
-        height: 50px;
-        font-size: 1.2rem;
-        margin-left: 3px;
-        margin-right: 3px;
-    }
+  .head {
+    padding: 15px 16px;
+  }
 
-    .conteudo {
-        padding: 16px;
-        column-gap: 12px;
-    }
+  h1 {
+    font-size: 1.15rem;
+  }
 
-    .materia {
-        font-size: 1rem;
-    }
+  .subMain {
+    padding: 12px;
+  }
+
+  .dias {
+    gap: 5px;
+    padding-bottom: 12px;
+  }
+
+  .inicialDaSemana {
+    flex: 1;
+    width: auto;
+    max-width: 80px;
+    height: 46px;
+    padding: 6px 3px;
+    font-size: 0.85rem;
+  }
+
+  .conteudo {
+    grid-template-columns: minmax(0, 1fr);
+    padding: 4px 14px;
+  }
+
+  .aula {
+    padding: 13px 8px;
+    border-bottom: 1px solid #eeeeee;
+  }
+
+  .aula:last-child {
+    border-bottom: none;
+  }
+
+  .hora {
+    font-size: 0.78rem;
+  }
+
+  .materia {
+    font-size: 0.95rem;
+  }
+
+  .periodoh3 {
+    margin-top: 16px;
+  }
+}
+
+/* ========================================
+   ACESSIBILIDADE
+======================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  .inicialDaSemana {
+    transition: none;
+  }
 }

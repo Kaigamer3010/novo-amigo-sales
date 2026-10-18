@@ -1,24 +1,58 @@
 
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Injectable, inject } from '@angular/core';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { Observable, map } from 'rxjs';
 import { GradeHorarios } from '../models/gradeHorario';
+
+interface HorarioLaravel {
+  id: number;
+  sala_id: number;
+  dia_semana: string;
+  disciplina: string;
+  num_aula: number;
+}
 
 @Injectable({
   providedIn: 'root',
 })
 export class HorariosGradeService {
-  private apiUrl = 'http://127.0.0.1:8000/api/horarios-grade';
+  private http = inject(HttpClient);
+  private apiUrl = 'http://127.0.0.1:8000/api/horarios';
 
-  constructor(private http: HttpClient) {}
+  private headers(): HttpHeaders {
+    const token = localStorage.getItem('token');
 
-  obterHorario(): Observable<GradeHorarios[]> {
-    return this.http.get<GradeHorarios[]>(this.apiUrl);
+    return new HttpHeaders(
+      token ? { Authorization: `Bearer ${token}` } : {}
+    );
   }
 
-  adicionarHorario(
-    horario: Omit<GradeHorarios, 'id'>
-  ): Observable<GradeHorarios> {
-    return this.http.post<GradeHorarios>(this.apiUrl, horario);
+  private converter(horario: HorarioLaravel): GradeHorarios {
+    const horariosAula: Record<number, string> = {
+      1: '07:00',
+      2: '07:50',
+      3: '08:40',
+      4: '09:50',
+      5: '10:40',
+      6: '11:30',
+    };
+
+    return {
+      id: horario.id,
+      sala_id: horario.sala_id,
+      dia_semana: horario.dia_semana,
+      materia: horario.disciplina,
+      hora_inicio: horariosAula[horario.num_aula] ?? '--:--',
+    };
+  }
+
+  obterHorario(salaId?: number): Observable<GradeHorarios[]> {
+    const url = salaId
+      ? `${this.apiUrl}/sala/${salaId}`
+      : this.apiUrl;
+
+    return this.http
+      .get<HorarioLaravel[]>(url, { headers: this.headers() })
+      .pipe(map(horarios => horarios.map(horario => this.converter(horario))));
   }
 }

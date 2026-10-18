@@ -1,41 +1,110 @@
-<main>
-  <div class="backDash"></div>
 
-  <div class="sub-main">
-    <div class="p-col">
+<main class="sala-page">
+  <header class="sala-header">
+    <div class="header-conteudo">
+      <h1>Área do Aluno</h1>
+      <p>Confira seus horários, comunicados e eventos escolares.</p>
+    </div>
+  </header>
 
-      <div class="f-floor">
-        <div class="gradeHorarios">
-            <button class="gradeButton" (click)="abrirGradeHorarios()"></button>
+  <section class="sala-conteudo">
+
+    <div class="coluna-principal">
+
+      <section class="secao-grade">
+        <div class="titulo-secao">
+          <div>
+            <span class="secao-etiqueta">SUA ROTINA</span>
+            <h2>Grade de horários</h2>
+            <p>Consulte as aulas e disciplinas da semana.</p>
+          </div>
         </div>
-      </div>
 
-      <div class="s-floor">
-        <h2 style="font-size: 1.4rem;">COMUNICADOS:</h2>
+        <button
+          type="button"
+          class="grade-button"
+          (click)="abrirGradeHorarios()">
 
-        <div class="cards">
-          @for (aviso of noticiasVisiveis; track aviso.id) {
-            <app-avisos-sala-component
-              [titulo]="aviso.titulo"
-              [descricao]="aviso.descricao">
-            </app-avisos-sala-component>
+          <div class="grade-icone" aria-hidden="true">
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.7"
+              stroke-linecap="round"
+              stroke-linejoin="round">
+              <rect x="3" y="4" width="18" height="17" rx="2"/>
+              <path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 17h2"/>
+            </svg>
+          </div>
+
+          <div class="grade-texto">
+            <strong>Consultar grade semanal</strong>
+            <span>Veja os horários das suas aulas</span>
+          </div>
+
+          <span class="grade-seta" aria-hidden="true">→</span>
+        </button>
+      </section>
+
+      <section class="secao-comunicados">
+        <div class="titulo-secao">
+          <div>
+            <span class="secao-etiqueta">FIQUE POR DENTRO</span>
+            <h2>Comunicados</h2>
+            <p>Informações e avisos importantes da escola.</p>
+          </div>
+        </div>
+
+        @if (carregandoAvisos) {
+          <div class="estado-vazio">
+            Carregando comunicados...
+          </div>
+        } @else if (noticiasVisiveis.length > 0) {
+          <div class="cards">
+            @for (aviso of noticiasVisiveis; track aviso.id) {
+              <app-avisos-sala-component
+                [titulo]="aviso.titulo"
+                [descricao]="aviso.descricao">
+              </app-avisos-sala-component>
+            }
+          </div>
+
+          @if (noticias.length > 2) {
+            <mat-paginator
+              id="paginacao-aviso"
+              [length]="noticias.length"
+              [pageSize]="2"
+              [pageIndex]="0"
+              [hidePageSize]="true"
+              [pageSizeOptions]="[2]"
+              (page)="mudarPagina($event)">
+            </mat-paginator>
+          }
+        } @else {
+          <div class="estado-vazio">
+            Nenhum comunicado disponível no momento.
+          </div>
         }
-        
-    </div>
-          <mat-paginator
-            id="paginacao-aviso"
-            [length]="noticias.length"
-            [pageSize]="2"
-            hidePageSize="length"
-            [pageSizeOptions]="[2]"
-            (page)="mudarPagina($event)">
-          </mat-paginator>
-      </div>
+      </section>
 
     </div>
 
-    <div class="s-col">
-      <div class="p-andar"> <app-calendario></app-calendario> </div>
-    </div>
-  </div>
+    <aside class="coluna-lateral">
+      <section class="secao-calendario">
+        <div class="titulo-secao">
+          <div>
+            <span class="secao-etiqueta">AGENDA ESCOLAR</span>
+            <h2>Calendário</h2>
+            <p>Acompanhe as datas e os eventos.</p>
+          </div>
+        </div>
+
+        <div class="calendario-container">
+          <app-calendario></app-calendario>
+        </div>
+      </section>
+    </aside>
+
+  </section>
 </main>
