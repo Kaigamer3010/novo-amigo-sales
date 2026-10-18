@@ -1,11 +1,26 @@
-
 <main class="sala-page">
+  
   <header class="sala-header">
     <div class="header-conteudo">
-      <h1>Área do Aluno</h1>
+      <span class="secao-etiqueta">JORNAL SALES · ÁREA DO ALUNO</span>
+
+      @if (carregandoCurso) {
+      <h1>Carregando seu curso...</h1>
+      <p>Estamos preparando sua área de estudos.</p>
+      } @else {
+      <h1>
+        {{ nomeCurso || 'Área do Aluno' }}
+      </h1>
+
+      @if (serieAluno !== null) {
+      <p>{{ serieAluno }}º ano · Sua área de estudos</p>
+      } @else {
       <p>Confira seus horários, comunicados e eventos escolares.</p>
+      }
+      }
     </div>
   </header>
+  
 
   <section class="sala-conteudo">
 
@@ -20,21 +35,13 @@
           </div>
         </div>
 
-        <button
-          type="button"
-          class="grade-button"
-          (click)="abrirGradeHorarios()">
+        <button type="button" class="grade-button" (click)="abrirGradeHorarios()">
 
           <div class="grade-icone" aria-hidden="true">
-            <svg
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"
               stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="17" rx="2"/>
-              <path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 17h2"/>
+              <rect x="3" y="4" width="18" height="17" rx="2" />
+              <path d="M16 2v4M8 2v4M3 10h18M8 14h2M14 14h2M8 17h2" />
             </svg>
           </div>
 
@@ -57,34 +64,26 @@
         </div>
 
         @if (carregandoAvisos) {
-          <div class="estado-vazio">
-            Carregando comunicados...
-          </div>
+        <div class="estado-vazio">
+          Carregando comunicados...
+        </div>
         } @else if (noticiasVisiveis.length > 0) {
-          <div class="cards">
-            @for (aviso of noticiasVisiveis; track aviso.id) {
-              <app-avisos-sala-component
-                [titulo]="aviso.titulo"
-                [descricao]="aviso.descricao">
-              </app-avisos-sala-component>
-            }
-          </div>
-
-          @if (noticias.length > 2) {
-            <mat-paginator
-              id="paginacao-aviso"
-              [length]="noticias.length"
-              [pageSize]="2"
-              [pageIndex]="0"
-              [hidePageSize]="true"
-              [pageSizeOptions]="[2]"
-              (page)="mudarPagina($event)">
-            </mat-paginator>
+        <div class="cards">
+          @for (aviso of noticiasVisiveis; track aviso.id) {
+          <app-avisos-sala-component [titulo]="aviso.titulo" [descricao]="aviso.descricao">
+          </app-avisos-sala-component>
           }
+        </div>
+
+        @if (noticias.length > 2) {
+        <mat-paginator id="paginacao-aviso" [length]="noticias.length" [pageSize]="2" [pageIndex]="0"
+          [hidePageSize]="true" [pageSizeOptions]="[2]" (page)="mudarPagina($event)">
+        </mat-paginator>
+        }
         } @else {
-          <div class="estado-vazio">
-            Nenhum comunicado disponível no momento.
-          </div>
+        <div class="estado-vazio">
+          Nenhum comunicado disponível no momento.
+        </div>
         }
       </section>
 

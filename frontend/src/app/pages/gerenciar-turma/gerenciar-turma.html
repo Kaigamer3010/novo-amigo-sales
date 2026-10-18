@@ -1,16 +1,13 @@
 
 <main class="pagina-gerenciar">
-
-  <!-- CABEÇALHO -->
   <header class="cabecalho">
     <div>
       <span class="identificador">JORNAL SALES</span>
       <h1>Gerenciar turma</h1>
-      <p>Organize as informações, atividades e comunicados da sua turma.</p>
+      <p>Organize as informações, atividades, comunicados e horários da sua turma.</p>
     </div>
   </header>
 
-  <!-- MENSAGENS -->
   <div *ngIf="mensagem" class="alerta sucesso" role="status">
     {{ mensagem }}
   </div>
@@ -19,7 +16,6 @@
     {{ erro }}
   </div>
 
-  <!-- CARREGAMENTO -->
   <div *ngIf="carregando" class="estado-vazio">
     <p>Carregando informações da turma...</p>
   </div>
@@ -28,7 +24,6 @@
 
     <!-- 1. DADOS DA SALA -->
     <section class="painel">
-
       <div class="painel-cabecalho">
         <div class="titulo-grupo">
           <span class="linha-destaque"></span>
@@ -48,9 +43,7 @@
       </div>
 
       <div class="conteudo-painel">
-
         <div *ngIf="sala" class="dados-sala">
-
           <div class="campo-sala">
             <span>Série</span>
             <strong>{{ sala.serie }}º ano</strong>
@@ -58,11 +51,8 @@
 
           <div class="campo-sala">
             <span>Curso</span>
-            <strong>
-              {{ sala.curso?.nome || ('Curso #' + sala.curso_id) }}
-            </strong>
+            <strong>{{ sala.curso?.nome || ('Curso #' + sala.curso_id) }}</strong>
           </div>
-
         </div>
 
         <div *ngIf="!sala" class="estado-vazio">
@@ -100,10 +90,7 @@
               Cancelar
             </button>
 
-            <button
-              type="submit"
-              class="botao-principal"
-              [disabled]="salvando">
+            <button type="submit" class="botao-principal" [disabled]="salvando">
               {{ salvando ? 'Salvando...' : 'Salvar alterações' }}
             </button>
           </div>
@@ -112,13 +99,11 @@
         <p *ngIf="sala && !podeGerenciar" class="aviso-leitura">
           Somente o representante designado pode editar os dados da sala.
         </p>
-
       </div>
     </section>
 
     <!-- 2. ATIVIDADES -->
     <section class="painel">
-
       <div class="painel-cabecalho">
         <div class="titulo-grupo">
           <span class="linha-destaque"></span>
@@ -133,13 +118,12 @@
           type="button"
           class="botao-principal"
           (click)="abrirSecao('atividades'); novoItem()">
-          <span class="mais" aria-hidden="true">+</span>
+          <span class="mais">+</span>
           Nova atividade
         </button>
       </div>
 
       <div class="conteudo-painel">
-
         <form
           *ngIf="formularioAberto && podeGerenciar && secao === 'atividades'"
           class="formulario"
@@ -192,72 +176,45 @@
               Cancelar
             </button>
 
-            <button
-              type="submit"
-              class="botao-principal"
-              [disabled]="salvando">
+            <button type="submit" class="botao-principal" [disabled]="salvando">
               {{ salvando ? 'Salvando...' : 'Salvar atividade' }}
             </button>
           </div>
         </form>
 
         <div *ngIf="atividades.length === 0" class="estado-vazio">
-          <span class="estado-icone" aria-hidden="true">+</span>
           <h3>Nenhuma atividade cadastrada</h3>
           <p>As atividades da turma aparecerão aqui quando forem cadastradas.</p>
         </div>
 
         <div *ngIf="atividades.length > 0" class="lista">
-
           <article class="item" *ngFor="let atividade of atividades">
-
             <div class="item-conteudo">
               <span class="etiqueta">{{ atividade.disciplina }}</span>
-
               <h3>{{ atividade.titulo }}</h3>
-
-              <p *ngIf="atividade.descricao">
-                {{ atividade.descricao }}
-              </p>
-
+              <p *ngIf="atividade.descricao">{{ atividade.descricao }}</p>
               <span class="data">
                 Entrega: {{ atividade.data_entrega | date:'dd/MM/yyyy' }}
               </span>
             </div>
 
             <div class="acoes-item" *ngIf="podeGerenciar">
-
-              <button
-                type="button"
-                class="botao-texto"
-                (click)="editarAtividade(atividade)">
-                Editar
-              </button>
-
-              <button
-                type="button"
-                class="botao-texto perigo"
-                (click)="excluirAtividade(atividade)">
-                Excluir
-              </button>
-
+              <button type="button" class="botao-texto"
+                (click)="editarAtividade(atividade)">Editar</button>
+              <button type="button" class="botao-texto perigo"
+                (click)="excluirAtividade(atividade)">Excluir</button>
             </div>
-
           </article>
-
         </div>
-
       </div>
 
       <footer class="painel-rodape">
         <span>{{ atividades.length }} atividade(s) cadastrada(s)</span>
       </footer>
-
     </section>
 
     <!-- 3. COMUNICADOS -->
     <section class="painel">
-
       <div class="painel-cabecalho">
         <div class="titulo-grupo">
           <span class="linha-destaque"></span>
@@ -272,13 +229,12 @@
           type="button"
           class="botao-principal"
           (click)="abrirSecao('comunicados'); novoItem()">
-          <span class="mais" aria-hidden="true">+</span>
+          <span class="mais">+</span>
           Novo comunicado
         </button>
       </div>
 
       <div class="conteudo-painel">
-
         <form
           *ngIf="formularioAberto && podeGerenciar && secao === 'comunicados'"
           class="formulario"
@@ -315,67 +271,172 @@
               Cancelar
             </button>
 
-            <button
-              type="submit"
-              class="botao-principal"
-              [disabled]="salvando">
+            <button type="submit" class="botao-principal" [disabled]="salvando">
               {{ salvando ? 'Salvando...' : 'Salvar comunicado' }}
             </button>
           </div>
         </form>
 
         <div *ngIf="comunicados.length === 0" class="estado-vazio">
-          <span class="estado-icone" aria-hidden="true">!</span>
           <h3>Nenhum comunicado publicado</h3>
           <p>Os avisos destinados à turma aparecerão aqui.</p>
         </div>
 
         <div *ngIf="comunicados.length > 0" class="lista">
-
           <article class="item" *ngFor="let comunicado of comunicados">
-
             <div class="item-conteudo">
               <span class="etiqueta">Comunicado</span>
-
               <h3>{{ comunicado.titulo }}</h3>
-
               <p>{{ comunicado.descricao }}</p>
-
               <span class="data" *ngIf="comunicado.created_at">
                 Publicado em {{ comunicado.created_at | date:'dd/MM/yyyy' }}
               </span>
             </div>
 
             <div class="acoes-item" *ngIf="podeGerenciar">
-
-              <button
-                type="button"
-                class="botao-texto"
-                (click)="editarComunicado(comunicado)">
-                Editar
-              </button>
-
-              <button
-                type="button"
-                class="botao-texto perigo"
-                (click)="excluirComunicado(comunicado)">
-                Excluir
-              </button>
-
+              <button type="button" class="botao-texto"
+                (click)="editarComunicado(comunicado)">Editar</button>
+              <button type="button" class="botao-texto perigo"
+                (click)="excluirComunicado(comunicado)">Excluir</button>
             </div>
-
           </article>
-
         </div>
-
       </div>
 
       <footer class="painel-rodape">
         <span>{{ comunicados.length }} comunicado(s) publicado(s)</span>
       </footer>
+    </section>
 
+    <!-- 4. GRADE DE HORÁRIOS -->
+    <section class="painel">
+      <div class="painel-cabecalho">
+        <div class="titulo-grupo">
+          <span class="linha-destaque"></span>
+          <div>
+            <h2>Grade de horários</h2>
+            <p>Cadastre e organize as aulas da semana.</p>
+          </div>
+        </div>
+
+        <button
+          *ngIf="podeGerenciar"
+          type="button"
+          class="botao-principal"
+          (click)="abrirFormularioHorario()">
+          <span class="mais">+</span>
+          Nova aula
+        </button>
+      </div>
+
+      <div class="conteudo-painel">
+        <form
+          *ngIf="formularioHorarioAberto && podeGerenciar"
+          class="formulario"
+          (ngSubmit)="salvarHorario()">
+
+          <h3>{{ horarioEditando ? 'Editar aula' : 'Cadastrar aula' }}</h3>
+
+          <label for="dia-horario">Dia da semana</label>
+          <select
+            id="dia-horario"
+            name="diaHorario"
+            [(ngModel)]="horarioForm.dia_semana"
+            required>
+            <option *ngFor="let dia of diasSemana" [value]="dia.valor">
+              {{ dia.nome }}
+            </option>
+          </select>
+
+          <label for="disciplina-horario">Disciplina</label>
+          <input
+            id="disciplina-horario"
+            name="disciplinaHorario"
+            [(ngModel)]="horarioForm.disciplina"
+            required
+            maxlength="255"
+            placeholder="Ex.: Matemática">
+
+          <label for="numero-aula">Número da aula</label>
+          <select
+            id="numero-aula"
+            name="numeroAula"
+            [(ngModel)]="horarioForm.num_aula"
+            required>
+            <option [ngValue]="1">1ª aula — 07:00</option>
+            <option [ngValue]="2">2ª aula — 07:50</option>
+            <option [ngValue]="3">3ª aula — 08:40</option>
+            <option [ngValue]="4">4ª aula — 09:50</option>
+            <option [ngValue]="5">5ª aula — 10:40</option>
+            <option [ngValue]="6">6ª aula — 11:30</option>
+          </select>
+
+          <div class="acoes-formulario">
+            <button
+              type="button"
+              class="botao-secundario"
+              [disabled]="salvandoHorario"
+              (click)="cancelarHorario()">
+              Cancelar
+            </button>
+
+            <button
+              type="submit"
+              class="botao-principal"
+              [disabled]="salvandoHorario">
+              {{ salvandoHorario
+                ? 'Salvando...'
+                : horarioEditando
+                  ? 'Salvar alterações'
+                  : 'Cadastrar aula' }}
+            </button>
+          </div>
+        </form>
+
+        <div *ngIf="carregandoHorarios" class="estado-vazio">
+          <p>Carregando grade de horários...</p>
+        </div>
+
+        <div
+          *ngIf="!carregandoHorarios && horariosTurma.length === 0"
+          class="estado-vazio">
+          <h3>Nenhuma aula cadastrada</h3>
+          <p>Cadastre as aulas para montar a grade semanal da turma.</p>
+        </div>
+
+        <div
+          *ngIf="!carregandoHorarios && horariosTurma.length > 0"
+          class="lista">
+          <article class="item" *ngFor="let horario of horariosTurma">
+            <div class="item-conteudo">
+              <span class="etiqueta">
+                {{ nomeDiaHorario(horario.dia_semana) }}
+              </span>
+              <h3>{{ horario.disciplina }}</h3>
+              <span class="data">
+                {{ horario.num_aula }}ª aula · {{ horaAula(horario.num_aula) }}
+              </span>
+            </div>
+
+            <div class="acoes-item" *ngIf="podeGerenciar">
+              <button type="button" class="botao-texto"
+                (click)="editarHorarioTurma(horario)">Editar</button>
+              <button type="button" class="botao-texto perigo"
+                [disabled]="salvandoHorario"
+                (click)="excluirHorarioTurma(horario)">Excluir</button>
+            </div>
+          </article>
+        </div>
+
+        <p *ngIf="!podeGerenciar" class="aviso-leitura">
+          Você pode consultar a grade, mas somente o representante designado pode alterá-la.
+        </p>
+      </div>
+
+      <footer class="painel-rodape">
+        <span>{{ horariosTurma.length }} aula(s) cadastrada(s)</span>
+      </footer>
     </section>
 
   </ng-container>
-
 </main>

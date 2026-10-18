@@ -692,3 +692,28 @@ select:focus-visible {
     scroll-behavior: auto !important;
   }
 }
+
+
+/* ========================================
+   GRADE DE HORÁRIOS
+======================================== */
+
+.painel .item .etiqueta {
+  width: fit-content;
+}
+
+.painel .acoes-item button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.painel .formulario select {
+  cursor: pointer;
+}
+
+@media (max-width: 520px) {
+  .painel .acoes-item {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
