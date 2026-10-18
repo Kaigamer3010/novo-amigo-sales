@@ -3,88 +3,143 @@
 namespace App\Http\Controllers;
 
 use App\Models\Atividade;
+use App\Models\Sala;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
 
 class AtividadeController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $atividades = Atividade::with(['sala', 'usuario'])->get();
-        return response()->json($atividades);
+        $usuario = $request->user();
+
+        $consulta = Atividade::with(['sala', 'usuario']);
+
+        if ($usuario->nivel_acesso === 'administrador') {
+            return response()->json($consulta->get());
+        }
+
+        if ($usuario->sala_id) {
+            return response()->json(
+                $consulta->where('sala_id', $usuario->sala_id)->get()
+            );
+        }
+
+        return response()->json([]);
     }
 
-    public function show($id)
+    public function show(Request $request, $id)
     {
+        $usuario = $request->user();
         $atividade = Atividade::with(['sala', 'usuario'])->findOrFail($id);
+
+        if (
+            $usuario->nivel_acesso !== 'administrador'
+            && (int) $usuario->sala_id !== (int) $atividade->sala_id
+        ) {
+            return response()->json(['erro' => 'Sem permissão'], 403);
+        }
+
         return response()->json($atividade);
     }
 
-    // Rota extra: atividades de UMA sala específica (o que o aluno vai usar mais)
-    public function porSala($salaId)
+    public function porSala(Request $request, $salaId)
     {
-        $atividades = Atividade::where('sala_id', $salaId)
+        $usuario = $request->user();
+
+        if (
+            $usuario->nivel_acesso !== 'administrador'
+            && (int) $usuario->sala_id !== (int) $salaId
+        ) {
+            return response()->json(['erro' => 'Sem permissão'], 403);
+        }
+
+        $atividades = Atividade::with(['sala', 'usuario'])
+            ->where('sala_id', $salaId)
             ->orderBy('data_entrega')
             ->get();
 
         return response()->json($atividades);
     }
 
-    public function store(Request $request)
+    private function podeGerenciar(Request $request, Sala $sala): bool
     {
-        // só professor/coordenador podem criar atividade
-        if (Gate::denies('gerenciar-atividade')) {
-            return response()->json(['erro' => 'Sem permissão'], 403);
+        $usuario = $request->user();
+
+        if ($usuario->nivel_acesso === 'administrador') {
+            return true;
         }
 
-        $request->validate([
-            'titulo' => 'required|string',
+        return $usuario->nivel_acesso === 'aluno'
+            && (int) $sala->representante_id === (int) $usuario->id;
+    }
+
+    public function store(Request $request)
+    {
+        $dados = $request->validate([
+            'titulo' => 'required|string|max:255',
             'descricao' => 'nullable|string',
-            'disciplina' => 'required|string',
+            'disciplina' => 'required|string|max:255',
             'data_entrega' => 'required|date',
             'sala_id' => 'required|exists:salas,id',
         ]);
 
+        $sala = Sala::findOrFail($dados['sala_id']);
+
+        if (!$this->podeGerenciar($request, $sala)) {
+            return response()->json(['erro' => 'Sem permissão'], 403);
+        }
+
         $atividade = Atividade::create([
-            'titulo' => $request->titulo,
-            'descricao' => $request->descricao,
-            'disciplina' => $request->disciplina,
-            'data_entrega' => $request->data_entrega,
-            'sala_id' => $request->sala_id,
+            'titulo' => $dados['titulo'],
+            'descricao' => $dados['descricao'] ?? null,
+            'disciplina' => $dados['disciplina'],
+            'data_entrega' => $dados['data_entrega'],
+            'sala_id' => $sala->id,
+            'usuario_id' => $request->user()->id,
         ]);
 
-        return response()->json($atividade->load(['sala']), 201);
+        return response()->json(
+            $atividade->load(['sala', 'usuario']),
+            201
+        );
     }
 
     public function update(Request $request, $id)
     {
-        if (Gate::denies('gerenciar-atividade')) {
+        $atividade = Atividade::findOrFail($id);
+        $sala = $atividade->sala;
+
+        if (!$sala || !$this->podeGerenciar($request, $sala)) {
             return response()->json(['erro' => 'Sem permissão'], 403);
         }
 
-        $atividade = Atividade::findOrFail($id);
-
-        $request->validate([
-            'titulo' => 'sometimes|required|string',
-            'descricao' => 'nullable|string',
-            'disciplina' => 'sometimes|required|string',
+        $dados = $request->validate([
+            'titulo' => 'sometimes|required|string|max:255',
+            'descricao' => 'sometimes|nullable|string',
+            'disciplina' => 'sometimes|required|string|max:255',
             'data_entrega' => 'sometimes|required|date',
-            'sala_id' => 'sometimes|required|exists:salas,id',
         ]);
 
+        $atividade->update($dados);
 
-        return response()->json($atividade->load(['sala']));
+        return response()->json(
+            $atividade->fresh()->load(['sala', 'usuario'])
+        );
     }
 
-    public function destroy($id)
+    public function destroy(Request $request, $id)
     {
-        if (Gate::denies('gerenciar-atividade')) {
+        $atividade = Atividade::findOrFail($id);
+        $sala = $atividade->sala;
+
+        if (!$sala || !$this->podeGerenciar($request, $sala)) {
             return response()->json(['erro' => 'Sem permissão'], 403);
         }
 
-        $atividade = Atividade::findOrFail($id);
         $atividade->delete();
 
-        return response()->json(['mensagem' => 'Removido com sucesso'], 200);
+        return response()->json([
+            'mensagem' => 'Atividade removida com sucesso'
+        ]);
     }
 }

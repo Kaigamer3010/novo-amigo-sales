@@ -7,7 +7,7 @@ use Illuminate\Support\Facades\Gate;
 
 class EdicaoController extends Controller
 {
-    // Listar todas as edições
+    
     public function index()
     {
         return response()->json(
@@ -15,7 +15,7 @@ class EdicaoController extends Controller
         );
     }
 
-    // Mostrar uma edição específica
+    
     public function show(string $id)
     {
         $edicao = Edicao::find($id);
@@ -29,7 +29,7 @@ class EdicaoController extends Controller
         return response()->json($edicao);
     }
 
-    // Cadastrar uma edição
+    
     public function store(Request $request)
     {
         if (Gate::denies('gerenciar-noticia')) {
@@ -49,7 +49,7 @@ class EdicaoController extends Controller
         return response()->json($edicao, 201);
     }
 
-    // Atualizar uma edição
+   
     public function update(Request $request, string $id)
     {
         if (Gate::denies('gerenciar-noticia')) {
@@ -77,7 +77,7 @@ class EdicaoController extends Controller
         return response()->json($edicao);
     }
 
-    // Excluir uma edição
+    
     public function destroy(string $id)
     {
         if (Gate::denies('gerenciar-noticia')) {

@@ -1,20 +1,103 @@
 <main>
-  <div class="h1CadastrarAvisos">
-    <h1>ADICIONAR AVISO</h1>
-  </div>
-  <div class="conteudo">
+  <header class="cabecalho">
 
-  <label for="titulo">Adicione o título do seu aviso</label>
 
-  <input type="text" id="titulo" [(ngModel)]="novoTitulo" placeholder="Escreva o título da notícia">
+    <div class="texto-cabecalho">
+      <h1>Adicionar aviso</h1>
+      <p>Publique comunicados importantes para a comunidade escolar.</p>
+    </div>
+  </header>
 
-  <label for="descricao">Adicione a descrição do seu aviso</label>
+  <section class="conteudo">
+    <div class="titulo-secao">
+      <h2>Informações do aviso</h2>
+      <p>Preencha os campos abaixo para publicar um novo comunicado.</p>
+    </div>
 
-  <input type="text" id="descricao" [(ngModel)]="novoDescricao" placeholder="Escreva a descrição da notícia" >
+    <form (ngSubmit)="adicionarAviso()" #formAviso="ngForm">
+      <div class="campo">
+        <label for="titulo">
+          Título do aviso <span class="obrigatorio">*</span>
+        </label>
 
-  <label for="dataExpiracao">Data de expiração</label>
+        <input type="text" id="titulo" name="titulo" [(ngModel)]="novoTitulo" #titulo="ngModel"
+          placeholder="Ex.: Reunião de pais e responsáveis" [maxlength]="limiteTitulo" required
+          [disabled]="carregando" />
 
-  <input type="date" id="dataExpiracao" [(ngModel)]="novaDataExpiracao" >
-  <button (click)="adicionarAviso()">Enviar</button>
-  </div>
+        <div class="ajuda-campo">
+          <span>Escolha um título claro e objetivo.</span>
+          <span>{{ novoTitulo.length }}/{{ limiteTitulo }}</span>
+        </div>
+
+        @if (titulo.invalid && titulo.touched) {
+        <span class="erro-campo">Informe o título do aviso.</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="descricao">
+          Descrição do aviso <span class="obrigatorio">*</span>
+        </label>
+
+        <textarea id="descricao" name="descricao" [(ngModel)]="novoDescricao" #descricao="ngModel"
+          placeholder="Descreva o comunicado, incluindo informações importantes, horários ou orientações."
+          [maxlength]="limiteDescricao" rows="6" required [disabled]="carregando"></textarea>
+
+        <div class="ajuda-campo">
+          <span>Escreva as informações necessárias para os leitores.</span>
+          <span>{{ novoDescricao.length }}/{{ limiteDescricao }}</span>
+        </div>
+
+        @if (descricao.invalid && descricao.touched) {
+        <span class="erro-campo">Informe a descrição do aviso.</span>
+        }
+      </div>
+
+      <div class="campo">
+        <label for="dataExpiracao">
+          Data de expiração <span class="obrigatorio">*</span>
+        </label>
+
+        <input type="date" id="dataExpiracao" name="dataExpiracao" [(ngModel)]="novaDataExpiracao"
+          #dataExpiracao="ngModel" [min]="dataMinima" required [disabled]="carregando" />
+
+        <span class="texto-ajuda">
+          Informe até quando o aviso deverá permanecer válido.
+        </span>
+
+        @if (dataExpiracao.invalid && dataExpiracao.touched) {
+        <span class="erro-campo">Selecione a data de expiração.</span>
+        }
+      </div>
+
+      @if (erro) {
+      <div class="mensagem mensagem-erro" role="alert">
+        <span class="material-symbols-outlined">error</span>
+        <span>{{ erro }}</span>
+      </div>
+      }
+
+      @if (mensagem) {
+      <div class="mensagem mensagem-sucesso" role="status">
+        <span class="material-symbols-outlined">check_circle</span>
+        <span>{{ mensagem }}</span>
+      </div>
+      }
+
+      <div class="rodape-formulario">
+
+        <div class="acoes">
+          <button type="button" class="botao-secundario" (click)="limparFormulario()" [disabled]="carregando">
+            Limpar campos
+          </button>
+
+
+          <button type="submit" class="botao-principal" [disabled]="carregando || !formAviso.valid">
+            {{ carregando ? 'Publicando...' : 'Publicar aviso' }}
+          </button>
+
+        </div>
+      </div>
+    </form>
+  </section>
 </main>

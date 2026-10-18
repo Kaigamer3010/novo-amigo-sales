@@ -1,71 +1,65 @@
 
-import { Component, ChangeDetectorRef } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+} from '@angular/core';
+
 import { RouterLink } from '@angular/router';
-import { AvisoComponent } from '../../components/aviso/aviso';
 import { MatDialog } from '@angular/material/dialog';
+
+import { AvisoComponent } from '../../components/aviso/aviso';
 import { CardapioComponent } from '../../components/cardapio/cardapio';
 import { AvisosService } from '../../service/avisos';
 import { Aviso } from '../../models/avisos';
-import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 
 @Component({
   selector: 'app-pagina-inicial',
+  standalone: true,
   imports: [
     RouterLink,
     AvisoComponent,
     CardapioComponent,
-    MatPaginatorModule
   ],
   templateUrl: './pagina-inicial.html',
   styleUrl: './pagina-inicial.css',
 })
-export class PaginaInicial {
+export class PaginaInicial implements OnInit {
+  noticias: Aviso[] = [];
+  carregandoAvisos = true;
 
   constructor(
-    private dialog: MatDialog,
-    private avisoService: AvisosService,
-    private cdr: ChangeDetectorRef
+    private readonly dialog: MatDialog,
+    private readonly avisoService: AvisosService,
+    private readonly cdr: ChangeDetectorRef,
   ) {}
 
-  abrirCardapio() {
-    this.dialog.open(CardapioComponent, {
-      panelClass: 'cardapio-dialog'
-    });
-  }
-
-  noticias: Aviso[] = [];
-  noticiasVisiveis: Aviso[] = [];
-
-  ngOnInit() {
+  ngOnInit(): void {
     this.carregarAvisos();
   }
 
-  carregandoAvisos = true;
+  abrirCardapio(): void {
+    this.dialog.open(CardapioComponent, {
+      panelClass: 'cardapio-dialog',
+    });
+  }
 
-carregarAvisos() {
-  this.carregandoAvisos = true;
+  carregarAvisos(): void {
+    this.carregandoAvisos = true;
 
-  this.avisoService.obterAvisos().subscribe({
-    next: (avisos) => {
-      this.noticias = [...avisos];
-      this.noticiasVisiveis = avisos.slice(0, 4);
-      this.carregandoAvisos = false;
+    this.avisoService.obterAvisos().subscribe({
+      next: (avisos) => {
+        this.noticias = Array.isArray(avisos) ? [...avisos] : [];
+        this.carregandoAvisos = false;
+        this.cdr.markForCheck();
+      },
 
-      this.cdr.detectChanges();
-    },
-    error: (erro) => {
-      console.error('Erro ao carregar avisos:', erro);
-      this.carregandoAvisos = false;
-
-      this.cdr.detectChanges();
-    }
-  });
-}
-
-  mudarPagina(event: PageEvent) {
-    const inicio = event.pageIndex * event.pageSize;
-    const fim = inicio + event.pageSize;
-
-    this.noticiasVisiveis = this.noticias.slice(inicio, fim);
+      error: (erro) => {
+        console.error('Erro ao carregar avisos:', erro);
+        this.noticias = [];
+        this.carregandoAvisos = false;
+        this.cdr.markForCheck();
+      },
+    });
   }
 }

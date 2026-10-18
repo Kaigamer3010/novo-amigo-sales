@@ -1,52 +1,606 @@
-<main>
-  <div class="jornalEscola">
-    <h1>Administração de usuários</h1>
-    <h3>Edite o cargo dos usuários aqui</h3>
-  </div>
+<main class="admin-layout">
+  <aside class="sidebar">
+    <div class="brand">
+      
+    </div>
 
-  <div class="table-container">
-    <table class="book-table">
-      <thead>
-        <tr>
-          <th>Usuário</th>
-          <th>Nome completo</th>
-          <th>E-mail</th>
-          <th>Cargo</th>
-          <th>Sala</th>
-          <th>Data de login</th>
-        </tr>
-      </thead>
+    <div class="menu-label">MENU PRINCIPAL</div>
 
-      <tbody>
-  @for (usuario of usuarios; track usuario.id) {
-    <tr>
-      <td>{{ usuario.nome_usuario }}</td>
-      <td>{{ usuario.nome_completo }}</td>
-      <td>{{ usuario.email }}</td>
+    <nav class="menu">
+      @for (secao of secoes; track secao.id) {
+      <button type="button" class="menu-item" [class.active]="secaoAtual === secao.id" (click)="abrirSecao(secao.id)">
+        <span class="menu-icon">{{ secao.icone }}</span>
+        <span>{{ secao.titulo }}</span>
+      </button>
+      }
+    </nav>
 
-      <td>
-        <select
-          [ngModel]="usuario.nivel_acesso"
-          (ngModelChange)="alterarCargo(usuario, $event)"
-        >
-          <option value="aluno">Aluno</option>
-          <option value="administrador">Administrador</option>
-          <option value="bibliotecario">Bibliotecário</option>
-        </select>
-      </td>
+    
+  </aside>
 
-      <td>{{ usuario.sala_id }}</td>
+  <section class="admin-content">
+    <header class="topbar">
+      <div>
+        <span class="breadcrumb">Jornal Sales / Administração</span>
 
-      <td>
-        {{ usuario.created_at ? (usuario.created_at | date:'dd/MM/yyyy HH:mm') : '—' }}
-      </td>
-    </tr>
-  } @empty {
-    <tr>
-      <td colspan="6">Nenhum usuário encontrado.</td>
-    </tr>
-  }
-</tbody>
-    </table>
-  </div>
+        <h1>
+          @switch (secaoAtual) {
+          @case ('inicio') { Visão geral }
+          @case ('usuarios') { Usuários }
+          @case ('turmas') { Gestão de turmas }
+          @case ('representantes') { Representantes }
+          @case ('cursos') { Gerenciar cursos }
+          }
+        </h1>
+      </div>
+
+      <button class="refresh-button" type="button" (click)="atualizarSecao()" [disabled]="carregando">
+        <span>↻</span>
+        Atualizar
+      </button>
+    </header>
+
+    @if (erro) {
+    <div class="feedback feedback-error" role="alert">
+      <span>!</span>
+      <p>{{ erro }}</p>
+      <button type="button" (click)="erro = ''" aria-label="Fechar mensagem">
+        ×
+      </button>
+    </div>
+    }
+
+    @if (mensagem) {
+    <div class="feedback feedback-success" role="status">
+      <span>✓</span>
+      <p>{{ mensagem }}</p>
+      <button type="button" (click)="mensagem = ''" aria-label="Fechar mensagem">
+        ×
+      </button>
+    </div>
+    }
+
+    @if (carregando) {
+    <div class="loading-bar">
+      <span></span>
+      Carregando informações...
+    </div>
+    }
+
+    <!-- VISÃO GERAL -->
+    @if (secaoAtual === 'inicio') {
+    <section class="stats-grid">
+      <article class="stat-card">
+        <div class="stat-heading">
+          <span>Total de usuários</span>
+          <span class="stat-icon">♙</span>
+        </div>
+
+        <strong class="stat-number">{{ usuarios.length }}</strong>
+        <span class="stat-caption">Contas cadastradas</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-heading">
+          <span>Alunos</span>
+          <span class="stat-icon">♧</span>
+        </div>
+
+        <strong class="stat-number">{{ totalAlunos }}</strong>
+        <span class="stat-caption">Contas de alunos</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-heading">
+          <span>Bibliotecários</span>
+          <span class="stat-icon">▤</span>
+        </div>
+
+        <strong class="stat-number">{{ totalBibliotecarios }}</strong>
+        <span class="stat-caption">Contas de bibliotecários</span>
+      </article>
+
+      <article class="stat-card">
+        <div class="stat-heading">
+          <span>Administradores</span>
+          <span class="stat-icon">⚙</span>
+        </div>
+
+        <strong class="stat-number">{{ totalAdministradores }}</strong>
+        <span class="stat-caption">Contas administrativas</span>
+      </article>
+    </section>
+
+    <section class="section-heading">
+      <div>
+        <h2>Acesso rápido</h2>
+        <p>Escolha uma área para continuar a administração.</p>
+      </div>
+    </section>
+
+    <section class="management-grid">
+      @for (secao of secoes; track secao.id) {
+      @if (secao.id !== 'inicio') {
+      <button type="button" class="management-card" (click)="abrirSecao(secao.id)">
+        <span class="management-icon">{{ secao.icone }}</span>
+
+        <span class="management-text">
+          <strong>{{ secao.titulo }}</strong>
+          <span>{{ secao.descricao }}</span>
+        </span>
+
+        <span class="management-arrow">→</span>
+      </button>
+      }
+      }
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Usuários cadastrados</h2>
+          <p>Visualização rápida das contas do sistema.</p>
+        </div>
+
+        <button type="button" class="text-button" (click)="abrirSecao('usuarios')">
+          Ver todos →
+        </button>
+      </div>
+
+      @if (!carregando && usuarios.length === 0) {
+      <div class="empty-state">
+        Nenhum usuário para exibir.
+      </div>
+      } @else {
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuário</th>
+              <th>Nome completo</th>
+              <th>Perfil</th>
+              <th>Turma</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (usuario of usuarios.slice(0, 5); track usuario.id) {
+            <tr>
+              <td class="username-cell">
+                {{ usuario.nome_usuario }}
+              </td>
+              <td>{{ usuario.nome_completo }}</td>
+              <td>
+                <span class="role-badge" [ngClass]="'role-' + usuario.nivel_acesso">
+                  {{ nomeCargo(usuario.nivel_acesso) }}
+                </span>
+              </td>
+              <td>{{ usuario.sala_id ?? 'Sem turma' }}</td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">
+                Nenhum usuário cadastrado.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      }
+    </section>
+    }
+
+    <!-- USUÁRIOS -->
+    @if (secaoAtual === 'usuarios') {
+    <section class="page-intro">
+      <div>
+        <h2>Gerenciamento de usuários</h2>
+        <p>Consulte as contas e altere os níveis de acesso.</p>
+      </div>
+
+      <span class="total-pill">
+        {{ usuarios.length }} usuários
+      </span>
+    </section>
+
+    <section class="panel">
+      <div class="table-toolbar">
+        <div class="search-box">
+          <span>⌕</span>
+          <input type="search" [(ngModel)]="busca" placeholder="Buscar por nome, usuário, cargo ou turma..."
+            aria-label="Buscar usuários" />
+        </div>
+
+        <button type="button" class="refresh-button" (click)="carregarUsuarios()" [disabled]="carregando">
+          ↻ Recarregar
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Usuário</th>
+              <th>Nome completo</th>
+              <th>Turma</th>
+              <th>Perfil de acesso</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (usuario of usuariosFiltrados; track usuario.id) {
+            <tr>
+              <td class="username-cell">
+                {{ usuario.nome_usuario }}
+              </td>
+
+              <td>{{ usuario.nome_completo }}</td>
+              <td>{{ usuario.sala_id ?? 'Sem turma' }}</td>
+
+              <td>
+                <div class="role-control">
+                  <select [ngModel]="usuario.nivel_acesso" (ngModelChange)="alterarCargo(usuario, $event)"
+                    [disabled]="usuarioAtualizando === usuario.id"
+                    [attr.aria-label]="'Cargo de ' + usuario.nome_usuario">
+                    <option value="aluno">Aluno</option>
+                    <option value="bibliotecario">Bibliotecário</option>
+                    <option value="administrador">Administrador</option>
+                  </select>
+
+                  @if (usuarioAtualizando === usuario.id) {
+                  <span class="saving-label">Salvando...</span>
+                  }
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="4" class="empty-state">
+                Nenhum usuário corresponde à busca.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <p class="security-note">
+      <strong>Atenção:</strong>
+      conceda o cargo de administrador somente a pessoas autorizadas.
+    </p>
+    }
+
+
+    <!-- CURSOS -->
+    @if (secaoAtual === 'cursos') {
+    <section class="page-intro">
+      <div>
+        <h2>Gerenciamento de cursos</h2>
+        <p>Cadastre os cursos que poderão ser associados às turmas.</p>
+      </div>
+
+      <span class="total-pill">{{ cursos.length }} cursos</span>
+    </section>
+
+    <section class="panel form-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>
+            {{ editandoCursoId ? 'Editar curso' : 'Cadastrar novo curso' }}
+          </h2>
+          <p>Digite o nome do curso que deseja disponibilizar no sistema.</p>
+        </div>
+      </div>
+
+      <form class="admin-form" (ngSubmit)="salvarCurso()">
+        <div class="form-grid">
+          <label class="field">
+            <span>Nome do curso *</span>
+            <input type="text" name="nomeCurso" [(ngModel)]="cursoForm.nome" placeholder="Ex.: Arquitetura e Urbanismo"
+              maxlength="255" required />
+          </label>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button" [disabled]="salvandoCurso">
+            {{
+            salvandoCurso
+            ? 'Salvando...'
+            : editandoCursoId
+            ? 'Salvar alterações'
+            : 'Cadastrar curso'
+            }}
+          </button>
+
+          @if (editandoCursoId) {
+          <button type="button" class="secondary-button" (click)="limparFormularioCurso()">
+            Cancelar edição
+          </button>
+          }
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Cursos cadastrados</h2>
+          <p>Os cursos desta lista estarão disponíveis no cadastro de turmas.</p>
+        </div>
+      </div>
+
+      <div class="table-toolbar">
+        <div class="search-box">
+          <span>⌕</span>
+          <input type="search" name="buscaCurso" [(ngModel)]="buscaCurso" placeholder="Buscar curso pelo nome..."
+            aria-label="Buscar cursos" />
+        </div>
+
+        <button type="button" class="refresh-button" (click)="carregarCursos()" [disabled]="carregando">
+          ↻ Recarregar
+        </button>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nome do curso</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (curso of cursosFiltrados; track curso.id) {
+            <tr>
+              <td>{{ curso.id }}</td>
+              <td class="username-cell">{{ curso.nome }}</td>
+              <td>
+                <div class="action-group">
+                  <button type="button" class="table-action" (click)="editarCurso(curso)">
+                    Editar
+                  </button>
+
+                  <button type="button" class="table-action danger-action" (click)="excluirCurso(curso)">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="3" class="empty-state">
+                Nenhum curso encontrado.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    }
+
+
+    <!-- TURMAS -->
+    @if (secaoAtual === 'turmas') {
+    <section class="page-intro">
+      <div>
+        <h2>Organização das turmas</h2>
+        <p>Cadastre, consulte, edite ou exclua turmas escolares.</p>
+      </div>
+
+      <span class="total-pill">{{ turmas.length }} turmas</span>
+    </section>
+
+    <section class="panel form-panel">
+      <div class="panel-heading">
+        <div>
+          <h2>
+            {{ editandoTurmaId ? 'Editar turma' : 'Cadastrar turma' }}
+          </h2>
+          <p>Informe a série e o curso da turma.</p>
+        </div>
+      </div>
+
+      <form class="admin-form" (ngSubmit)="salvarTurma()">
+        <div class="form-grid">
+          <label class="field">
+            <span>Série *</span>
+            <input type="number" name="serie" min="1" required [(ngModel)]="turmaForm.serie" placeholder="Ex.: 3" />
+          </label>
+
+          <label class="field">
+            <span>Curso *</span>
+            <select name="curso_id" required [(ngModel)]="turmaForm.curso_id">
+              <option [ngValue]="0" disabled>
+                Selecione um curso
+              </option>
+
+              @for (curso of cursos; track curso.id) {
+              <option [ngValue]="curso.id">
+                {{ curso.nome }}
+              </option>
+              }
+            </select>
+          </label>
+        </div>
+
+        @if (cursos.length === 0 && !carregando) {
+        <p class="inline-notice">
+          Nenhum curso foi encontrado. Cadastre um curso antes de criar
+          uma turma.
+        </p>
+        }
+
+        <div class="form-actions">
+          <button type="submit" class="primary-button" [disabled]="salvandoTurma || cursos.length === 0">
+            {{
+            salvandoTurma
+            ? 'Salvando...'
+            : editandoTurmaId
+            ? 'Salvar alterações'
+            : 'Cadastrar turma'
+            }}
+          </button>
+
+          @if (editandoTurmaId) {
+          <button type="button" class="secondary-button" (click)="limparFormularioTurma()">
+            Cancelar edição
+          </button>
+          }
+        </div>
+      </form>
+    </section>
+
+    <section class="panel">
+      <div class="panel-heading">
+        <div>
+          <h2>Turmas cadastradas</h2>
+          <p>Lista de turmas retornadas pelo servidor.</p>
+        </div>
+      </div>
+
+      <div class="table-toolbar">
+        <div class="search-box">
+          <span>⌕</span>
+          <input type="search" name="buscaTurma" [(ngModel)]="buscaTurma"
+            placeholder="Buscar por série, curso ou código..." aria-label="Buscar turmas" />
+        </div>
+      </div>
+
+      <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Série</th>
+              <th>Curso</th>
+              <th>Código de acesso</th>
+              <th>Representante</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            @for (turma of turmasFiltradas; track turma.id) {
+            <tr>
+              <td>{{ turma.id }}</td>
+              <td>{{ turma.serie }}º</td>
+              <td>{{ turma.curso?.nome ?? 'Curso não informado' }}</td>
+              <td>{{ turma.codigo_acesso ?? '—' }}</td>
+              <td>
+                {{ turma.representante?.nome_completo ?? 'Não definido' }}
+              </td>
+              <td>
+                <div class="action-group">
+                  <button type="button" class="table-action" (click)="editarTurma(turma)">
+                    Editar
+                  </button>
+
+                  <button type="button" class="table-action danger-action" (click)="excluirTurma(turma)">
+                    Excluir
+                  </button>
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="6" class="empty-state">
+                Nenhuma turma encontrada.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+    }
+
+    <!-- REPRESENTANTES -->
+    @if (secaoAtual === 'representantes') {
+    <section class="page-intro">
+      <div>
+        <h2>Representantes de turma</h2>
+        <p>
+          Escolha um aluno matriculado na própria turma para representá-la.
+        </p>
+      </div>
+
+      <span class="total-pill">{{ turmas.length }} turmas</span>
+    </section>
+
+    <div class="info-banner">
+      <strong>Como funciona:</strong>
+      cada turma pode ter um representante. O aluno precisa estar cadastrado
+      como aluno daquela turma.
+    </div>
+
+    <section class="representative-grid">
+      @for (turma of turmas; track turma.id) {
+      <article class="representative-card">
+        <div class="representative-card-heading">
+          <div class="management-icon">♧</div>
+
+          <div>
+            <h2>
+              {{ turma.serie }}º
+              {{ turma.curso?.nome ?? 'Curso não informado' }}
+            </h2>
+            <p>Turma #{{ turma.id }}</p>
+          </div>
+        </div>
+
+        <div class="current-representative">
+          <span class="field-caption">Representante atual</span>
+
+          <strong>
+            {{
+            turma.representante?.nome_completo
+            ?? 'Nenhum representante definido'
+            }}
+          </strong>
+
+          @if (turma.representante?.nome_usuario) {
+          <span>@{{ turma.representante?.nome_usuario }}</span>
+          }
+        </div>
+
+        <label class="field">
+          <span>Selecionar aluno</span>
+
+          <select #representanteSelect [ngModel]="turma.representante_id ?? ''" [name]="'representante-' + turma.id"
+            aria-label="Selecionar representante da turma">
+            <option value="">Selecione um aluno</option>
+
+            @for (aluno of alunosDaTurma(turma); track aluno.id) {
+            <option [value]="aluno.id">
+              {{ aluno.nome_completo }} (@{{ aluno.nome_usuario }})
+            </option>
+            }
+          </select>
+        </label>
+
+        @if (alunosDaTurma(turma).length === 0) {
+        <p class="inline-notice">
+          Não há alunos cadastrados nesta turma.
+        </p>
+        }
+
+        <button type="button" class="primary-button full-button" [disabled]="alunosDaTurma(turma).length === 0"
+          (click)="definirRepresentante(turma, +representanteSelect.value)">
+          Definir representante
+        </button>
+      </article>
+      } @empty {
+      <div class="panel empty-state">
+        Nenhuma turma encontrada. Cadastre uma turma antes de definir
+        representantes.
+      </div>
+      }
+    </section>
+    }
+  </section>
 </main>

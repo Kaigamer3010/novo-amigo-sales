@@ -1,0 +1,220 @@
+
+<main class="pagina-gerenciar">
+  <header class="cabecalho">
+    <div>
+      <span class="identificador">JORNAL SALES</span>
+      <h1>Gerenciar turma</h1>
+      <p>Organize as atividades e mantenha sua turma informada.</p>
+    </div>
+  </header>
+
+  <nav class="abas" aria-label="Seções de gerenciamento">
+    <button
+      type="button"
+      [class.ativa]="secao === 'atividades'"
+      (click)="abrirSecao('atividades')">
+      Atividades
+      <span class="contador">{{ atividades.length }}</span>
+    </button>
+
+    <button
+      type="button"
+      [class.ativa]="secao === 'comunicados'"
+      (click)="abrirSecao('comunicados')">
+      Comunicados
+      <span class="contador">{{ comunicados.length }}</span>
+    </button>
+  </nav>
+
+  <div *ngIf="mensagem" class="alerta sucesso" role="status">
+    {{ mensagem }}
+  </div>
+
+  <div *ngIf="erro" class="alerta erro" role="alert">
+    {{ erro }}
+  </div>
+
+  <section class="conteudo">
+    <div class="titulo-secao">
+      <div>
+        <h2>{{ secao === 'atividades' ? 'Atividades da turma' : 'Comunicados da turma' }}</h2>
+        <p>
+          {{
+            secao === 'atividades'
+              ? 'Acompanhe prazos, disciplinas e tarefas.'
+              : 'Publique avisos importantes para seus colegas.'
+          }}
+        </p>
+      </div>
+
+      <button
+        *ngIf="podeGerenciar"
+        type="button"
+        class="botao-principal"
+        (click)="novoItem()">
+        <span aria-hidden="true">+</span>
+        {{ secao === 'atividades' ? 'Nova atividade' : 'Novo comunicado' }}
+      </button>
+    </div>
+
+    <div *ngIf="carregando" class="estado-vazio">
+      Carregando informações...
+    </div>
+
+    <form
+      *ngIf="formularioAberto && !carregando"
+      class="formulario"
+      (ngSubmit)="salvar()">
+
+      <h3>
+        {{
+          modoFormulario === 'editar' ? 'Editar' : 'Adicionar'
+        }}
+        {{ secao === 'atividades' ? 'atividade' : 'comunicado' }}
+      </h3>
+
+      <ng-container *ngIf="secao === 'atividades'; else formularioComunicado">
+        <label for="titulo-atividade">Título</label>
+        <input
+          id="titulo-atividade"
+          name="tituloAtividade"
+          [(ngModel)]="atividadeForm.titulo"
+          required
+          maxlength="255"
+          placeholder="Ex.: Trabalho de matemática">
+
+        <label for="disciplina">Disciplina</label>
+        <input
+          id="disciplina"
+          name="disciplina"
+          [(ngModel)]="atividadeForm.disciplina"
+          required
+          maxlength="255"
+          placeholder="Ex.: Matemática">
+
+        <label for="data-entrega">Data de entrega</label>
+        <input
+          id="data-entrega"
+          name="dataEntrega"
+          type="date"
+          [(ngModel)]="atividadeForm.data_entrega"
+          required>
+
+        <label for="descricao-atividade">Descrição (opcional)</label>
+        <textarea
+          id="descricao-atividade"
+          name="descricaoAtividade"
+          [(ngModel)]="atividadeForm.descricao"
+          rows="4"
+          placeholder="Detalhes da atividade..."></textarea>
+      </ng-container>
+
+      <ng-template #formularioComunicado>
+        <label for="titulo-comunicado">Título</label>
+        <input
+          id="titulo-comunicado"
+          name="tituloComunicado"
+          [(ngModel)]="comunicadoForm.titulo"
+          required
+          maxlength="255"
+          placeholder="Ex.: Aviso sobre a excursão">
+
+        <label for="descricao-comunicado">Mensagem</label>
+        <textarea
+          id="descricao-comunicado"
+          name="descricaoComunicado"
+          [(ngModel)]="comunicadoForm.descricao"
+          required
+          rows="5"
+          placeholder="Escreva o comunicado para a turma..."></textarea>
+      </ng-template>
+
+      <div class="acoes-formulario">
+        <button
+          type="button"
+          class="botao-secundario"
+          [disabled]="salvando"
+          (click)="fecharFormulario()">
+          Cancelar
+        </button>
+
+        <button
+          type="submit"
+          class="botao-principal"
+          [disabled]="salvando">
+          {{ salvando ? 'Salvando...' : 'Salvar' }}
+        </button>
+      </div>
+    </form>
+
+    <ng-container *ngIf="!carregando && secao === 'atividades'">
+      <div *ngIf="atividades.length === 0" class="estado-vazio">
+        <h3>Nenhuma atividade cadastrada</h3>
+        <p>As atividades da turma aparecerão aqui.</p>
+      </div>
+
+      <div class="lista">
+        <article class="item" *ngFor="let atividade of atividades">
+          <div class="item-conteudo">
+            <span class="etiqueta">{{ atividade.disciplina }}</span>
+            <h3>{{ atividade.titulo }}</h3>
+            <p *ngIf="atividade.descricao">{{ atividade.descricao }}</p>
+            <span class="data">
+              Entrega: {{ atividade.data_entrega | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+
+          <div class="acoes-item" *ngIf="podeGerenciar">
+            <button
+              type="button"
+              class="botao-texto"
+              (click)="editarAtividade(atividade)">
+              Editar
+            </button>
+            <button
+              type="button"
+              class="botao-texto perigo"
+              (click)="excluirAtividade(atividade)">
+              Excluir
+            </button>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+
+    <ng-container *ngIf="!carregando && secao === 'comunicados'">
+      <div *ngIf="comunicados.length === 0" class="estado-vazio">
+        <h3>Nenhum comunicado publicado</h3>
+        <p>Os avisos destinados à turma aparecerão aqui.</p>
+      </div>
+
+      <div class="lista">
+        <article class="item" *ngFor="let comunicado of comunicados">
+          <div class="item-conteudo">
+            <span class="etiqueta">Comunicado</span>
+            <h3>{{ comunicado.titulo }}</h3>
+            <p class="texto-comunicado">{{ comunicado.descricao }}</p>
+            <span class="data" *ngIf="comunicado.created_at">
+              Publicado em {{ comunicado.created_at | date:'dd/MM/yyyy' }}
+            </span>
+          </div>
+
+          <div class="acoes-item" *ngIf="podeGerenciar">
+            <button
+              type="button"
+              class="botao-texto"
+              (click)="editarComunicado(comunicado)">
+              Editar
+            </button>
+            <button
+              type="button"
+              class="botao-texto perigo"
+              (click)="excluirComunicado(comunicado)">
+              Excluir
+            </button>
+          </div>
+        </article>
+      </div>
+    </ng-container>
+  </section>
+</main>

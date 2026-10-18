@@ -12,6 +12,7 @@ class Atividade extends Model
         'disciplina',
         'data_entrega',
         'sala_id',
+        'usuario_id',
     ];
 
     public function sala()
@@ -19,7 +20,6 @@ class Atividade extends Model
         return $this->belongsTo(Sala::class);
     }
 
-    // O professor que criou essa atividade
     public function usuario()
     {
         return $this->belongsTo(Usuario::class);

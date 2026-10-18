@@ -23,7 +23,6 @@ class Usuario extends Authenticatable
         'senha',
     ];
 
-    // Mutator para o campo nome_completo em camelcase
     protected function nomeCompleto(): Attribute
     {
         return Attribute::make(

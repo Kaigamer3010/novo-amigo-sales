@@ -7,10 +7,10 @@ import { Biblioteca } from './pages/biblioteca/biblioteca';
 import { Sala } from './pages/sala/sala';
 import { EditarPgInicial } from './pages/editar-pg-inicial/editar-pg-inicial';
 import { Dashboard } from './pages/dashboard/dashboard';
+import { GerenciarTurma } from './pages/gerenciar-turma/gerenciar-turma';
+import { PgUsersAdm } from './pages/pg-users-adm/pg-users-adm';
 
 import { cargoGuard } from './guards/cargo-guard';
-import { AdicionarLivro } from './components/adicionar-livro/adicionar-livro';
-import { PgUsersAdm } from './pages/pg-users-adm/pg-users-adm';
 
 export const routes: Routes = [
   {
@@ -52,7 +52,13 @@ export const routes: Routes = [
   },
   {
     path: 'pg-users-adm',
-    component: PgUsersAdm
+    component: PgUsersAdm,
+    canActivate: [cargoGuard],
+    data: { cargos: ['administrador'] }
+  },
+  {
+    path: 'gerenciar-turma',
+    component: GerenciarTurma
   },
   {
     path: '**',

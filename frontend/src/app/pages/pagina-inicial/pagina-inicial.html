@@ -55,7 +55,9 @@
           <p>Encontre livros e explore novos conhecimentos.</p>
         </div>
 
-        <span class="atalho-acao">ACESSAR BIBLIOTECA <span>→</span></span>
+        <span class="atalho-acao">
+          ACESSAR BIBLIOTECA <span>→</span>
+        </span>
       </a>
 
       <button
@@ -73,7 +75,9 @@
           <p>Consulte as opções de alimentação da escola.</p>
         </div>
 
-        <span class="atalho-acao">CONSULTAR CARDÁPIO <span>→</span></span>
+        <span class="atalho-acao">
+          CONSULTAR CARDÁPIO <span>→</span>
+        </span>
       </button>
 
       <a class="atalho-card" href="#avisos">
@@ -87,7 +91,9 @@
           <p>Acompanhe os comunicados e fique por dentro.</p>
         </div>
 
-        <span class="atalho-acao">VER COMUNICADOS <span>→</span></span>
+        <span class="atalho-acao">
+          VER COMUNICADOS <span>→</span>
+        </span>
       </a>
     </section>
 
@@ -109,7 +115,7 @@
 
       @if (carregandoAvisos) {
         <div class="estado-avisos">
-          <span class="estado-icone estado-carregando">◷</span>
+          <span class="estado-icone">◷</span>
           <p>Carregando os avisos...</p>
         </div>
       } @else if (noticias.length === 0) {
@@ -118,26 +124,25 @@
           <p>Nenhum aviso disponível no momento.</p>
         </div>
       } @else {
-        <div class="grade-avisos">
-          @for (noticia of noticiasVisiveis; track noticia.id) {
-            <app-aviso
-              [titulo]="noticia.titulo"
-              [descricao]="noticia.descricao"
-            ></app-aviso>
+        <div
+          class="grade-avisos"
+          aria-label="Avisos publicados. Deslize horizontalmente para ver mais."
+          tabindex="0"
+        >
+          @for (noticia of noticias; track noticia.id) {
+            <article class="item-aviso">
+              <app-aviso
+                [titulo]="noticia.titulo"
+                [descricao]="noticia.descricao"
+              ></app-aviso>
+            </article>
           }
         </div>
 
         @if (noticias.length > 4) {
-          <div class="paginacao-avisos">
-            <mat-paginator
-              id="paginacao-aviso"
-              [length]="noticias.length"
-              [pageSize]="4"
-              [pageSizeOptions]="[4]"
-              [hidePageSize]="true"
-              (page)="mudarPagina($event)"
-            ></mat-paginator>
-          </div>
+          <p class="instrucao-avisos">
+            Deslize para o lado para ver mais avisos <span>→</span>
+          </p>
         }
       }
     </section>
@@ -208,7 +213,5 @@
         </a>
       </div>
     </section>
-
-  
   </div>
 </main>

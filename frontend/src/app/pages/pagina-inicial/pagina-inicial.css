@@ -76,7 +76,6 @@ img {
 
 .hero-sobreposicao {
   z-index: -1;
-
   background: linear-gradient(
     90deg,
     rgba(28, 19, 19, 0.91) 0%,
@@ -355,6 +354,7 @@ img {
 ================================ */
 
 .secao-avisos {
+  width: 100%;
   min-width: 0;
   padding: 62px 0 76px;
   scroll-margin-top: 25px;
@@ -366,11 +366,17 @@ img {
   justify-content: space-between;
   gap: 24px;
 
+  width: 100%;
   min-width: 0;
   margin-bottom: 27px;
   padding-bottom: 22px;
 
   border-bottom: 1px solid #e2dcd8;
+}
+
+.cabecalho-texto {
+  flex: 1 1 auto;
+  min-width: 0;
 }
 
 .sobretitulo {
@@ -381,11 +387,6 @@ img {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.6px;
-}
-
-.cabecalho-texto {
-  flex: 1 1 auto;
-  min-width: 0;
 }
 
 .cabecalho-texto h2 {
@@ -439,32 +440,110 @@ img {
 }
 
 /*
-   Avisos alinhados à esquerda e limitados
-   a uma largura menor que a página.
+   CARROSSEL DE AVISOS
+
+   Computador: quatro cards visíveis.
+   Os próximos ficam à direita, acessíveis
+   pela rolagem horizontal.
 */
 
 .grade-avisos {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-auto-flow: column;
+  grid-auto-columns: calc((100% - 54px) / 4);
+  grid-template-rows: minmax(0, 1fr);
   align-items: stretch;
   justify-content: start;
   gap: 18px;
 
   width: 100%;
-  max-width: 800px;
   min-width: 0;
-  margin-right: auto;
-  margin-left: 0;
+  max-width: 100%;
+  margin: 0;
+
+  padding: 3px 2px 14px;
+
+  overflow-x: auto;
+  overflow-y: hidden;
+
+  scroll-snap-type: x mandatory;
+  scroll-padding-left: 2px;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+
+  scrollbar-width: thin;
+  scrollbar-color: #b9a4a0 #eee9e7;
 }
 
-.grade-avisos app-aviso {
+/* Cada aviso ocupa exatamente uma coluna */
+
+.item-aviso {
+  display: flex;
+  align-self: stretch;
+
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+
+  scroll-snap-align: start;
+}
+
+.item-aviso app-aviso {
   display: block;
+  flex: 1 1 auto;
 
   width: 100%;
   min-width: 0;
   max-width: 100%;
   height: 100%;
 }
+
+/* Barra de rolagem */
+
+.grade-avisos::-webkit-scrollbar {
+  height: 7px;
+}
+
+.grade-avisos::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background: #eee9e7;
+}
+
+.grade-avisos::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  background: #b9a4a0;
+}
+
+.grade-avisos::-webkit-scrollbar-thumb:hover {
+  background: var(--vinho);
+}
+
+.grade-avisos:focus-visible {
+  outline: 2px solid var(--vinho);
+  outline-offset: 4px;
+}
+
+/* Orientação para encontrar outros avisos */
+
+.instrucao-avisos {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+
+  margin: 12px 0 0;
+
+  color: var(--texto-secundario);
+  font-size: 11px;
+  line-height: 1.6;
+}
+
+.instrucao-avisos span {
+  color: var(--vinho);
+  font-size: 17px;
+}
+
+/* Carregamento e lista vazia */
 
 .estado-avisos {
   display: flex;
@@ -477,8 +556,8 @@ img {
   min-width: 0;
   min-height: 170px;
   padding: 25px;
-  border: 1px solid var(--borda);
 
+  border: 1px solid var(--borda);
   background: var(--branco);
   text-align: center;
 }
@@ -518,22 +597,6 @@ img {
   }
 }
 
-.paginacao-avisos {
-  display: flex;
-  justify-content: flex-start;
-
-  width: 100%;
-  max-width: 800px;
-  min-width: 0;
-  margin: 18px auto 0 0;
-}
-
-#paginacao-aviso {
-  max-width: 100%;
-  min-width: 0;
-  background: transparent;
-}
-
 /* ================================
    SOBRE A ESCOLA
 ================================ */
@@ -549,11 +612,6 @@ img {
 
   border-top: 1px solid #e2dcd8;
 }
-
-/*
-   Galeria menor e mais estreita.
-   As duas fotos continuam lado a lado.
-*/
 
 .escola-galeria {
   position: relative;
@@ -583,13 +641,9 @@ img {
   background: #e5dfdb;
 }
 
-/* Primeira foto mais alta */
-
 .galeria-foto-principal {
   margin-top: 0;
 }
-
-/* Segunda foto ligeiramente mais baixa */
 
 .galeria-foto-secundaria {
   margin-top: 27px;
@@ -830,9 +884,11 @@ img {
     font-size: 17px;
   }
 
+  /* Três avisos visíveis no tablet */
+
   .grade-avisos {
-    max-width: 720px;
-    gap: 14px;
+    grid-auto-columns: calc((100% - 36px) / 3);
+    gap: 18px;
   }
 
   .secao-escola {
@@ -926,7 +982,7 @@ img {
   }
 
   .secao-avisos {
-    padding: 50px 0 55px;
+    padding: 45px 0 52px;
   }
 
   .cabecalho-secao {
@@ -948,24 +1004,17 @@ img {
     font-size: 23px;
   }
 
-  /* Cards de avisos alinhados à esquerda */
+  /* Dois avisos visíveis no celular */
 
   .grade-avisos {
-    grid-template-columns: minmax(0, 1fr);
-    width: 100%;
-    max-width: 430px;
+    grid-auto-columns: calc((100% - 14px) / 2);
     gap: 14px;
-    margin-left: 0;
-    margin-right: auto;
+    padding-bottom: 12px;
   }
 
-  .grade-avisos app-aviso {
-    height: auto;
-  }
-
-  .paginacao-avisos {
+  .instrucao-avisos {
     justify-content: flex-start;
-    max-width: 430px;
+    font-size: 10px;
   }
 
   .secao-escola {
@@ -1050,14 +1099,11 @@ img {
     padding: 17px;
   }
 
-  .grade-avisos {
-    grid-template-columns: minmax(0, 1fr);
-    max-width: 100%;
-    gap: 13px;
-  }
+  /* Mantém dois cards proporcionais no celular pequeno */
 
-  .paginacao-avisos {
-    max-width: 100%;
+  .grade-avisos {
+    grid-auto-columns: 82%;
+    gap: 12px;
   }
 
   .escola-galeria {

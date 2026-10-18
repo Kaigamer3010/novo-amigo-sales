@@ -1,5 +1,11 @@
 
-import { Component, OnInit, inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ChangeDetectorRef,
+  inject
+} from '@angular/core';
+
 import { CommonModule } from '@angular/common';
 
 import { GradeHorarios } from '../../models/gradeHorario';
@@ -16,10 +22,11 @@ import { AuthService } from '../../service/auth';
 export class GradeHorariosComponent implements OnInit {
   private horariosService = inject(HorariosGradeService);
   private authService = inject(AuthService);
+  private cdr = inject(ChangeDetectorRef);
 
   horarios: GradeHorarios[] = [];
 
-  carregando = true;
+  carregando = false;
   erro = '';
 
   diaSelecionado = 'segunda';
@@ -39,27 +46,51 @@ export class GradeHorariosComponent implements OnInit {
   carregarHorarios(): void {
     this.carregando = true;
     this.erro = '';
+    this.horarios = [];
 
-    
-    const salaId = this.authService.obterUsuario()?.sala_id ?? 1;
+    const usuario = this.authService.obterUsuario();
+    const salaId = usuario?.sala_id;
+
+    console.log('Usuário conectado:', usuario);
+    console.log('ID da sala do usuário:', salaId);
+
+    if (!salaId) {
+      this.erro = 'Sua conta não está vinculada a uma sala.';
+      this.carregando = false;
+      this.cdr.detectChanges();
+      return;
+    }
 
     this.horariosService.obterHorario(salaId).subscribe({
       next: (horarios) => {
-        this.horarios = horarios;
+        console.log('Horários recebidos da API:', horarios);
+
+        this.horarios = Array.isArray(horarios) ? horarios : [];
         this.carregando = false;
+
+        if (this.horarios.length === 0) {
+          this.erro = 'Nenhum horário cadastrado para sua sala.';
+        }
+
+        this.cdr.detectChanges();
       },
+
       error: (erro) => {
         console.error('Erro ao carregar horários:', erro);
 
-        this.erro =
-          erro.status === 401
-            ? 'Faça login para consultar os horários.'
-            : erro.status === 403
-              ? 'Você não tem autorização para consultar os horários.'
-              : 'Não foi possível carregar os horários. Verifique o servidor.';
+        if (erro.status === 401) {
+          this.erro = 'Sua sessão expirou. Entre novamente no sistema.';
+        } else if (erro.status === 403) {
+          this.erro = 'Você não tem autorização para consultar os horários.';
+        } else if (erro.status === 404) {
+          this.erro = 'A rota de horários não foi encontrada na API.';
+        } else {
+          this.erro = 'Não foi possível carregar os horários. Verifique o servidor.';
+        }
 
         this.carregando = false;
-      },
+        this.cdr.detectChanges();
+      }
     });
   }
 
@@ -75,7 +106,11 @@ export class GradeHorariosComponent implements OnInit {
 
   get horariosDoDia(): GradeHorarios[] {
     return this.horarios
-      .filter(horario => horario.dia_semana === this.diaSelecionado)
-      .sort((a, b) => a.hora_inicio.localeCompare(b.hora_inicio));
+      .filter(
+        horario => horario.dia_semana === this.diaSelecionado
+      )
+      .sort(
+        (a, b) => a.hora_inicio.localeCompare(b.hora_inicio)
+      );
   }
 }

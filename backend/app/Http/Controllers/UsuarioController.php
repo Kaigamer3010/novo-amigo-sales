@@ -11,7 +11,7 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        // Continua liberado pra qualquer usuário autenticado (não precisa de Gate aqui).
+        
         $usuarios = Usuario::all();
         return response()->json($usuarios);
     }
