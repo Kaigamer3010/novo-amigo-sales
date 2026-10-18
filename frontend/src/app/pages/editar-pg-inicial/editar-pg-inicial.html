@@ -1,110 +1,310 @@
- <main class="conteudo">
 
-    <section class="cabecalho-pagina">
-      <h1>EDIÇÕES - PÁGINA INICIAL</h1>
-      <p>Adicione, edite ou remova avisos e cardápios.</p>
-    </section>
+<main class="conteudo">
 
-    <!-- CARDÁPIO -->
-    <section class="painel">
+  <header class="cabecalho-pagina">
+    <div>
+      <span class="identificador">PAINEL ADMINISTRATIVO</span>
+      <h1>Edições da página inicial</h1>
+      <p>Gerencie os avisos e cardápios exibidos no Jornal Sales.</p>
+    </div>
+  </header>
 
-      <div class="painel-cabecalho">
-        <h2>Cardápio</h2>
+  <section class="resumo">
+    <article class="resumo-item">
+      <div class="resumo-icone aviso-icone">!</div>
+      <div>
+        <span class="resumo-label">Avisos cadastrados</span>
+        <strong>{{ avisos.length }}</strong>
+      </div>
+    </article>
 
-        <button class="botao-adicionar"
-                (click)="abrirGerenciarCardapio()">
-          <span class="mais">+</span>
-          Cardápio
-        </button>
+    <article class="resumo-item">
+      <div class="resumo-icone cardapio-icone">☷</div>
+      <div>
+        <span class="resumo-label">Cardápios cadastrados</span>
+        <strong>{{ cardapios.length }}</strong>
+      </div>
+    </article>
+  </section>
+
+  <!-- CARDÁPIOS -->
+  <section class="painel">
+
+    <header class="painel-cabecalho">
+      <div class="titulo-grupo">
+        <span class="linha-destaque"></span>
+        <div>
+          <h2>Cardápios</h2>
+          <p>Consulte e atualize as refeições cadastradas.</p>
+        </div>
       </div>
 
+      <button class="botao-adicionar"
+              type="button"
+              (click)="abrirGerenciarCardapio()">
+        <span class="mais">+</span>
+        Novo cardápio
+      </button>
+    </header>
+
+    @if (carregandoCardapios) {
+      <div class="estado">
+        <span class="carregando"></span>
+        <p>Carregando cardápios...</p>
+      </div>
+    } @else if (erroCardapios) {
+      <div class="estado estado-erro">
+        <span class="estado-icone">!</span>
+        <p>{{ erroCardapios }}</p>
+        <button class="botao-secundario"
+                type="button"
+                (click)="carregarCardapios()">
+          Tentar novamente
+        </button>
+      </div>
+    } @else if (cardapios.length === 0) {
+      <div class="estado">
+        <span class="estado-icone">☷</span>
+        <h3>Nenhum cardápio cadastrado</h3>
+        <p>Adicione um cardápio para começar a organizar as refeições.</p>
+        <button class="botao-secundario"
+                type="button"
+                (click)="abrirGerenciarCardapio()">
+          + Adicionar cardápio
+        </button>
+      </div>
+    } @else {
       <div class="tabela-container">
         <table>
           <thead>
             <tr>
-              <th>Dia da Semana</th>
-              <th>Manhã</th>
-              <th>Tarde</th>
-              <th>Ações</th>
+              <th>Dia da semana</th>
+              <th>Refeição</th>
+              <th class="coluna-acoes">Ações</th>
             </tr>
           </thead>
 
           <tbody>
             @for (item of cardapios; track item.id) {
               <tr>
-                <td>{{ item.dia_semana }}</td>
-                <td>{{ item.refeicao }}</td>
+                <td>
+                  <div class="dia-conteudo">
+                    <span class="dia-icone">▦</span>
+                    <strong>{{ item.dia_semana }}</strong>
+                  </div>
+                </td>
+
+                <td>
+                  <span class="texto-refeicao">{{ item.refeicao }}</span>
+                </td>
 
                 <td class="acoes">
+                  <button class="botao-acao visualizar"
+                          type="button"
+                          [class.ativo]="cardapioSelecionado === item.id"
+                          [attr.aria-expanded]="cardapioSelecionado === item.id"
+                          title="Visualizar cardápio"
+                          aria-label="Visualizar cardápio"
+                          (click)="visualizarCardapio(item.id)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+
                   <button class="botao-acao editar"
+                          type="button"
                           title="Editar cardápio"
+                          aria-label="Editar cardápio"
                           (click)="editarCardapio(item)">
-                    ✎
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                    </svg>
                   </button>
 
                   <button class="botao-acao excluir"
+                          type="button"
                           title="Excluir cardápio"
+                          aria-label="Excluir cardápio"
                           (click)="excluirCardapio(item.id)">
-                    ♜
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 6h18"/>
+                      <path d="M8 6V4h8v2"/>
+                      <path d="m19 6-1 14H6L5 6"/>
+                      <path d="M10 11v5M14 11v5"/>
+                    </svg>
                   </button>
                 </td>
               </tr>
+
+              @if (cardapioSelecionado === item.id) {
+                <tr class="linha-detalhes">
+                  <td colspan="3">
+                    <div class="detalhes">
+                      <span class="detalhes-titulo">Detalhes do cardápio</span>
+                      <strong>{{ item.dia_semana }}</strong>
+                      <p>{{ item.refeicao }}</p>
+                    </div>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
       </div>
+    }
 
-    </section>
+    <footer class="painel-rodape">
+      <span>{{ cardapios.length }} registro(s)</span>
+      <button class="botao-atualizar"
+              type="button"
+              (click)="carregarCardapios()"
+              [disabled]="carregandoCardapios">
+        ↻ Atualizar lista
+      </button>
+    </footer>
 
-    <!-- AVISOS -->
-    <section class="painel">
+  </section>
 
-      <div class="painel-cabecalho">
-        <h2>Avisos</h2>
+  <!-- AVISOS -->
+  <section class="painel">
 
-        <button class="botao-adicionar"
-                (click)="abrirGerenciarAvisos()">
-          <span class="mais">+</span>
-          Aviso
-        </button>
+    <header class="painel-cabecalho">
+      <div class="titulo-grupo">
+        <span class="linha-destaque"></span>
+        <div>
+          <h2>Avisos</h2>
+          <p>Gerencie os comunicados publicados na página inicial.</p>
+        </div>
       </div>
 
+      <button class="botao-adicionar"
+              type="button"
+              (click)="abrirGerenciarAvisos()">
+        <span class="mais">+</span>
+        Novo aviso
+      </button>
+    </header>
+
+    @if (carregandoAvisos) {
+      <div class="estado">
+        <span class="carregando"></span>
+        <p>Carregando avisos...</p>
+      </div>
+    } @else if (erroAvisos) {
+      <div class="estado estado-erro">
+        <span class="estado-icone">!</span>
+        <p>{{ erroAvisos }}</p>
+        <button class="botao-secundario"
+                type="button"
+                (click)="carregarAvisos()">
+          Tentar novamente
+        </button>
+      </div>
+    } @else if (avisos.length === 0) {
+      <div class="estado">
+        <span class="estado-icone">▤</span>
+        <h3>Nenhum aviso cadastrado</h3>
+        <p>Quando houver avisos, eles aparecerão nesta lista.</p>
+        <button class="botao-secundario"
+                type="button"
+                (click)="abrirGerenciarAvisos()">
+          + Adicionar aviso
+        </button>
+      </div>
+    } @else {
       <div class="tabela-container">
         <table class="tabela-avisos">
           <thead>
             <tr>
               <th>Título</th>
               <th>Descrição</th>
-              <th>Ações</th>
+              <th class="coluna-acoes">Ações</th>
             </tr>
           </thead>
 
           <tbody>
             @for (aviso of avisos; track aviso.id) {
               <tr>
-                <td>{{ aviso.titulo }}</td>
-                <td class="descricao">{{ aviso.descricao }}</td>
+                <td>
+                  <div class="aviso-titulo">
+                    <span class="aviso-marcador"></span>
+                    <strong>{{ aviso.titulo }}</strong>
+                  </div>
+                </td>
 
+                <td class="descricao">
+                  {{ aviso.descricao }}
+                </td>
 
                 <td class="acoes">
+                  <button class="botao-acao visualizar"
+                          type="button"
+                          [class.ativo]="avisoSelecionado === aviso.id"
+                          [attr.aria-expanded]="avisoSelecionado === aviso.id"
+                          title="Visualizar aviso"
+                          aria-label="Visualizar aviso"
+                          (click)="visualizarAviso(aviso.id)">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"/>
+                      <circle cx="12" cy="12" r="3"/>
+                    </svg>
+                  </button>
+
                   <button class="botao-acao editar"
+                          type="button"
                           title="Editar aviso"
+                          aria-label="Editar aviso"
                           (click)="editarAviso(aviso)">
-                    ✎
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 20h9"/>
+                      <path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/>
+                    </svg>
                   </button>
 
                   <button class="botao-acao excluir"
+                          type="button"
                           title="Excluir aviso"
+                          aria-label="Excluir aviso"
                           (click)="excluirAviso(aviso.id)">
-                    ♜
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M3 6h18"/>
+                      <path d="M8 6V4h8v2"/>
+                      <path d="m19 6-1 14H6L5 6"/>
+                      <path d="M10 11v5M14 11v5"/>
+                    </svg>
                   </button>
                 </td>
               </tr>
+
+              @if (avisoSelecionado === aviso.id) {
+                <tr class="linha-detalhes">
+                  <td colspan="3">
+                    <div class="detalhes">
+                      <span class="detalhes-titulo">Detalhes do aviso</span>
+                      <strong>{{ aviso.titulo }}</strong>
+                      <p>{{ aviso.descricao }}</p>
+                    </div>
+                  </td>
+                </tr>
+              }
             }
           </tbody>
         </table>
       </div>
+    }
 
-    </section>
+    <footer class="painel-rodape">
+      <span>{{ avisos.length }} registro(s)</span>
+      <button class="botao-atualizar"
+              type="button"
+              (click)="carregarAvisos()"
+              [disabled]="carregandoAvisos">
+        ↻ Atualizar lista
+      </button>
+    </footer>
 
-  </main>
+  </section>
+
+</main>

@@ -1,59 +1,456 @@
-main{
+
+:host {
+  display: block;
+  font-family: 'Montserrat', sans-serif;
+  color: #262626;
+  --vinho: #761111;
+  --vinho-escuro: #570b0b;
+  --borda: #e7e7eb;
+  --texto-suave: #777d87;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.gerenciar-cardapio {
+  width: 100%;
+  max-height: 85vh;
+  overflow-y: auto;
+  background: #fff;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 25px 26px;
+  background: #fff;
+  border-bottom: 1px solid #eeeeef;
+}
+
+.icone-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  flex-shrink: 0;
+  color: var(--vinho);
+  background: #f7eeee;
+  border-radius: 11px;
+}
+
+.icone-cabecalho svg {
+  width: 23px;
+  height: 23px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.cabecalho-texto {
+  min-width: 0;
+}
+
+.subtitulo {
+  color: var(--vinho);
+  font-size: 9px;
+  font-weight: 800;
+  letter-spacing: 1.4px;
+}
+
+.cabecalho h1 {
+  margin: 5px 0;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: -0.4px;
+}
+
+.cabecalho p {
+  margin: 0;
+  color: var(--texto-suave);
+  font-size: 11px;
+  line-height: 1.7;
+}
+
+.conteudo {
+  padding: 25px 26px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  margin-bottom: 22px;
+}
+
+.campo label {
+  color: #343434;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.campo select,
+.campo textarea {
+  width: 100%;
+  padding: 12px 13px;
+  color: #303030;
+  background: #fff;
+  border: 1px solid #dfe0e5;
+  border-radius: 7px;
+  outline: none;
+  font-size: 12px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.campo select {
+  min-height: 44px;
+  cursor: pointer;
+}
+
+.campo textarea {
+  min-height: 105px;
+  resize: vertical;
+  line-height: 1.8;
+}
+
+.campo select:focus,
+.campo textarea:focus {
+  border-color: var(--vinho);
+  box-shadow: 0 0 0 3px rgb(118 17 17 / 8%);
+}
+
+.campo select:disabled,
+.campo textarea:disabled {
+  background: #f6f6f7;
+  cursor: not-allowed;
+}
+
+.campo textarea::placeholder {
+  color: #a0a2a9;
+}
+
+.dica {
+  color: #8a8d95;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.aviso-substituicao {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 23px;
+  padding: 15px;
+  background: #fcf7f2;
+  border: 1px solid #efdfcf;
+  border-radius: 8px;
+}
+
+.aviso-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  flex-shrink: 0;
+  color: #925d24;
+  background: #f5e6d5;
+  border-radius: 50%;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.aviso-substituicao strong {
+  display: block;
+  margin-bottom: 6px;
+  color: #71451d;
+  font-size: 11px;
+}
+
+.aviso-substituicao p {
+  margin: 0 0 5px;
+  color: #5c5146;
+  font-size: 11px;
+  line-height: 1.8;
+  overflow-wrap: anywhere;
+}
+
+.aviso-substituicao span {
+  color: #8b755e;
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.mensagem {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin: 0 0 16px;
+  padding: 12px;
+  border-radius: 7px;
+}
+
+.mensagem p {
+  margin: 0;
+  font-size: 11px;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+
+.mensagem-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.sucesso {
+  color: #216b42;
+  background: #eef8f1;
+  border: 1px solid #d6ebdc;
+}
+
+.falha {
+  color: #a51d29;
+  background: #fdf0f1;
+  border: 1px solid #f2d6d9;
+}
+
+.acoes-formulario {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 19px 0 25px;
+  border-bottom: 1px solid #eeeeef;
+}
+
+.botao-cancelar,
+.botao-salvar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  min-height: 42px;
+  padding: 0 17px;
+  border-radius: 7px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.botao-cancelar {
+  color: #555963;
+  background: #fff;
+  border: 1px solid #dedfe4;
+}
+
+.botao-cancelar:hover:not(:disabled) {
+  background: #f7f7f8;
+}
+
+.botao-salvar {
+  color: #fff;
+  background: var(--vinho);
+  border: 1px solid var(--vinho);
+}
+
+.botao-salvar:hover:not(:disabled) {
+  background: var(--vinho-escuro);
+  border-color: var(--vinho-escuro);
+}
+
+.botao-salvar:disabled,
+.botao-cancelar:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgb(255 255 255 / 40%);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: girar 0.7s linear infinite;
+}
+
+@keyframes girar {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* LISTA SEMANAL */
+
+.lista-cardapios {
+  padding-top: 23px;
+}
+
+.lista-cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 15px;
+}
+
+.lista-cabecalho h2 {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.lista-cabecalho p {
+  margin: 6px 0 0;
+  color: var(--texto-suave);
+  font-size: 10px;
+  line-height: 1.6;
+}
+
+.contador {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 42px;
+  padding: 7px 9px;
+  color: var(--vinho);
+  background: #f7eeee;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.lista-vazia {
+  padding: 17px;
+  color: var(--texto-suave);
+  background: #fafafa;
+  border: 1px dashed #dedfe4;
+  border-radius: 7px;
+  font-size: 11px;
+  text-align: center;
+  line-height: 1.8;
+}
+
+.lista-dias {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item-dia {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  width: 100%;
+  min-width: 0;
+  padding: 12px;
+  color: #292929;
+  background: #fff;
+  border: 1px solid var(--borda);
+  border-radius: 8px;
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.2s, border-color 0.2s;
+}
+
+.item-dia:hover,
+.item-dia.selecionado {
+  background: #fcf7f7;
+  border-color: #d9bcbc;
+}
+
+.item-dia-icone {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  flex-shrink: 0;
+  color: #4d745b;
+  background: #edf5ef;
+  border-radius: 7px;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.item-dia-texto {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  flex: 1;
+  min-width: 0;
+}
+
+.item-dia-texto strong {
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.item-dia-texto > span {
+  color: #777d87;
+  font-size: 10px;
+  line-height: 1.7;
+  white-space: pre-line;
+  overflow-wrap: anywhere;
+}
+
+.item-editar {
+  flex-shrink: 0;
+  color: var(--vinho);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+@media (max-width: 480px) {
+  .cabecalho {
+    gap: 11px;
+    padding: 19px 16px;
+  }
+
+  .icone-cabecalho {
+    width: 41px;
+    height: 41px;
+  }
+
+  .cabecalho h1 {
+    font-size: 17px;
+  }
+
+  .conteudo {
+    padding: 20px 16px;
+  }
+
+  .acoes-formulario {
+    flex-direction: column-reverse;
+  }
+
+  .botao-cancelar,
+  .botao-salvar {
     width: 100%;
-    height: 100%;
-    background-color: var(--background-color);
+  }
 }
 
-select{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-}
-
-input{
-    margin-top: 5px;
-    margin-bottom: 5px;
-    padding: 3px;
-}
-
-button{
-    width: 100px;
-    margin: 0 auto;
-    margin-top: 5px;
-    background-color: var(--primary-color);
-    font-family: var(--font-montserrat);
-    color: white;
-    border: none;
-    border-radius: 2px;
-    padding: 4px;
-    transition: 0.3s;
-}
-
-button:hover{
-    background-color: var(--secondary-color);
-}
-
-.conteudo{
-    height:auto;
-    margin: 10px;
-    background-color: white;
-    border-radius: 5px;
-    box-shadow: 4px 5px 10px rgba(0, 0, 0, 0.111);
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-}
-
-.h1CadastrarCardapio{
-    padding-top:8px;
-    padding-bottom: 1px;
-    padding-left: 14px;
-    background-color: var(--primary-color);
-}
-
-.h1CadastrarCardapio h1{
-    color: white;
-    font-size: 1.5rem;
-    font-family: var(--font-montserrat);
-    font-weight: bold;
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }

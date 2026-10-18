@@ -1,44 +1,162 @@
 
-<main>
-  <div class="h1CadastrarCardapio">
-  <h1>ADICIONAR CARDÁPIO</h1>
-  </div>
+<main class="gerenciar-cardapio">
+  <header class="cabecalho">
+    <div class="icone-cabecalho">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M4 4h16v16H4z" />
+        <path d="M8 8h8M8 12h8M8 16h5" />
+      </svg>
+    </div>
 
+    <div class="cabecalho-texto">
+      <span class="subtitulo">PÁGINA INICIAL</span>
+      <h1>Gerenciar cardápio</h1>
+      <p>Organize as refeições de cada dia da semana.</p>
+    </div>
+  </header>
 
   <div class="conteudo">
-  <label for="dia">Dia da semana:</label>
+    <div class="campo">
+      <label for="dia">Dia da semana</label>
 
-  <select id="dia" [(ngModel)]="novoDia">
-    @for (dia of dias; track dia.dia_semana) {
-      <option [ngValue]="dia.dia_semana">
-        {{ dia.nome }}
-      </option>
+      <select
+        id="dia"
+        name="dia"
+        [(ngModel)]="novoDia"
+        (ngModelChange)="verificarDia()"
+        [disabled]="carregando || carregandoLista"
+      >
+        @for (dia of dias; track dia.dia_semana) {
+          <option [ngValue]="dia.dia_semana">
+            {{ dia.nome }}
+          </option>
+        }
+      </select>
+    </div>
+
+    @if (carregandoLista) {
+      <p class="lista-vazia">Carregando cardápios cadastrados...</p>
     }
-  </select>
 
-  <label for="refeicao">Refeição:</label>
+    @if (modoSubstituicao && cardapioExistente) {
+      <section class="aviso-substituicao">
+        <div class="aviso-icone">!</div>
 
-  <input
-    id="refeicao"
-    type="text"
-    [(ngModel)]="novaRefeicao"
-    placeholder="Digite a refeição"
-  >
+        <div>
+          <strong>Este dia já tem um cardápio</strong>
+          <p>
+            {{ nomeDia(novoDia) }}:
+            {{ cardapioExistente.refeicao }}
+          </p>
+          <span>
+            Ao salvar, a refeição anterior será substituída.
+          </span>
+        </div>
+      </section>
+    }
 
-  <button
-    type="button"
-    (click)="adicionarCardapio()"
-    [disabled]="carregando"
-  >
-    {{ carregando ? 'Cadastrando...' : 'Adicionar' }}
-  </button>
+    <div class="campo">
+      <label for="refeicao">
+        {{ modoSubstituicao ? 'Nova refeição' : 'Descrição da refeição' }}
+      </label>
 
-  @if (mensagem) {
-    <p>{{ mensagem }}</p>
-  }
+      <textarea
+        id="refeicao"
+        name="refeicao"
+        [(ngModel)]="novaRefeicao"
+        placeholder="Ex.: arroz, feijão, frango assado e salada..."
+        rows="4"
+        maxlength="2000"
+        [disabled]="carregando || carregandoLista"
+      ></textarea>
 
-  @if (erro) {
-    <p>{{ erro }}</p>
-  }
+      <span class="dica">
+        Descreva as refeições de forma clara para os alunos.
+      </span>
+    </div>
+
+    @if (mensagem) {
+      <div class="mensagem sucesso" role="status">
+        <span class="mensagem-icone">✓</span>
+        <p>{{ mensagem }}</p>
+      </div>
+    }
+
+    @if (erro) {
+      <div class="mensagem falha" role="alert">
+        <span class="mensagem-icone">!</span>
+        <p>{{ erro }}</p>
+      </div>
+    }
+
+    <footer class="acoes-formulario">
+      <button
+        class="botao-cancelar"
+        type="button"
+        (click)="cancelar()"
+        [disabled]="carregando"
+      >
+        Cancelar
+      </button>
+
+      <button
+        class="botao-salvar"
+        type="button"
+        (click)="adicionarCardapio()"
+        [disabled]="carregando || carregandoLista"
+      >
+        @if (carregando) {
+          <span class="spinner"></span>
+          Salvando...
+        } @else {
+          <span>
+            {{ modoSubstituicao ? 'Substituir cardápio' : 'Cadastrar cardápio' }}
+          </span>
+        }
+      </button>
+    </footer>
+
+    <section class="lista-cardapios">
+      <div class="lista-cabecalho">
+        <div>
+          <h2>Cardápios da semana</h2>
+          <p>Confira os dias já cadastrados.</p>
+        </div>
+
+        <span class="contador">
+          {{ cardapios.length }}/{{ dias.length }}
+        </span>
+      </div>
+
+      @if (carregandoLista) {
+        <p class="lista-vazia">Carregando cardápios...</p>
+      } @else if (cardapios.length === 0) {
+        <p class="lista-vazia">
+          Nenhuma refeição cadastrada ainda.
+        </p>
+      } @else {
+        <div class="lista-dias">
+          @for (dia of dias; track dia.dia_semana) {
+            @if (cardapioDoDia(dia.dia_semana); as item) {
+              <button
+                class="item-dia"
+                [class.selecionado]="novoDia === dia.dia_semana"
+                type="button"
+                (click)="novoDia = dia.dia_semana; verificarDia()"
+              >
+                <span class="item-dia-icone">✓</span>
+
+                <span class="item-dia-texto">
+                  <strong>{{ dia.nome }}</strong>
+                  <span>{{ item.refeicao }}</span>
+                </span>
+
+                <span class="item-editar">Editar</span>
+              </button>
+            }
+          }
+        </div>
+      }
+    </section>
   </div>
 </main>
