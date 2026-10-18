@@ -1,0 +1,112 @@
+
+<div class="janela-livros">
+  <header class="cabecalho">
+    <div>
+      <h2>Gerenciar livros</h2>
+      <p>Pesquise, edite ou exclua livros cadastrados na biblioteca.</p>
+    </div>
+
+    <button
+      type="button"
+      class="botao-fechar"
+      aria-label="Fechar janela"
+      (click)="fechar()">
+      ×
+    </button>
+  </header>
+
+  <div class="campo-pesquisa">
+    <label for="pesquisaLivros">Pesquisar livro</label>
+
+    <input
+      id="pesquisaLivros"
+      name="pesquisaLivros"
+      type="search"
+      [(ngModel)]="busca"
+      placeholder="Digite o título ou o nome do autor..."
+      autocomplete="off">
+  </div>
+
+  <p class="contador">
+    {{ livrosFiltrados.length }}
+    {{ livrosFiltrados.length === 1
+      ? 'livro encontrado'
+      : 'livros encontrados' }}
+  </p>
+
+  <div class="tabela-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Título</th>
+          <th>Autor</th>
+          <th>Gênero</th>
+          <th>Disponíveis</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+
+      <tbody>
+        @for (livro of livrosFiltrados; track livro.id) {
+          <tr>
+            <td class="titulo-livro">{{ livro.titulo }}</td>
+
+            <td>
+              {{ livro.autor || livro.autores?.join(', ') || '—' }}
+            </td>
+
+            <td>{{ livro.categoria || '—' }}</td>
+            <td>{{ livro.quantidadeDisponivel ?? 0 }}</td>
+
+            <td>
+              <span
+                class="status"
+                [class.disponivel]="livro.disponivel"
+                [class.indisponivel]="!livro.disponivel">
+                {{ livro.disponivel ? 'Disponível' : 'Indisponível' }}
+              </span>
+            </td>
+
+            <td>
+              <div class="acoes">
+                <button
+                  type="button"
+                  class="botao-editar"
+                  (click)="editar(livro)">
+                  Editar
+                </button>
+
+                <button
+                  type="button"
+                  class="botao-excluir"
+                  (click)="excluir(livro)">
+                  Excluir
+                </button>
+              </div>
+            </td>
+          </tr>
+        } @empty {
+          <tr>
+            <td colspan="6" class="vazio">
+              @if (busca.trim()) {
+                Nenhum livro encontrado para essa pesquisa.
+              } @else {
+                Nenhum livro cadastrado.
+              }
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <footer>
+    <button
+      type="button"
+      class="botao-fechar-rodape"
+      (click)="fechar()">
+      Fechar
+    </button>
+  </footer>
+</div>

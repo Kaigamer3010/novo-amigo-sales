@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\Models\Emprestimo;
 use App\Models\Exemplar;
 use App\Models\Livro;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Gate;
@@ -11,9 +12,6 @@ use Illuminate\Validation\ValidationException;
 
 class EmprestimoController extends Controller
 {
-    /**
-     * Lista empréstimos, incluindo livros arquivados no histórico.
-     */
     public function index()
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -25,9 +23,6 @@ class EmprestimoController extends Controller
         );
     }
 
-    /**
-     * Registra o empréstimo de uma cópia física disponível.
-     */
     public function store(Request $request)
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -35,9 +30,31 @@ class EmprestimoController extends Controller
         $dados = $request->validate([
             'livro_id' => ['required', 'integer', 'exists:livros,id'],
             'nome_aluno' => ['required', 'string', 'max:255'],
+            'data_emprestimo' => ['required', 'date_format:Y-m-d'],
+            'prazo_devolucao_dias' => ['required', 'integer', 'min:1', 'max:365'],
+        ], [
+            'data_emprestimo.required' => 'Selecione a data do empréstimo.',
+            'data_emprestimo.date_format' => 'A data do empréstimo é inválida.',
+            'prazo_devolucao_dias.required' => 'Informe o prazo para devolução.',
+            'prazo_devolucao_dias.integer' => 'O prazo deve ser informado em dias inteiros.',
+            'prazo_devolucao_dias.min' => 'O prazo mínimo para devolução é de 1 dia.',
+            'prazo_devolucao_dias.max' => 'O prazo máximo para devolução é de 365 dias.',
         ]);
 
-        $emprestimo = DB::transaction(function () use ($dados) {
+        $dataEmprestimo = Carbon::createFromFormat(
+            'Y-m-d',
+            $dados['data_emprestimo']
+        )->startOfDay();
+
+        $dataDevolucaoPrevista = $dataEmprestimo
+            ->copy()
+            ->addDays((int) $dados['prazo_devolucao_dias']);
+
+        $emprestimo = DB::transaction(function () use (
+            $dados,
+            $dataEmprestimo,
+            $dataDevolucaoPrevista
+        ) {
             $livro = Livro::where('ativo', true)
                 ->whereKey($dados['livro_id'])
                 ->lockForUpdate()
@@ -57,12 +74,10 @@ class EmprestimoController extends Controller
                 ]);
             }
 
-            // 1. Atualiza a cópia que está sendo emprestada.
             $exemplar->update([
                 'status' => 'emprestado',
             ]);
 
-            // 2. Recalcula a disponibilidade do título.
             $temDisponivel = $livro->exemplares()
                 ->where('status', 'disponivel')
                 ->exists();
@@ -71,13 +86,12 @@ class EmprestimoController extends Controller
                 'disponibilidade' => $temDisponivel,
             ]);
 
-            // 3. Registra o histórico de empréstimo.
             $novoEmprestimo = Emprestimo::create([
                 'livro_id' => $livro->id,
                 'exemplar_id' => $exemplar->id,
                 'nome_aluno' => $dados['nome_aluno'],
-                'data_emprestimo' => today(),
-                'data_devolucao_prevista' => today()->addDays(7),
+                'data_emprestimo' => $dataEmprestimo->toDateString(),
+                'data_devolucao_prevista' => $dataDevolucaoPrevista->toDateString(),
             ]);
 
             return $novoEmprestimo->load(['livro', 'exemplar']);
@@ -89,9 +103,6 @@ class EmprestimoController extends Controller
         ], 201);
     }
 
-    /**
-     * Registra a devolução e libera a cópia física.
-     */
     public function devolver(Emprestimo $emprestimo)
     {
         Gate::authorize('gerenciar-biblioteca');
@@ -121,8 +132,6 @@ class EmprestimoController extends Controller
                 }
             }
 
-            // Um livro arquivado permanece fora do catálogo, mas seu
-            // histórico é preservado e sua disponibilidade é atualizada.
             $livro = Livro::whereKey($registro->livro_id)->first();
 
             if ($livro) {
@@ -148,9 +157,6 @@ class EmprestimoController extends Controller
         ]);
     }
 
-    /**
-     * Lista empréstimos vencidos ainda não devolvidos.
-     */
     public function atrasados()
     {
         Gate::authorize('gerenciar-biblioteca');

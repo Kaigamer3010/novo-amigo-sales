@@ -1,0 +1,196 @@
+
+:host {
+  display: block;
+  color: #252525;
+  font-family: var(--font-montserrat, Arial, sans-serif);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.janela-livros {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-height: 85vh;
+  padding: 24px;
+  background: #fff;
+}
+
+.cabecalho {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cabecalho h2 {
+  margin: 0 0 7px;
+  font-size: 1.35rem;
+  font-weight: 700;
+}
+
+.cabecalho p {
+  margin: 0;
+  color: #737373;
+  font-size: 0.88rem;
+  line-height: 1.5;
+}
+
+.botao-fechar {
+  border: none;
+  background: transparent;
+  color: #555;
+  font-size: 30px;
+  cursor: pointer;
+}
+
+.campo-pesquisa {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.campo-pesquisa label {
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.campo-pesquisa input {
+  width: 100%;
+  min-height: 44px;
+  padding: 10px 14px;
+  border: 1px solid #d3d7dd;
+  border-radius: 7px;
+  font: inherit;
+  outline: none;
+}
+
+.campo-pesquisa input:focus {
+  border-color: var(--primary-color, #721111);
+  box-shadow: 0 0 0 3px rgb(114 17 17 / 12%);
+}
+
+.contador {
+  margin: -7px 0 0;
+  color: #737373;
+  font-size: 0.84rem;
+}
+
+.tabela-wrapper {
+  width: 100%;
+  max-height: 48vh;
+  overflow: auto;
+  border: 1px solid #e6e6e6;
+  border-radius: 8px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+}
+
+thead {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  background: #f7f4f4;
+}
+
+th,
+td {
+  padding: 12px;
+  border-bottom: 1px solid #ededed;
+  text-align: left;
+  vertical-align: middle;
+}
+
+th {
+  white-space: nowrap;
+  font-weight: 700;
+}
+
+tbody tr:hover {
+  background: #fcfafa;
+}
+
+.titulo-livro {
+  min-width: 140px;
+  font-weight: 600;
+}
+
+.acoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.botao-editar,
+.botao-excluir,
+.botao-fechar-rodape {
+  padding: 8px 11px;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.botao-editar {
+  background: #f1e8e8;
+  color: #721111;
+}
+
+.botao-excluir {
+  background: #fff0ef;
+  color: #a5221b;
+}
+
+.botao-fechar-rodape {
+  border-color: #dedede;
+  background: #fff;
+  color: #333;
+}
+
+.status {
+  display: inline-block;
+  padding: 5px 8px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+.status.disponivel {
+  background: #e7f5eb;
+  color: #246a3b;
+}
+
+.status.indisponivel {
+  background: #fbe9e8;
+  color: #9f2924;
+}
+
+.vazio {
+  padding: 25px;
+  color: #737373;
+  text-align: center;
+}
+
+footer {
+  display: flex;
+  justify-content: flex-end;
+}
+
+@media (max-width: 650px) {
+  .janela-livros {
+    padding: 16px;
+  }
+
+  .tabela-wrapper {
+    max-height: 52vh;
+  }
+}
