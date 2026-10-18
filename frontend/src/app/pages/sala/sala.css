@@ -3,15 +3,15 @@
 
 main{
     width: 100%;
-    height: 92vh;
+    height: 94vh;
     display: flex;
     flex-direction: column;
-    padding-bottom: 10px;
+    padding-bottom: 15px;
 }
 
 .backDash {
   width: 100%;
-  height: 18vh;
+  height: 14vh;
   background-color: gray;
 }
 
@@ -20,8 +20,8 @@ main{
     height: 100%;
     display: flex;
     flex-direction: row;
-    padding-left: 210px;
-    padding-right: 210px;
+    padding-left: 280px;
+    padding-right: 280px;
 }
 
 .p-col{
@@ -29,20 +29,18 @@ main{
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 5px;
+    padding: 10px;
 }
 
 .f-floor{
     width: 100%;
     height: 45%;
-    border: 1px solid red;
     padding: 5px;
 }
 
 .s-floor{
     width: 100%;
     height: 55%;
-    border: 1px solid red;
     padding: 5px;
 }
 
@@ -51,29 +49,29 @@ main{
     height: 100%;
     display: flex;
     flex-direction: column;
-    padding: 5px;
-    background-color: rgb(159, 237, 237);
+    padding: 10px;
 }
 
 .p-andar{
     width: 100%;
-    height: 60%;
-    border: 1px solid red;
+    height: 100%;
     padding: 5px;
 }
 
-.s-andar{
-    width: 100%;
-    height: 40%;
-    border: 1px solid red;
-    padding: 5px;
-}
 
 .gradeHorarios{
     width: 100%;
     height: 200px;
     background-color: blue;
     border-radius: 5px;
+    box-shadow: 5px 5px 15px rgba(0, 0, 0, 0.325);
+}
+
+.gradeButton{
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+    border: none;
 }
 
 

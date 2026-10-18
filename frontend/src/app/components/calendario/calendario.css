@@ -1,0 +1,61 @@
+
+.calendario-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.calendario {
+  width: 100%;
+  max-width: 380px;
+  height: 100%;
+  
+  background: #fff;
+  border-radius: 5px;
+  box-shadow: 0 4px 12px #00000020;
+  margin-left: auto;
+}
+
+.avisos{
+  width: 100%;
+  max-width: 380px;
+  margin-left: auto;
+}
+
+.avisos h2 {
+  font-size: 22px;
+  margin-bottom: 10px;
+}
+
+.aviso-card {
+  width: 100%;
+  max-width: 370px;
+  min-height: 120px;
+  padding: 15px;
+  margin-bottom: 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px #00000010;
+}
+
+.aviso-card h3 {
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.aviso-card p {
+  font-size: 14px;
+  margin-bottom: 0;
+}
+
+/* Destaca os dias que possuem eventos. */
+:host ::ng-deep .dia-com-evento
+.mat-calendar-body-cell-content {
+  background: #ffe8a3;
+  border-radius: 50%;
+}
+
+

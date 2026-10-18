@@ -1,51 +1,144 @@
+
 @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&display=swap");
 @import url("https://fonts.googleapis.com/css2?family=League+Spartan:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap");
 
 :root {
-    --background-color: #faf8f4;
-    --primary-color: #721111;
-    --secondary-color: #430a0a;
-    --tertiary-color: #9198a0;
-    --correct-color: green;
-    --second-correct-color: rgba(86, 224, 86, 0.419);
-    --wrong-color: rgb(207, 7, 7);
-    --second-wrong-color: rgba(255, 93, 93, 0.329);
+  --background-color: #faf8f4;
+  --primary-color: #721111;
+  --secondary-color: #430a0a;
+  --tertiary-color: #9198a0;
+  --correct-color: green;
+  --second-correct-color: rgba(86, 224, 86, 0.419);
+  --wrong-color: rgb(207, 7, 7);
+  --second-wrong-color: rgba(255, 93, 93, 0.329);
 
-    --font-league-spartan: "League Spartan", sans-serif;
-    --font-montserrat: "Montserrat", sans-serif;
+  --font-league-spartan: "League Spartan", sans-serif;
+  --font-montserrat: "Montserrat", sans-serif;
 }
 
 * {
-    font-family: var(--font-montserrat);
+  font-family: var(--font-montserrat);
 }
-
 
 html {
   scrollbar-gutter: stable;
   background-color: var(--background-color);
 }
 
-
 body {
-    margin: 0;
-    padding: 0 !important;
-    background-color: var(--background-color);
+  margin: 0;
+  padding: 0 !important;
+  background-color: var(--background-color);
 }
 
+/* Diálogos */
 .cardapio-dialog .mat-mdc-dialog-container .mdc-dialog__surface {
-    width: 600px;
-    height: 310px;
-    border-radius: 5px !important;
-}
-
-.login-dialog .mat-mdc-dialog-surface {
+  width: 600px;
+  height: 310px;
   border-radius: 5px !important;
 }
 
-.gerenciar-cardapio-dialog .mat-mdc-dialog-surface {
-  border-radius: 5px !important;
-}
-
+.login-dialog .mat-mdc-dialog-surface,
+.gerenciar-cardapio-dialog .mat-mdc-dialog-surface,
 .gerenciar-avisos-dialog .mat-mdc-dialog-surface {
   border-radius: 5px !important;
+}
+
+/* Calendário */
+.mat-calendar {
+  background-color: #fff;
+  font-family: var(--font-montserrat);
+  border-radius: 5px;
+}
+
+/* Cabeçalho */
+.mat-calendar .mat-calendar-header {
+  background-color: var(--primary-color);
+  padding: 0 !important;
+  margin: 0 !important;
+  border-radius: 5px;
+}
+
+.mat-calendar .mat-calendar-period-button {
+  color: white !important;
+  font-family: var(--font-league-spartan) !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase;
+  pointer-events: none;
+  cursor: default;
+}
+
+/* Remove a seta ao lado do mês e do ano */
+.mat-calendar-arrow {
+  display: none !important;
+}
+
+/* Setas de navegação entre meses */
+.mat-calendar .mat-calendar-previous-button,
+.mat-calendar .mat-calendar-next-button {
+  color: white;
+}
+
+/* Dias da semana */
+.mat-calendar .mat-calendar-table-header th {
+  color: var(--primary-color);
+  font-family: var(--font-montserrat);
+  font-weight: bold;
+  font-size: 12px;
+}
+
+/* Área dos dias: reserva espaço para até 6 semanas */
+.mat-calendar-content {
+  padding: 0 !important;
+}
+
+.mat-calendar-table {
+  width: 100%;
+  height: 280px !important;
+  table-layout: fixed;
+}
+
+.mat-calendar-table tbody tr {
+  height: 40px !important;
+}
+
+/* Números dos dias */
+.mat-calendar .mat-calendar-body-cell-content {
+  font-family: var(--font-montserrat);
+  font-size: 12px;
+  font-weight: 600;
+}
+
+/* Dia selecionado */
+.mat-calendar .mat-calendar-body-selected {
+  background-color: var(--primary-color) !important;
+  color: white !important;
+}
+
+/* Dia atual */
+.mat-calendar .mat-calendar-body-today:not(.mat-calendar-body-selected) {
+  border-color: var(--primary-color);
+}
+
+/* Dias com eventos */
+.mat-calendar .dia-com-evento .mat-calendar-body-cell-content {
+  background-color: #ffe8a3;
+  border-radius: 50%;
+}
+
+/* Hover dos dias */
+.mat-calendar .mat-calendar-body-cell:hover
+.mat-calendar-body-cell-content:not(.mat-calendar-body-selected) {
+  background-color: #f0e4df;
+}
+
+/* Oculta o rótulo extra do mês, como OCT */
+.mat-calendar-body-label {
+  visibility: hidden !important;
+}
+
+.mat-calendar .mat-calendar-controls {
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
 }

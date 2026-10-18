@@ -6,11 +6,12 @@ import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Aviso } from '../../models/avisos';
 import { AvisosSalaService } from '../../service/avisos-sala';
 import { GradeHorarios } from '../../components/grade-horarios/grade-horarios';
+import { CalendarioComponent } from '../../components/calendario/calendario';
 
 
 @Component({
   selector: 'app-sala',
-  imports: [RouterLink, AvisosSalaComponent, MatPaginatorModule],
+  imports: [RouterLink, AvisosSalaComponent, MatPaginatorModule, CalendarioComponent],
   templateUrl: './sala.html',
   styleUrl: './sala.css',
 })

@@ -1,0 +1,28 @@
+<div class="calendario-container">
+
+    <div class="calendario">
+        <mat-calendar #calendario [(selected)]="dataSelecionada" [dateClass]="marcarDatas" [minDate]="dataMinima"
+            [maxDate]="dataMaxima" [startAt]="mesAtivo" (selectedChange)="selecionarData($event)">
+        </mat-calendar>
+    </div>
+
+    <div class="avisos">
+        <h2>AVISOS:</h2>
+
+        @if (eventosSelecionados.length > 0) {
+        @for (evento of eventosSelecionados; track evento.id) {
+        <div class="aviso-card">
+            <h3>{{ evento.titulo }}</h3>
+            <hr>
+            <p>{{ evento.descricao }}</p>
+        </div>
+        }
+        } @else {
+        <div class="aviso-card">
+            <p style="font-weight: bold;">Nenhum evento nesta data.</p>
+            <hr>
+        </div>
+        }
+    </div>
+
+</div>
