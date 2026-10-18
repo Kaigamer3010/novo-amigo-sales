@@ -1,1 +1,35 @@
-<p>grade-horarios works!</p>
+<main>
+  <div class="head">
+    <h1>Dia da Semana: oioi</h1>
+  </div>
+
+  <div class="subMain">
+    <div class="dias">
+      <button
+        class="inicialDaSemana"
+        *ngFor="let dia of dias"
+        (click)="selecionarDia(dia.dia_semana)"
+        [style.background-color]="
+          dia.dia_semana === diaSelecionado ? 'white' : '#f5f5f5'
+        ">
+        {{ dia.letra }}
+      </button>
+    </div>
+
+<div class="conteudo">
+  <h2>{{ diaAtual?.nome }}</h2>
+
+  <div *ngIf="horariosDoDia.length > 0; else semRefeicoes">
+    <p *ngFor="let horario of horariosDoDia">
+      {{ horario.hora_inicio }}
+      {{ horario.materia }}
+    </p>
+  </div>
+
+  <ng-template #semRefeicoes>
+    <p>Nenhuma refeição cadastrada para este dia.</p>
+  </ng-template>
+</div>
+
+  </div>
+</main>

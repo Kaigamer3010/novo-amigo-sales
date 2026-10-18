@@ -5,7 +5,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { Aviso } from '../../models/avisos';
 import { AvisosSalaService } from '../../service/avisos-sala';
-import { GradeHorarios } from '../../components/grade-horarios/grade-horarios';
+import { GradeHorariosComponent } from '../../components/grade-horarios/grade-horarios';
 import { CalendarioComponent } from '../../components/calendario/calendario';
 
 
@@ -24,7 +24,7 @@ export class Sala {
   ) {}
 
   abrirGradeHorarios() {
-      this.dialog.open(GradeHorarios, {
+      this.dialog.open(GradeHorariosComponent, {
         panelClass: 'cardapio-dialog'
       });
     }
