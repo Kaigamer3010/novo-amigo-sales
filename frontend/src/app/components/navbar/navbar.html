@@ -47,10 +47,18 @@
       }
 
       @if (auth.temCargo(['administrador'])) {
-      <a class= "rotas" routerLink="/pg-users-adm" routerLinkActive="active">
+      <a class="rotas" routerLink="/pg-users-adm" routerLinkActive="active">
         <ul>ADMINISTRAÇÃO</ul>
       </a>
       }
+
+
+      @if (podeGerenciarTurma) {
+      <a class="rotas" routerLink="/gerenciar-turma" routerLinkActive="active">
+        <ul>GERENCIAR SALA</ul>
+      </a>
+      }
+
 
       @if (auth.temCargo(['administrador'])) {
       <a class="rotas" routerLink="/editar-pg-inicial">

@@ -53,26 +53,52 @@ class SalaController extends Controller
     }
 
     
-    public function update(Request $request, $id)
-    {
-        if (Gate::denies('gerenciar-sala')) {
-            return response()->json([
-                'erro' => 'Sem permissão.'
-            ], 403);
-        }
+    
+public function update(Request $request, $id)
+{
+    $sala = Sala::findOrFail($id);
+    $usuario = $request->user();
 
+   
+    if (Gate::allows('gerenciar-sala')) {
         $dados = $request->validate([
             'serie' => 'sometimes|required|integer|min:1',
             'curso_id' => 'sometimes|required|exists:cursos,id',
         ]);
 
-        $sala = Sala::findOrFail($id);
         $sala->update($dados);
 
         return response()->json(
             $sala->load(['curso', 'representante'])
         );
     }
+
+    
+    
+    if (
+        !$usuario ||
+        (int) $sala->representante_id !== (int) $usuario->id ||
+        (int) $sala->id !== (int) $usuario->sala_id
+    ) {
+        return response()->json([
+            'erro' => 'Você não tem permissão para editar esta sala.'
+        ], 403);
+    }
+
+    
+    $dados = $request->validate([
+        'serie' => 'required|integer|min:1',
+    ]);
+
+    $sala->update([
+        'serie' => $dados['serie'],
+    ]);
+
+    return response()->json(
+        $sala->load(['curso', 'representante'])
+    );
+}
+
 
    
     public function definirRepresentante(Request $request, $id)
