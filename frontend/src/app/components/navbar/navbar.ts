@@ -1,10 +1,12 @@
 
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, ViewChild } from '@angular/core';
+import { MatSidenav } from '@angular/material/sidenav';
 import { Router, RouterLink } from '@angular/router';
 import { AsyncPipe } from '@angular/common';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialog } from '@angular/material/dialog';
 import { Subscription } from 'rxjs';
+import { Offcanvas } from 'bootstrap';
 
 import { PerfilUsuario } from '../perfil-usuario/perfil-usuario';
 import { LoginComponent } from '../login/login';
@@ -24,6 +26,9 @@ interface Sala {
 })
 export class Navbar implements OnInit, OnDestroy {
   private readonly apiUrl = 'http://127.0.0.1:8000/api';
+
+  @ViewChild('sidenav') sidenav!: MatSidenav;
+
 
   podeGerenciarTurma = false;
   private usuarioSubscription?: Subscription;
@@ -141,4 +146,27 @@ export class Navbar implements OnInit, OnDestroy {
       autoFocus: false
     });
   }
+
+  fecharMenu(): void {
+  const elemento = document.getElementById('offcanvasExample');
+
+  if (elemento) {
+    const menu = Offcanvas.getInstance(elemento);
+
+    if (menu) {
+      menu.hide();
+    }
+  }
+
+  // Remove possíveis resíduos do Offcanvas
+  setTimeout(() => {
+    document.querySelectorAll('.offcanvas-backdrop').forEach((backdrop) => {
+      backdrop.remove();
+    });
+
+    document.body.classList.remove('modal-open');
+    document.body.style.removeProperty('overflow');
+    document.body.style.removeProperty('padding-right');
+  }, 300);
+}
 }

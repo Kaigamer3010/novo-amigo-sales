@@ -30,43 +30,43 @@
       <button type="button" class="btn-close btn-close-white" data-bs-dismiss="offcanvas" aria-label="Close"></button>
     </div>
     <div class="offcanvas-body">
-      <a class="rotas" routerLink="/pg-inicial">
+      <a class="rotas" routerLink="/pg-inicial" (click)="fecharMenu()">
         <ul>PÁGINA INICIAL</ul>
       </a>
-      <a class="rotas" routerLink="/pg-jornal">
+      <a class="rotas" routerLink="/pg-jornal" (click)="fecharMenu()">
         <ul>JORNAL</ul>
       </a>
-      <a class="rotas" routerLink="/pg-biblioteca">
+      <a class="rotas" routerLink="/pg-biblioteca" (click)="fecharMenu()">
         <ul>BIBLIOTECA</ul>
       </a>
 
       @if (auth.temCargo(['aluno'])) {
-      <a class="rotas" routerLink="/pg-sala">
+      <a class="rotas" routerLink="/pg-sala" (click)="fecharMenu()">
         <ul>ÁREA DO ALUNO</ul>
       </a>
       }
 
       @if (auth.temCargo(['administrador'])) {
-      <a class="rotas" routerLink="/pg-users-adm" routerLinkActive="active">
+      <a class="rotas" routerLink="/pg-users-adm" routerLinkActive="active" (click)="fecharMenu()">
         <ul>ADMINISTRAÇÃO</ul>
       </a>
       }
 
 
       @if (podeGerenciarTurma) {
-      <a class="rotas" routerLink="/gerenciar-turma" routerLinkActive="active">
+      <a class="rotas" routerLink="/gerenciar-turma" routerLinkActive="active" (click)="fecharMenu()">
         <ul>GERENCIAR SALA</ul>
       </a>
       }
 
 
       @if (auth.temCargo(['administrador'])) {
-      <a class="rotas" routerLink="/editar-pg-inicial">
+      <a class="rotas" routerLink="/editar-pg-inicial" (click)="fecharMenu()">
         <ul>EDITAR PÁGINA INICIAL</ul>
       </a>
       }
       @if (auth.temCargo(['bibliotecario', 'administrador'])) {
-      <a class="rotas" routerLink="/pg-dashboard">
+      <a class="rotas" routerLink="/pg-dashboard" (click)="fecharMenu()">
         <ul>DASHBOARD</ul>
       </a>
       }
