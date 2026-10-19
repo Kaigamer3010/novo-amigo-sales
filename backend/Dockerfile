@@ -1,7 +1,11 @@
-FROM richarvey/nginx-php-fame:latest
+FROM richarvey/nginx-php-fpm:latest
 
 # Copia os arquivos do projeto para o container
 COPY . /var/www/html
+
+# Configurações obrigatórias para esta imagem rodar o Laravel corretamente
+ENV WEBROOT /var/www/html/public
+ENV COMPOSER_ALLOW_SUPERUSER 1
 
 # Define as variáveis de ambiente necessárias para o deploy estático
 ENV LARA_APP_ENV=production
