@@ -1,22 +1,17 @@
-FROM richarvey/nginx-php-fpm:latest
+FROM php:8.3-cli
 
-# Copia os arquivos do projeto para o container
-COPY . /var/www/html
+RUN apt-get update && apt-get install -y git unzip libpq-dev libzip-dev \
+    && docker-php-ext-install pdo_pgsql zip bcmath \
+    && rm -rf /var/lib/apt/lists/*
 
-# Configurações obrigatórias para esta imagem rodar o Laravel corretamente
-ENV WEBROOT /var/www/html/public
-ENV COMPOSER_ALLOW_SUPERUSER 1
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
 
-# Define as variáveis de ambiente necessárias para o deploy estático
-ENV LARA_APP_ENV=production
-ENV APP_ENV=production
-ENV APP_DEBUG=false
+WORKDIR /app
+COPY composer.json composer.lock ./
+RUN composer install --no-dev --no-scripts --no-autoloader --prefer-dist
 
-# Instala as dependências do Composer sem pacotes de desenvolvimento
-RUN composer install --no-dev --optimize-autoloader
+COPY . .
+RUN composer dump-autoload --optimize --no-dev \
+    && php artisan package:discover --ansi
 
-# Ajusta as permissões das pastas storage e bootstrap/cache
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
-
-# O Render exige que a aplicação escute na porta 80 por padrão usando esta imagem
-EXPOSE 80
+CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && (php artisan storage:link || true) && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
