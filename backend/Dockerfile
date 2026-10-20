@@ -14,4 +14,4 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev \
     && php artisan package:discover --ansi
 
-CMD ["sh", "-c", "php artisan migrate --force && php artisan db:seed --force && (php artisan storage:link || true) && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
+CMD ["sh", "-c", "php artisan migrate --force && (php artisan storage:link || true) && php artisan serve --host=0.0.0.0 --port=${PORT:-10000}"]
