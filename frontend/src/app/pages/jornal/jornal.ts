@@ -6,6 +6,7 @@
 
   import { Edicao } from '../../models/edicaoJornal';
   import { Artigo } from '../../models/artigoJornal';
+import { environment } from '../../../environments/environment';
 
   type ConteudoJornal = {
     id: number;
@@ -25,9 +26,9 @@
     styleUrl: './jornal.css',
   })
   export class Jornal implements OnInit {
-    private readonly apiUrl = 'http://127.0.0.1:8000/api/noticias';
-    private readonly apiEdicoesUrl = 'http://127.0.0.1:8000/api/edicoes';
-    private readonly storageUrl = 'http://127.0.0.1:8000/storage/';
+    private readonly apiUrl = environment.baseUrl + '/api/noticias';
+    private readonly apiEdicoesUrl = environment.baseUrl + '/api/edicoes';
+    private readonly storageUrl = environment.baseUrl + '/storage/';
 
     edicoes: ConteudoJornal[] = [];
     artigos: ConteudoJornal[] = [];
@@ -179,7 +180,7 @@
       const caminho = item.pdf.replace(/^\/+/, '');
 
       if (caminho.startsWith('storage/')) {
-        return `http://127.0.0.1:8000/${caminho}`;
+        return `${environment.baseUrl}/${caminho}`;
       }
 
       return `${this.storageUrl}${caminho}`;

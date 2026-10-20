@@ -11,6 +11,7 @@ import { Offcanvas } from 'bootstrap';
 import { PerfilUsuario } from '../perfil-usuario/perfil-usuario';
 import { LoginComponent } from '../login/login';
 import { AuthService, Usuario } from '../../service/auth';
+import { environment } from '../../../environments/environment';
 
 interface Sala {
   id: number;
@@ -25,7 +26,7 @@ interface Sala {
   styleUrl: './navbar.css',
 })
 export class Navbar implements OnInit, OnDestroy {
-  private readonly apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = environment.baseUrl + '/api';
 
   @ViewChild('sidenav') sidenav!: MatSidenav;
 

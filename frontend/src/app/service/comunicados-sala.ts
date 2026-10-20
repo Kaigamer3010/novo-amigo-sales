@@ -2,6 +2,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { environment } from '../../environments/environment';
 
 export interface ComunicadoSala {
   id: number;
@@ -33,7 +34,7 @@ export interface NovoComunicadoSala {
   providedIn: 'root',
 })
 export class ComunicadosSalaService {
-  private apiUrl = 'http://127.0.0.1:8000/api/comunicados';
+  private apiUrl = environment.baseUrl + '/api/comunicados';
 
   constructor(private http: HttpClient) {}
 

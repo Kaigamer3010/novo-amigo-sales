@@ -18,6 +18,7 @@ import {
 } from '@angular/material/core';
 
 import { AuthService } from '../../service/auth';
+import { environment } from '../../../environments/environment';
 
 interface Evento {
   id: number;
@@ -86,7 +87,7 @@ export class CalendarioComponent implements OnInit {
 
     this.http
       .get<AtividadeApi[]>(
-        `http://127.0.0.1:8000/api/atividades/sala/${salaId}`,
+        `${environment.baseUrl}/api/atividades/sala/${salaId}`,
         { headers }
       )
       .subscribe({

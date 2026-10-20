@@ -9,6 +9,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../service/auth';
+import { environment } from '../../../environments/environment';
 
 interface Atividade {
   id: number;
@@ -59,7 +60,7 @@ type ModoFormulario = 'criar' | 'editar';
   styleUrl: './gerenciar-turma.css'
 })
 export class GerenciarTurma implements OnInit {
-  private readonly apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = environment.baseUrl + '/api';
 
   private readonly http = inject(HttpClient);
   private readonly cdr = inject(ChangeDetectorRef);

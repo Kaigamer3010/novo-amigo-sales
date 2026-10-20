@@ -22,6 +22,7 @@ import { AdicionarLivro } from '../../components/adicionar-livro/adicionar-livro
 import { AdicionarCategoria } from '../../components/adicionar-categoria/adicionar-categoria';
 import { GerenciarCategorias } from '../../components/gerenciar-categorias/gerenciar-categorias';
 import { GerenciarLivros } from '../../components/gerenciar-livros/gerenciar-livros';
+import { environment } from '../../../environments/environment';
 
 registerLocaleData(localePt);
 
@@ -42,7 +43,7 @@ export class Dashboard implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.baseUrl + '/api';
   private apiGeneros = `${this.apiUrl}/generos`;
 
   secaoAtual: SecaoDashboard = 'inicio';

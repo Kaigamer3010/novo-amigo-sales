@@ -5,6 +5,7 @@ import { ChangeDetectorRef, Component, OnInit, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { Usuario } from '../../models/usuario';
+import { environment } from '../../../environments/environment';
 
 type SecaoAdmin =
   | 'inicio'
@@ -39,7 +40,7 @@ export class PgUsersAdm implements OnInit {
   private http = inject(HttpClient);
   private cdr = inject(ChangeDetectorRef);
 
-  private readonly api = 'http://127.0.0.1:8000/api';
+  private readonly api = environment.baseUrl + '/api';
 
   secaoAtual: SecaoAdmin = 'inicio';
 

@@ -6,6 +6,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef
 } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-adicionar-categoria',
@@ -22,7 +23,7 @@ export class AdicionarCategoria {
   private http = inject(HttpClient);
   private dialogRef = inject(MatDialogRef<AdicionarCategoria>);
 
-  private apiUrl = 'http://127.0.0.1:8000/api/generos';
+  private apiUrl = environment.baseUrl + '/api/generos';
 
   data = inject<{ categorias: string[] }>(MAT_DIALOG_DATA);
 

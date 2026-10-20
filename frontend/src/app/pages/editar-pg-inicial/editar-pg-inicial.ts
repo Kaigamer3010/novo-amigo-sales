@@ -15,6 +15,7 @@ import { GerenciarCardapio } from '../../components/gerenciar-cardapio/gerenciar
 
 import { Aviso } from '../../models/avisos';
 import { Cardapio } from '../../models/cardapio';
+import { environment } from '../../../environments/environment';
 
 @Component({
   selector: 'app-editar-pg-inicial',
@@ -28,7 +29,7 @@ export class EditarPgInicial implements OnInit {
   private readonly http = inject(HttpClient);
   private readonly cdr = inject(ChangeDetectorRef);
 
-  private readonly api = 'http://127.0.0.1:8000/api';
+  private readonly api = environment.baseUrl + '/api';
 
   avisos: Aviso[] = [];
   cardapios: Cardapio[] = [];

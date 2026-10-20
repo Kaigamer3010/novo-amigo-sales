@@ -20,6 +20,7 @@ import {
   ComunicadosSalaService,
   ComunicadoSala
 } from '../../service/comunicados-sala';
+import { environment } from '../../../environments/environment';
 
 interface SalaAluno {
   id: number;
@@ -44,7 +45,7 @@ interface SalaAluno {
 })
 export class Sala implements OnInit {
 
-  private readonly apiUrl = 'http://127.0.0.1:8000/api';
+  private readonly apiUrl = environment.baseUrl + '/api';
 
   constructor(
     private dialog: MatDialog,

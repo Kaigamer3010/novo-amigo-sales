@@ -3,12 +3,13 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Aviso } from '../models/avisos';
+import { environment } from '../../environments/environment';
 
 @Injectable({
   providedIn: 'root',
 })
 export class AvisosSalaService {
-  private apiUrl = 'http://127.0.0.1:8000/api/avisos';
+  private apiUrl = environment.baseUrl + '/api/avisos';
 
   constructor(private http: HttpClient) {}
 

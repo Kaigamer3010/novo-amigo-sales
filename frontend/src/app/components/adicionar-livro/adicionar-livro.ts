@@ -14,6 +14,7 @@ import {
   MAT_DIALOG_DATA,
   MatDialogRef
 } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 interface Genero {
   id: number;
@@ -56,7 +57,7 @@ export class AdicionarLivro {
   @Output() livroSalvo = new EventEmitter<void>();
   @Output() cancelar = new EventEmitter<void>();
 
-  private apiUrl = 'http://127.0.0.1:8000/api';
+  private apiUrl = environment.baseUrl + '/api';
   private generoInicialId: number | null = null;
 
   editando = false;

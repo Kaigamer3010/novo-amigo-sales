@@ -9,6 +9,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { MatDialogRef } from '@angular/material/dialog';
+import { environment } from '../../../environments/environment';
 
 interface Genero {
   id: number;
@@ -36,7 +37,7 @@ export class GerenciarCategorias {
   private dialogRef = inject(MatDialogRef<GerenciarCategorias>);
   private cdr = inject(ChangeDetectorRef);
 
-  private apiUrl = 'http://127.0.0.1:8000/api/generos';
+  private apiUrl = environment.baseUrl + '/api/generos';
 
   constructor() {
     // Inicia a consulta depois da primeira renderização do diálogo.

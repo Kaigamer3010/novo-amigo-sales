@@ -3,6 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { GradeHorarios } from '../models/gradeHorario';
+import { environment } from '../../environments/environment';
 
 interface HorarioLaravel {
   id: number;
@@ -17,7 +18,7 @@ interface HorarioLaravel {
 })
 export class HorariosGradeService {
   private http = inject(HttpClient);
-  private apiUrl = 'http://127.0.0.1:8000/api/horarios';
+  private apiUrl = environment.baseUrl + '/api/horarios';
 
   private headers(): HttpHeaders {
     const token = localStorage.getItem('token');
